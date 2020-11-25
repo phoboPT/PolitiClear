@@ -48,8 +48,8 @@ app.listen(5000, () => {
 
 app.post('/chaincode/create', async (req, res) => {
     try {
-        const { id,value } = req.body;
-        await contract.submitTransaction('createPolitiClear', id, value);
+        const { id,value,otherValue } = req.body;
+        await contract.submitTransaction('createPolitiClear', id, value,otherValue);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);
@@ -59,8 +59,12 @@ app.post('/chaincode/create', async (req, res) => {
 app.get('/chaincode/read/:id', async (req, res) => {
     try {
         const response = await contract.submitTransaction('readPolitiClear', req.params.id);
-        res.status(200).send(JSON.parse(response));
+
         console.log(`response ${response}`);
+        const edge = await contract.submitTransaction('readPolitiClear', JSON.parse(response).otherValue);
+
+        console.log('node '+edge);
+        res.status(200).send(JSON.parse(response));
     } catch (e) {
         res.status(500).json(e.message);
     }

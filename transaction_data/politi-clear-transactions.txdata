@@ -12,7 +12,8 @@
         "transactionLabel": "A test createPolitiClear transaction",
         "arguments": [
             "001",
-            "some value"
+            "some value",
+            "other Value"
         ],
         "transientData": {}
     },
