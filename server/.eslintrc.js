@@ -11,7 +11,7 @@ module.exports = {
         ecmaVersion: 8,
         sourceType: 'module'
     },
-    extends: 'eslint:recommended',
+    extends: 'airbnb-base/legacy',
     rules: {
         indent: ['error', 4],
         quotes: ['error', 'single'],
