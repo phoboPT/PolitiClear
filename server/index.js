@@ -63,7 +63,7 @@ app.post('/userTypes/create', async (req, res) => {
 });
 
 // update users
-app.put('/users/update/:id', async (req, res) => {
+app.put('/users/update/', async (req, res) => {
     usersRoute.updateUsers(req, res, contract);
 });
 
@@ -95,8 +95,6 @@ app.get('/users/name/:name', async (req, res) => {
 app.get('/usersTypes/key/:key', async (req, res) => {
     usersTypesRoute.getByKey(req, res, contract);
 });
-
-
 
 // rota para buscar por tipo e id
 app.get('/readByType/:type/:id', async (req, res) => {
