@@ -23,7 +23,7 @@ exports.getByName = async function (req, res, contract) {
 exports.setUsers = async function (req, res, contract) {
     try {
         const {
-            id, name, email, password
+            name, email, password
         } = req.body;
         await contract.submitTransaction('createUsers', name, email, password);
         res.sendStatus(201);
