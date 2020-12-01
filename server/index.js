@@ -4,7 +4,9 @@ import path from 'path';
 import { Gateway, Wallets } from 'fabric-network';
 
 import ConnectionProfile from '../ConnectionProfile.json';
+//import de rotas
 const usersRoute = require('./endpoints/usersRoute');
+const usersTypesRoute = require('./endpoints/usersTypesRoute')
 
 const connectToFabric = async () => {
     const walletPath = path.join(process.cwd(), 'wallet/Org1');
@@ -48,19 +50,49 @@ app.listen(5000, () => {
     console.log('App is listening on port 5000, http://127.0.0.1:5000');
 });
 
-app.post('/create', async (req, res) => {
+// post's de users
+app.post('/create/users', async (req, res) => {
+    usersRoute.setUsers(req, res, contract);
+});
+
+app.post('/create/userTypes', async (req, res) => {
     try {
-        const { id, value, otherValue } = req.body;
-        await contract.submitTransaction('createPolitiClear', id, value, otherValue);
+        const { id, name} = req.body;
+        await contract.submitTransaction('createUsersTypes', id, name);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);
     }
 });
 
-app.get('/read/:id', async (req, res) => {
-    usersRoute.getById(req, res, contract);
+// LISTA de ROTAS
+/*
+    /:types
+    /:types/:key
+    /arcs
+    /forms
+    /graphs
+    /nodes
+    /nodesTypes
+    /users
+        /:key
+    /usersTypes
+    
+*/ 
+
+// users
+app.get('/users/key/:key', async (req, res) => {
+    usersRoute.getByKey(req, res, contract);
 });
+app.get('/users/name/:name', async (req, res) => {
+    usersRoute.getByName(req, res, contract);
+});
+
+//usersTypes
+app.get('/usersTypes/key/:key', async (req, res) => {
+    usersTypesRoute.getByKey(req, res, contract);
+});
+
 
 // rota para buscar por tipo e id
 app.get('/readByType/:type/:id', async (req, res) => {
