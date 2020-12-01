@@ -1,7 +1,7 @@
 // Pesquisa por key
 exports.getByKey = async function (req, res, contract) {
     try {
-        const response = await contract.submitTransaction('readPolitiClear', req.params.key);
+        const response = await contract.submitTransaction('readUsers', req.params.key);
 
         res.status(200).send(JSON.parse(response));
     } catch (e) {
@@ -12,7 +12,7 @@ exports.getByKey = async function (req, res, contract) {
 // Pesquisa por name
 exports.getByName = async function (req, res, contract) {
     try {
-        const response = await contract.submitTransaction('readPolitiClear', req.params.name);
+        const response = await contract.submitTransaction('readUsers', req.params.name);
 
         res.status(200).send(JSON.parse(response));
     } catch (e) {

@@ -4,7 +4,8 @@ import path from 'path';
 import { Gateway, Wallets } from 'fabric-network';
 
 import ConnectionProfile from '../ConnectionProfile.json';
-//import de rotas
+
+//import de endpoints
 const usersRoute = require('./endpoints/usersRoute');
 const usersTypesRoute = require('./endpoints/usersTypesRoute')
 
@@ -51,18 +52,12 @@ app.listen(5000, () => {
 });
 
 // post's de users
-app.post('/create/users', async (req, res) => {
+app.post('/users/create', async (req, res) => {
     usersRoute.setUsers(req, res, contract);
 });
 
-app.post('/create/userTypes', async (req, res) => {
-    try {
-        const { id, name} = req.body;
-        await contract.submitTransaction('createUsersTypes', id, name);
-        res.sendStatus(201);
-    } catch (e) {
-        res.status(500).json(e.message);
-    }
+app.post('/userTypes/create', async (req, res) => {
+    usersTypesRoute.setUsersTypes(req, res, contract);
 });
 
 // LISTA de ROTAS
@@ -76,7 +71,9 @@ app.post('/create/userTypes', async (req, res) => {
     /nodesTypes
     /users
         /:key
+        /:name
     /usersTypes
+        /:key
     
 */ 
 
