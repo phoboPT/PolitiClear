@@ -47,7 +47,7 @@ app.listen(5000, () => {
     console.log('App is listening on port 5000, http://127.0.0.1:5000');
 });
 
-app.post('/chaincode/create', async (req, res) => {
+app.post('/create', async (req, res) => {
     try {
         const { id, value, otherValue } = req.body;
         await contract.submitTransaction('createPolitiClear', id, value, otherValue);
@@ -57,20 +57,37 @@ app.post('/chaincode/create', async (req, res) => {
     }
 });
 
-app.get('/chaincode/read/:id', async (req, res) => {
+app.get('/read/:id', async (req, res) => {
     try {
         const response = await contract.submitTransaction('readPolitiClear', req.params.id);
 
-        const edge = await contract.submitTransaction('queryByObjectType', 'user');
-
-        console.log('response' + edge);
         res.status(200).send(JSON.parse(response));
     } catch (e) {
         res.status(500).json(e.message);
     }
 });
 
-app.put('/chaincode/update', async (req, res) => {
+app.get('/readByType/:type/:id', async (req, res) => {
+    try {
+        const data = await contract.submitTransaction('queryByObjectType', req.params.type);
+        // console.log(JSON.parse(data));
+        const response = JSON.parse(data);
+        let final;
+        console.log(req.params.id);
+        response.forEach(item => {
+            if (parseInt(item.Key) === parseInt(req.params.id)) {
+                final = item;
+            }
+            console.log(item.Key);
+        });
+        console.log(final);
+        res.status(200).send(final);
+    } catch (e) {
+        res.status(500).json(e.message);
+    }
+});
+
+app.put('/update', async (req, res) => {
     try {
         await contract.submitTransaction('updateBook', req.body.isbn, req.body.name);
         res.sendStatus(204);
@@ -79,7 +96,7 @@ app.put('/chaincode/update', async (req, res) => {
     }
 });
 
-app.delete('/chaincode/delete', async (req, res) => {
+app.delete('/delete', async (req, res) => {
     try {
         await contract.submitTransaction('deleteBook', req.body.isbn);
         res.sendStatus(204);
