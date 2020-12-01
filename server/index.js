@@ -4,6 +4,7 @@ import path from 'path';
 import { Gateway, Wallets } from 'fabric-network';
 
 import ConnectionProfile from '../ConnectionProfile.json';
+const usersRoute = require('./endpoints/usersRoute');
 
 const connectToFabric = async () => {
     const walletPath = path.join(process.cwd(), 'wallet/Org1');
@@ -58,35 +59,27 @@ app.post('/create', async (req, res) => {
 });
 
 app.get('/read/:id', async (req, res) => {
-    try {
-        const response = await contract.submitTransaction('readPolitiClear', req.params.id);
-
-        res.status(200).send(JSON.parse(response));
-    } catch (e) {
-        res.status(500).json(e.message);
-    }
+    usersRoute.getById(req, res, contract);
 });
 
+// rota para buscar por tipo e id
 app.get('/readByType/:type/:id', async (req, res) => {
     try {
         const data = await contract.submitTransaction('queryByObjectType', req.params.type);
         // console.log(JSON.parse(data));
         const response = JSON.parse(data);
         let final;
-        console.log(req.params.id);
         response.forEach(item => {
             if (parseInt(item.Key) === parseInt(req.params.id)) {
                 final = item;
             }
-            console.log(item.Key);
         });
-        console.log(final);
         res.status(200).send(final);
     } catch (e) {
         res.status(500).json(e.message);
     }
 });
-
+// Updates
 app.put('/update', async (req, res) => {
     try {
         await contract.submitTransaction('updateBook', req.body.isbn, req.body.name);
@@ -95,6 +88,8 @@ app.put('/update', async (req, res) => {
         res.status(500).json(e.message);
     }
 });
+
+// Deletes
 
 app.delete('/delete', async (req, res) => {
     try {
