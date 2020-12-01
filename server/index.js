@@ -5,9 +5,10 @@ import { Gateway, Wallets } from 'fabric-network';
 
 import ConnectionProfile from '../ConnectionProfile.json';
 
-//import de endpoints
+// import de endpoints
 const usersRoute = require('./endpoints/usersRoute');
-const usersTypesRoute = require('./endpoints/usersTypesRoute')
+const usersTypesRoute = require('./endpoints/usersTypesRoute');
+const cors = require('cors');
 
 const connectToFabric = async () => {
     const walletPath = path.join(process.cwd(), 'wallet/Org1');
@@ -46,6 +47,7 @@ let contract = null;
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 app.listen(5000, () => {
     console.log('App is listening on port 5000, http://127.0.0.1:5000');
@@ -74,8 +76,8 @@ app.post('/userTypes/create', async (req, res) => {
         /:name
     /usersTypes
         /:key
-    
-*/ 
+
+*/
 
 // users
 app.get('/users/key/:key', async (req, res) => {
@@ -85,11 +87,10 @@ app.get('/users/name/:name', async (req, res) => {
     usersRoute.getByName(req, res, contract);
 });
 
-//usersTypes
+// usersTypes
 app.get('/usersTypes/key/:key', async (req, res) => {
     usersTypesRoute.getByKey(req, res, contract);
 });
-
 
 // rota para buscar por tipo e id
 app.get('/readByType/:type/:id', async (req, res) => {
@@ -104,6 +105,17 @@ app.get('/readByType/:type/:id', async (req, res) => {
             }
         });
         res.status(200).send(final);
+    } catch (e) {
+        res.status(500).json(e.message);
+    }
+});
+// rota para buscar por tipo e id
+app.get('/readByType/:type/', async (req, res) => {
+    try {
+        const data = await contract.submitTransaction('queryByObjectType', req.params.type);
+        // console.log(JSON.parse(data));
+
+        res.status(200).send(JSON.parse(data));
     } catch (e) {
         res.status(500).json(e.message);
     }

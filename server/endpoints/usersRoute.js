@@ -22,13 +22,12 @@ exports.getByName = async function (req, res, contract) {
 
 exports.setUsers = async function (req, res, contract) {
     try {
-        const { id, name, email, password } = req.body;
-        await contract.submitTransaction('createUsers', id, name, email, password);
+        const {
+            id, name, email, password
+        } = req.body;
+        await contract.submitTransaction('createUsers', name, email, password);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);
     }
-}
-
-
-
+};
