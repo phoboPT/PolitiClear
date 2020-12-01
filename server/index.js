@@ -62,6 +62,11 @@ app.post('/userTypes/create', async (req, res) => {
     usersTypesRoute.setUsersTypes(req, res, contract);
 });
 
+// update users
+app.put('/users/update/:id', async (req, res) => {
+    usersRoute.updateUsers(req, res, contract);
+});
+
 // LISTA de ROTAS
 /*
     /:types
@@ -76,7 +81,6 @@ app.post('/userTypes/create', async (req, res) => {
         /:name
     /usersTypes
         /:key
-
 */
 
 // users
@@ -91,6 +95,8 @@ app.get('/users/name/:name', async (req, res) => {
 app.get('/usersTypes/key/:key', async (req, res) => {
     usersTypesRoute.getByKey(req, res, contract);
 });
+
+
 
 // rota para buscar por tipo e id
 app.get('/readByType/:type/:id', async (req, res) => {
