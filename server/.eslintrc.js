@@ -5,10 +5,10 @@
 module.exports = {
     env: {
         node: true,
-        mocha: true,
+        mocha: true
     },
     parserOptions: {
-        ecmaVersion: 8,
+        ecmaVersion: 10,
         sourceType: 'module'
     },
     extends: 'airbnb-base/legacy',

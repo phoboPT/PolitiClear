@@ -41,5 +41,13 @@
             "001"
         ],
         "transientData": {}
+    },
+    {
+        "transactionName": "deletePolitiClear",
+        "transactionLabel": "A test deletePolitiClear transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
     }
 ]

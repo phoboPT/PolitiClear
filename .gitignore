@@ -77,3 +77,4 @@ typings/
 .serverless
 
 wallet
+ConnectionProfile.json
