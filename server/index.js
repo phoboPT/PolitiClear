@@ -62,17 +62,15 @@ app.get('/chaincode/read/:id', async (req, res) => {
         const response = await contract.submitTransaction('readPolitiClear', req.params.id);
        
 
-        const edge = await contract.submitTransaction('readPolitiClear', JSON.parse(response).id);
         const teste = new Users("qwe", "32123", "231123", 123123);
         console.log(teste);
       
         
         const object3 = JSON.stringify({
-            ...JSON.parse(response),
-           ... JSON.parse(edge)
+            ...JSON.parse(response)
         });
         console.log("response" + response);
-        res.status(200).send(JSON.parse(JSON.stringify(teste)));
+        res.status(200).send(JSON.parse(object3));
     } catch (e) {
         res.status(500).json(e.message);
     }
