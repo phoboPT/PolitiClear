@@ -19,4 +19,3 @@ exports.setForms = async function (req, res, contract) {
         res.status(500).json(e.message);
     }
 };
-
