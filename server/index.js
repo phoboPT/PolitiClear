@@ -6,6 +6,7 @@ import { Gateway, Wallets } from 'fabric-network';
 import ConnectionProfile from '../ConnectionProfile.json';
 
 // import de endpoints
+const formsRoute = require('./endpoints/formsRoute')
 const usersRoute = require('./endpoints/usersRoute');
 const usersTypesRoute = require('./endpoints/usersTypesRoute');
 const cors = require('cors');
@@ -53,7 +54,11 @@ app.listen(5000, () => {
     console.log('App is listening on port 5000, http://127.0.0.1:5000');
 });
 
-// post's de users
+// posts
+app.post('/forms/create', async (req, res) => {
+    formsRoute.setForms(req, res, contract);
+});
+
 app.post('/users/create', async (req, res) => {
     usersRoute.setUsers(req, res, contract);
 });
@@ -63,7 +68,7 @@ app.post('/userTypes/create', async (req, res) => {
 });
 
 // update users
-app.put('/users/update/', async (req, res) => {
+app.put('/users/update', async (req, res) => {
     usersRoute.updateUsers(req, res, contract);
 });
 
