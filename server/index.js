@@ -63,7 +63,7 @@ app.post('/userTypes/create', async (req, res) => {
 });
 
 // update users
-app.put('/users/update/', async (req, res) => {
+app.put('/users/update', async (req, res) => { 
     usersRoute.updateUsers(req, res, contract);
 });
 
@@ -114,10 +114,10 @@ app.get('/readByType/:type/:id', async (req, res) => {
     }
 });
 // rota para buscar por tipo e id
-app.get('/readByType/:type/', async (req, res) => {
+app.get('/readByType/:type', async (req, res) => {
     try {
         const data = await contract.submitTransaction('queryByObjectType', req.params.type);
-        // console.log(JSON.parse(data));
+        console.log(JSON.parse(data));
 
         res.status(200).send(JSON.parse(data));
     } catch (e) {
