@@ -1,4 +1,5 @@
 // search by key
+
 exports.getByKey = async function (req, res, contract) {
     try {
         const response = await contract.submitTransaction('readUsers', req.params.key);
@@ -34,10 +35,7 @@ exports.setUsers = async function (req, res, contract) {
 // Update User
 exports.updateUsers = async function (req, res, contract) {
     try {
-        const {
-            id, name, email, password
-        } = req.body;
-        await contract.submitTransaction('updateUsers', id, name, email, password);
+        await contract.submitTransaction('updateUsers', req.body.id, req.body);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);

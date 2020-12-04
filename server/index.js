@@ -7,7 +7,7 @@ import ConnectionProfile from '../ConnectionProfile.json';
 import { CLIEngine } from 'eslint';
 
 // import de endpoints
-const formsRoute = require('./endpoints/formsRoute')
+const formsRoute = require('./endpoints/formsRoute');
 const usersRoute = require('./endpoints/usersRoute');
 const usersTypesRoute = require('./endpoints/usersTypesRoute');
 const cors = require('cors');
@@ -125,10 +125,10 @@ app.get('/readByType/:type/:id', async (req, res) => {
     }
 });
 // rota para buscar por tipo e id
-app.get('/readByType/:type/', async (req, res) => {
+app.get('/readByType/:type', async (req, res) => {
     try {
         const data = await contract.submitTransaction('queryByObjectType', req.params.type);
-        // console.log(JSON.parse(data));
+        console.log(JSON.parse(data));
 
         res.status(200).send(JSON.parse(data));
     } catch (e) {
