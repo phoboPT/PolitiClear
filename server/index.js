@@ -4,6 +4,7 @@ import path from 'path';
 import { Gateway, Wallets } from 'fabric-network';
 
 import ConnectionProfile from '../ConnectionProfile.json';
+import { CLIEngine } from 'eslint';
 
 // import de endpoints
 const formsRoute = require('./endpoints/formsRoute')
@@ -78,6 +79,7 @@ app.put('/users/update', async (req, res) => {
     /:types/:key
     /arcs
     /forms
+        /:key
     /graphs
     /nodes
     /nodesTypes
@@ -88,6 +90,11 @@ app.put('/users/update', async (req, res) => {
         /:key
 */
 
+//forms
+app.get('/forms/key/:key', async (req, res) => {
+    console.log("hey")
+    formsRoute.getFormsByKey(req, res, contract);
+});
 // users
 app.get('/users/key/:key', async (req, res) => {
     usersRoute.getByKey(req, res, contract);
@@ -95,7 +102,6 @@ app.get('/users/key/:key', async (req, res) => {
 app.get('/users/name/:name', async (req, res) => {
     usersRoute.getByName(req, res, contract);
 });
-
 // usersTypes
 app.get('/usersTypes/key/:key', async (req, res) => {
     usersTypesRoute.getByKey(req, res, contract);
