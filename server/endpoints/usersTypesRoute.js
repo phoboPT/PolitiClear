@@ -12,10 +12,20 @@ exports.getByKey = async function (req, res, contract) {
 // cria novo tipo
 exports.setUsersTypes = async function (req, res, contract) {
     try {
-        const { id, name} = req.body;
-        await contract.submitTransaction('createUsersTypes', id, name);
+        await contract.submitTransaction('createUsersTypes', req.body.name);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);
     }
 }
+
+// Update User
+exports.updateUsersTypes = async function (req, res, contract) {
+    try {
+        const { id, name } = req.body;
+        await contract.submitTransaction('updateUsersTypes', id, name);
+        res.sendStatus(204);
+    } catch (e) {
+        res.status(500).json(e.message);
+    }
+};

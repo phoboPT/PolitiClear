@@ -35,7 +35,8 @@ exports.setUsers = async function (req, res, contract) {
 // Update User
 exports.updateUsers = async function (req, res, contract) {
     try {
-        await contract.submitTransaction('updateUsers', req.body.id, req.body);
+        const { id, name, email, password } = req.body;
+        await contract.submitTransaction('updateUsers', id, name, email, password);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);

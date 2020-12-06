@@ -73,6 +73,11 @@ app.put('/users/update', async (req, res) => {
     usersRoute.updateUsers(req, res, contract);
 });
 
+//update user types
+app.put('/usersTypes/update', async (req, res) => {
+    usersTypesRoute.updateUsersTypes(req, res, contract);
+});
+
 // LISTA de ROTAS
 /*
     /:types
