@@ -29,3 +29,12 @@ exports.updateUsersTypes = async function (req, res, contract) {
         res.status(500).json(e.message);
     }
 };
+
+exports.deleteUsersTypes = async function (req, res, contract) {
+    try {
+        await contract.submitTransaction('deleteUsersTypes', req.params.key);
+        res.sendStatus(204);
+    } catch (e) {
+        res.status(500).json(e.message);
+    }
+};

@@ -78,6 +78,10 @@ app.put('/usersTypes/update', async (req, res) => {
     usersTypesRoute.updateUsersTypes(req, res, contract);
 });
 
+app.delete('/usersTypes/delete/:key', async (req, res) => {
+    usersTypesRoute.deleteUsersTypes(req, res, contract);
+});
+
 // LISTA de ROTAS
 /*
     /:types
