@@ -10,7 +10,7 @@ exports.getFormsByKey = async function (req, res, contract) {
 };
 
 // create new form
-exports.setForms = async function (req, res, contract) {
+exports.createForms = async function (req, res, contract) {
     try {
         const { email, message } = req.body;
         await contract.submitTransaction('createForms', email, message);

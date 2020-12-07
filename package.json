@@ -1,7 +1,7 @@
 {
     "name": "fabric",
-    "version": "0.0.34",
-    "description": "My Smart Contract",
+    "version": "0.0.20",
+    "description": "PolitiClear Contract",
     "main": "index.js",
     "engines": {
         "node": ">=8",

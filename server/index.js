@@ -55,25 +55,31 @@ app.listen(5000, () => {
     console.log('App is listening on port 5000, http://127.0.0.1:5000');
 });
 
+
+
 // posts
 app.post('/forms/create', async (req, res) => {
-    formsRoute.setForms(req, res, contract);
+    formsRoute.createForms(req, res, contract);
 });
 
+//users
 app.post('/users/create', async (req, res) => {
-    usersRoute.setUsers(req, res, contract);
+    usersRoute.createUsers(req, res, contract);
 });
 
-app.post('/userTypes/create', async (req, res) => {
-    usersTypesRoute.setUsersTypes(req, res, contract);
-});
-
-// update users
 app.put('/users/update', async (req, res) => {
     usersRoute.updateUsers(req, res, contract);
 });
 
-//update user types
+app.delete('/users/delete/:key', async (req, res) => {
+    usersRoute.deleteUsers(req, res, contract);
+});
+
+//usertypes
+app.post('/userTypes/create', async (req, res) => {
+    usersTypesRoute.createUsersTypes(req, res, contract);
+});
+
 app.put('/usersTypes/update', async (req, res) => {
     usersTypesRoute.updateUsersTypes(req, res, contract);
 });
@@ -101,7 +107,6 @@ app.delete('/usersTypes/delete/:key', async (req, res) => {
 
 //forms
 app.get('/forms/key/:key', async (req, res) => {
-    console.log("hey")
     formsRoute.getFormsByKey(req, res, contract);
 });
 // users
@@ -117,14 +122,14 @@ app.get('/usersTypes/key/:key', async (req, res) => {
 });
 
 // rota para buscar por tipo e id
-app.get('/readByType/:type/:id', async (req, res) => {
+app.get('/readByType/:type/:key', async (req, res) => {
     try {
         const data = await contract.submitTransaction('queryByObjectType', req.params.type);
         // console.log(JSON.parse(data));
         const response = JSON.parse(data);
         let final;
         response.forEach(item => {
-            if (parseInt(item.Key) === parseInt(req.params.id)) {
+            if (parseInt(item.Key) === parseInt(req.params.key)) {
                 final = item;
             }
         });

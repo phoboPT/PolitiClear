@@ -1,5 +1,4 @@
 // search by key
-
 exports.getByKey = async function (req, res, contract) {
     try {
         const response = await contract.submitTransaction('readUsers', req.params.key);
@@ -22,7 +21,7 @@ exports.getByName = async function (req, res, contract) {
 };
 
 // Create user
-exports.setUsers = async function (req, res, contract) {
+exports.createUsers = async function (req, res, contract) {
     try {
         const { name, email, password } = req.body;
         await contract.submitTransaction('createUsers', name, email, password);
@@ -35,8 +34,18 @@ exports.setUsers = async function (req, res, contract) {
 // Update User
 exports.updateUsers = async function (req, res, contract) {
     try {
-        const { id, name, email, password } = req.body;
-        await contract.submitTransaction('updateUsers', id, name, email, password);
+        const { key, name, email, password } = req.body;
+        await contract.submitTransaction('updateUsers', key, name, email, password);
+        res.sendStatus(204);
+    } catch (e) {
+        res.status(500).json(e.message);
+    }
+};
+
+//delete user
+exports.deleteUsers = async function (req, res, contract) {
+    try {
+        await contract.submitTransaction('deleteUsers', req.params.key);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);
