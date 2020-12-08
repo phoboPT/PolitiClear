@@ -1,5 +1,8 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
 // search by key
-exports.getByKey = async function (req, res, contract) {
+exports.getByKey = async (req, res, contract) => {
     try {
         const response = await contract.submitTransaction('readUsers', req.params.key);
 
@@ -10,43 +13,76 @@ exports.getByKey = async function (req, res, contract) {
 };
 
 // search by name
-exports.getByName = async function (req, res, contract) {
+exports.getByName = async (req, res, contract) =>{
     try {
-        const response = await contract.submitTransaction('readUsers', req.params.name);
-
-        res.status(200).send(JSON.parse(response));
+        const data = await contract.submitTransaction('queryByObjectType', 'Users');
+        let user = {};
+        JSON.parse(data).forEach(userData => {
+            if (userData.Record.email === req.params.name) {
+                user = {
+                    ...user,
+                    user: userData.Record
+                };
+            }
+        });
+        res.status(200).send(user);
     } catch (e) {
         res.status(500).json(e.message);
     }
 };
 
 // Create user
-exports.createUsers = async function (req, res, contract) {
+exports.createUsers = async (req, res, contract) =>{
     try {
         const { name, email, password } = req.body;
-        await contract.submitTransaction('createUsers', name, email, password);
-        res.sendStatus(201);
+        const key = uuidv4();
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await contract.submitTransaction('createUsers', key, name, email, hashedPassword);
+        const token = jwt.sign(
+            {
+                userId: key
+            },
+            'MySecret'
+        );
+        res.token = token;
+        res.send({ token: token });
     } catch (e) {
         res.status(500).json(e.message);
     }
 };
 
 // Update User
-exports.updateUsers = async function (req, res, contract) {
+exports.updateUsers = async (req, res, contract)=> {
     try {
-        const { key, name, email, password } = req.body;
-        await contract.submitTransaction('updateUsers', key, name, email, password);
+        const {
+            id, name, email, password
+        } = req.body;
+        await contract.submitTransaction('updateUsers', id, name, email, password);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);
     }
 };
 
-//delete user
-exports.deleteUsers = async function (req, res, contract) {
+// delete user
+exports.deleteUsers = async (req, res, contract) =>{
     try {
         await contract.submitTransaction('deleteUsers', req.params.key);
         res.sendStatus(204);
+    } catch (e) {
+        res.status(500).json(e.message);
+    }
+};
+
+exports.me = async (req, res, contract) => {
+    console.log(req.body.token);
+    console.log('hey');
+    const key = jwt.verify(req.body.token, 'MySecret');
+    console.log(key);
+    try {
+        const response = await contract.submitTransaction('readUsers', key.userId);
+
+        res.status(200).send(JSON.parse(response));
     } catch (e) {
         res.status(500).json(e.message);
     }

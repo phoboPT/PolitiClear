@@ -1,6 +1,6 @@
 {
     "name": "fabric",
-    "version": "0.0.20",
+    "version": "0.0.32",
     "description": "PolitiClear Contract",
     "main": "index.js",
     "engines": {
@@ -17,10 +17,14 @@
     "author": "John Doe",
     "license": "Apache-2.0",
     "dependencies": {
+        "bcrypt": "^5.0.0",
+        "cookie-parser": "^1.4.5",
+        "dotenv": "^8.2.0",
         "eslint-config-airbnb": "^18.2.1",
         "eslint-config-airbnb-base": "^14.2.1",
         "fabric-contract-api": "^2.2.0",
         "fabric-shim": "^2.2.0",
+        "jsonwebtoken": "^8.5.1",
         "uuid": "^8.3.1"
     },
     "devDependencies": {
