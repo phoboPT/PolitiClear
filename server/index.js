@@ -4,13 +4,13 @@ import path from 'path';
 import { Gateway, Wallets } from 'fabric-network';
 
 import ConnectionProfile from '../ConnectionProfile.json';
-import { CLIEngine } from 'eslint';
 
 // import de endpoints
 const formsRoute = require('./endpoints/formsRoute');
 const usersRoute = require('./endpoints/usersRoute');
 const usersTypesRoute = require('./endpoints/usersTypesRoute');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const connectToFabric = async () => {
     const walletPath = path.join(process.cwd(), 'wallet/Org1');
@@ -49,7 +49,26 @@ let contract = null;
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors(
+    {
+        origin: 'http://localhost:3000',
+        optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+    }
+));
+
+app.use(cookieParser());
+
+// app.use((req, res, next) => {
+//     const { token } = req.cookies;
+//     console.log(req.cookie);
+
+//     if (token) {
+//         const { userId } = jwt.verify(token, 'MySecret');
+//         // put the userId onto the req for future requests to access
+//         req.userId = userId;
+//     }
+//     next();
+// });
 
 app.listen(5000, () => {
     console.log('App is listening on port 5000, http://127.0.0.1:5000');
@@ -80,7 +99,7 @@ app.delete('/users/delete/:key', async (req, res) => {
     usersRoute.deleteUsers(req, res, contract);
 });
 
-//usertypes
+// usertypes
 app.post('/userTypes/create', async (req, res) => {
     usersTypesRoute.createUsersTypes(req, res, contract);
 });
@@ -110,10 +129,13 @@ app.delete('/usersTypes/delete/:key', async (req, res) => {
         /:key
 */
 
-
 // users
 app.get('/users/key/:key', async (req, res) => {
     usersRoute.getByKey(req, res, contract);
+});
+
+app.post('/me', async (req, res) => {
+    usersRoute.me(req, res, contract);
 });
 app.get('/users/name/:name', async (req, res) => {
     usersRoute.getByName(req, res, contract);
@@ -124,27 +146,9 @@ app.get('/usersTypes/key/:key', async (req, res) => {
 });
 
 // rota para buscar por tipo e id
-app.get('/readByType/:type/:key', async (req, res) => {
-    try {
-        const data = await contract.submitTransaction('queryByObjectType', req.params.type);
-        // console.log(JSON.parse(data));
-        const response = JSON.parse(data);
-        let final;
-        response.forEach(item => {
-            if (parseInt(item.Key) === parseInt(req.params.key)) {
-                final = item;
-            }
-        });
-        res.status(200).send(final);
-    } catch (e) {
-        res.status(500).json(e.message);
-    }
-});
-// rota para buscar por tipo e id
 app.get('/readByType/:type', async (req, res) => {
     try {
         const data = await contract.submitTransaction('queryByObjectType', req.params.type);
-        console.log(JSON.parse(data));
 
         res.status(200).send(JSON.parse(data));
     } catch (e) {

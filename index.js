@@ -6,7 +6,6 @@
 
 const PolitiClearContract = require('./lib/politi-clear-contract');
 
-
 module.exports.PolitiClearContract = PolitiClearContract;
 module.exports.contracts = [PolitiClearContract];
 
