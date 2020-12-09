@@ -9,6 +9,7 @@ import ConnectionProfile from '../ConnectionProfile.json';
 const formsRoute = require('./endpoints/formsRoute');
 const usersRoute = require('./endpoints/usersRoute');
 const usersTypesRoute = require('./endpoints/usersTypesRoute');
+const votesRoute = require('./endpoints/votesRoute');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
@@ -85,6 +86,14 @@ app.get('/forms/key/:key', async (req, res) => {
     formsRoute.getByKey(req, res, contract);
 });
 
+app.put('/forms/update', async (req, res) => {
+    formsRoute.updateForms(req, res, contract);
+});
+
+app.delete('/forms/delete/:key', async (req, res) => {
+    formsRoute.deleteForms(req, res, contract);
+});
+
 // users
 app.post('/users/create', async (req, res) => {
     usersRoute.createUsers(req, res, contract);
@@ -109,6 +118,22 @@ app.put('/usersTypes/update', async (req, res) => {
 
 app.delete('/usersTypes/delete/:key', async (req, res) => {
     usersTypesRoute.deleteUsersTypes(req, res, contract);
+});
+
+// Votes
+app.get('/votes/key/:key', async (req, res) => {
+    votesRoute.getByKey(req, res, contract);
+});
+app.post('/votes/create', async (req, res) => {
+    votesRoute.createVotes(req, res, contract);
+});
+
+app.put('/votes/update', async (req, res) => {
+    votesRoute.updateVotes(req, res, contract);
+});
+
+app.delete('/votes/delete/:key', async (req, res) => {
+    votesRoute.deleteVotes(req, res, contract);
 });
 
 // LISTA de ROTAS
