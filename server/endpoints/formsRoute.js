@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require('uuid');
+
 // search by key
 exports.getByKey = async function (req, res, contract) {
     try {
@@ -12,8 +14,10 @@ exports.getByKey = async function (req, res, contract) {
 // create new form
 exports.createForms = async function (req, res, contract) {
     try {
+        const key = uuidv4();
+        const createdAt = new Date();
         const { email, message } = req.body;
-        await contract.submitTransaction('createForms', email, message);
+        await contract.submitTransaction('createForms', key, email, message, createdAt);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);
@@ -30,7 +34,7 @@ exports.updateForms = async function (req, res, contract) {
     }
 };
 
-//delete user
+// delete user
 exports.deleteUsers = async function (req, res, contract) {
     try {
         await contract.submitTransaction('deleteForms', req.params.key);

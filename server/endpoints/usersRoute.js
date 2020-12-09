@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { CLIEngine } = require('eslint');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 // search by key
@@ -13,7 +14,7 @@ exports.getByKey = async (req, res, contract) => {
 };
 
 // search by name
-exports.getByName = async (req, res, contract) =>{
+exports.getByName = async (req, res, contract) => {
     try {
         const data = await contract.submitTransaction('queryByObjectType', 'Users');
         let user = {};
@@ -32,12 +33,13 @@ exports.getByName = async (req, res, contract) =>{
 };
 
 // Create user
-exports.createUsers = async (req, res, contract) =>{
+exports.createUsers = async (req, res, contract) => {
     try {
         const { name, email, password } = req.body;
         const key = uuidv4();
+        const createdAt = new Date();
         const hashedPassword = await bcrypt.hash(password, 10);
-        await contract.submitTransaction('createUsers', key, name, email, hashedPassword);
+        await contract.submitTransaction('createUsers', key, name, email, hashedPassword, createdAt);
         const token = jwt.sign(
             {
                 userId: key
@@ -52,12 +54,10 @@ exports.createUsers = async (req, res, contract) =>{
 };
 
 // Update User
-exports.updateUsers = async (req, res, contract)=> {
+exports.updateUsers = async (req, res, contract) => {
     try {
-        const {
-            id, name, email, password
-        } = req.body;
-        await contract.submitTransaction('updateUsers', id, name, email, password);
+        const { key, name, email, password } = req.body;
+        await contract.submitTransaction('updateUsers', key, name, email, password);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);
@@ -65,7 +65,7 @@ exports.updateUsers = async (req, res, contract)=> {
 };
 
 // delete user
-exports.deleteUsers = async (req, res, contract) =>{
+exports.deleteUsers = async (req, res, contract) => {
     try {
         await contract.submitTransaction('deleteUsers', req.params.key);
         res.sendStatus(204);

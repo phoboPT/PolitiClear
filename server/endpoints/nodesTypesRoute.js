@@ -12,12 +12,13 @@ exports.getByKey = async function (req, res, contract) {
 // cria novo tipo
 exports.createNodesTypes = async function (req, res, contract) {
     try {
-        await contract.submitTransaction('createNodesTypes', req.body.name);
+        const key = uuidv4();
+        await contract.submitTransaction('createNodesTypes', key, req.body.name);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);
     }
-}
+};
 
 // update tipo nodo
 exports.updateNodesTypes = async function (req, res, contract) {

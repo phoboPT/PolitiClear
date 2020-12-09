@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "lint": "eslint .",
+        "lint": "eslint . --fix",
         "dev": "nodemon --exec babel-node index.js"
     },
     "keywords": [],
