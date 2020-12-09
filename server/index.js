@@ -134,6 +134,11 @@ app.get('/users/key/:key', async (req, res) => {
 app.post('/me', async (req, res) => {
     usersRoute.me(req, res, contract);
 });
+
+app.post('/login', async (req, res) => {
+    usersRoute.login(req, res, contract);
+});
+
 app.get('/users/name/:name', async (req, res) => {
     usersRoute.getByName(req, res, contract);
 });
