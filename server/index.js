@@ -74,12 +74,19 @@ app.listen(5000, () => {
     console.log('App is listening on port 5000, http://127.0.0.1:5000');
 });
 
-// posts
+/* -----  ROUTES  ----- */
+
+// Forms
 app.post('/forms/create', async (req, res) => {
     formsRoute.createForms(req, res, contract);
 });
 
-// users
+app.get('/forms/key/:key', async (req, res) => {
+    formsRoute.getByKey(req, res, contract);
+});
+
+
+//users
 app.post('/users/create', async (req, res) => {
     usersRoute.createUsers(req, res, contract);
 });
@@ -122,10 +129,6 @@ app.delete('/usersTypes/delete/:key', async (req, res) => {
         /:key
 */
 
-// forms
-app.get('/forms/key/:key', async (req, res) => {
-    formsRoute.getFormsByKey(req, res, contract);
-});
 // users
 app.get('/users/key/:key', async (req, res) => {
     usersRoute.getByKey(req, res, contract);
