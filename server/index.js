@@ -6,7 +6,10 @@ import { Gateway, Wallets } from 'fabric-network';
 import ConnectionProfile from '../ConnectionProfile.json';
 
 // import de endpoints
+const arcsRoute = require('./endpoints/arcsRoute');
 const formsRoute = require('./endpoints/formsRoute');
+const nodesRoute = require('./endpoints/nodesRoute');
+const nodesTypesRoute = require('./endpoints/nodesTypesRoute');
 const usersRoute = require('./endpoints/usersRoute');
 const usersTypesRoute = require('./endpoints/usersTypesRoute');
 const votesRoute = require('./endpoints/votesRoute');
@@ -76,6 +79,22 @@ app.listen(5000, () => {
 });
 
 /* -----  ROUTES  ----- */
+// Arcs
+app.post('/arcs/create', async (req, res) => {
+    arcsRoute.createArcs(req, res, contract);
+});
+
+app.get('/arcs/key/:key', async (req, res) => {
+    arcsRoute.getByKey(req, res, contract);
+});
+
+app.put('/arcs/update', async (req, res) => {
+    arcsRoute.updateArcs(req, res, contract);
+});
+
+app.delete('/arcs/delete/:key', async (req, res) => {
+    arcsRoute.deleteArcs(req, res, contract);
+});
 
 // Forms
 app.post('/forms/create', async (req, res) => {
@@ -94,7 +113,47 @@ app.delete('/forms/delete/:key', async (req, res) => {
     formsRoute.deleteForms(req, res, contract);
 });
 
+// nodes
+app.get('/nodes/key/:key', async (req, res) => {
+    nodesRoute.getByKey(req, res, contract);
+});
+app.post('/nodes/create', async (req, res) => {
+    nodesRoute.createNodes(req, res, contract);
+});
+
+app.put('/nodes/update', async (req, res) => {
+    nodesRoute.updateNodes(req, res, contract);
+});
+
+app.delete('/nodes/delete/:key', async (req, res) => {
+    nodesRoute.deleteNodes(req, res, contract);
+});
+
+
+// nodesTypes
+app.get('/nodesTypes/key/:key', async (req, res) => {
+    nodesTypesRoute.getByKey(req, res, contract);
+});
+app.post('/nodesTypes/create', async (req, res) => {
+    nodesTypesRoute.createNodesTypes(req, res, contract);
+});
+
+app.put('/nodesTypes/update', async (req, res) => {
+    nodesTypesRoute.updateNodesTypes(req, res, contract);
+});
+
+app.delete('/nodesTypes/delete/:key', async (req, res) => {
+    nodesTypesRoute.deleteNodesTypes(req, res, contract);
+});
+
+
 // users
+app.get('/users/key/:key', async (req, res) => {
+    usersRoute.getByKey(req, res, contract);
+});
+app.get('/users/name/:name', async (req, res) => {
+    usersRoute.getByName(req, res, contract);
+});
 app.post('/users/create', async (req, res) => {
     usersRoute.createUsers(req, res, contract);
 });
@@ -108,6 +167,10 @@ app.delete('/users/delete/:key', async (req, res) => {
 });
 
 // usertypes
+app.get('/usersTypes/key/:key', async (req, res) => {
+    usersTypesRoute.getByKey(req, res, contract);
+});
+
 app.post('/userTypes/create', async (req, res) => {
     usersTypesRoute.createUsersTypes(req, res, contract);
 });
@@ -153,10 +216,6 @@ app.delete('/votes/delete/:key', async (req, res) => {
         /:key
 */
 
-// users
-app.get('/users/key/:key', async (req, res) => {
-    usersRoute.getByKey(req, res, contract);
-});
 
 app.post('/me', async (req, res) => {
     usersRoute.me(req, res, contract);
@@ -166,13 +225,6 @@ app.post('/login', async (req, res) => {
     usersRoute.login(req, res, contract);
 });
 
-app.get('/users/name/:name', async (req, res) => {
-    usersRoute.getByName(req, res, contract);
-});
-// usersTypes
-app.get('/usersTypes/key/:key', async (req, res) => {
-    usersTypesRoute.getByKey(req, res, contract);
-});
 
 // rota para buscar por tipo e id
 app.get('/readByType/:type', async (req, res) => {
@@ -184,23 +236,4 @@ app.get('/readByType/:type', async (req, res) => {
         res.status(500).json(e.message);
     }
 });
-// Updates
-app.put('/update', async (req, res) => {
-    try {
-        await contract.submitTransaction('updateBook', req.body.isbn, req.body.name);
-        res.sendStatus(204);
-    } catch (e) {
-        res.status(500).json(e.message);
-    }
-});
 
-// Deletes
-
-app.delete('/delete', async (req, res) => {
-    try {
-        await contract.submitTransaction('deleteBook', req.body.isbn);
-        res.sendStatus(204);
-    } catch (e) {
-        res.status(500).json(e.message);
-    }
-});
