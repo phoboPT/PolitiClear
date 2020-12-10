@@ -51,24 +51,12 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors(
     {
-        origin: 'http://localhost:3000',
-        optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+        origin: 'http://localhost:7777',
+        optionsSuccessStatus: 200
     }
 ));
 
 app.use(cookieParser());
-
-// app.use((req, res, next) => {
-//     const { token } = req.cookies;
-//     console.log(req.cookie);
-
-//     if (token) {
-//         const { userId } = jwt.verify(token, 'MySecret');
-//         // put the userId onto the req for future requests to access
-//         req.userId = userId;
-//     }
-//     next();
-// });
 
 app.listen(5000, () => {
     console.log('App is listening on port 5000, http://127.0.0.1:5000');
@@ -85,8 +73,7 @@ app.get('/forms/key/:key', async (req, res) => {
     formsRoute.getByKey(req, res, contract);
 });
 
-
-//users
+// users
 app.post('/users/create', async (req, res) => {
     usersRoute.createUsers(req, res, contract);
 });
@@ -101,7 +88,9 @@ app.delete('/users/delete/:key', async (req, res) => {
 
 // usertypes
 app.post('/userTypes/create', async (req, res) => {
-    usersTypesRoute.createUsersTypes(req, res, contract);
+    const response = await usersTypesRoute.createUsersTypes(req, res, contract);
+    res.status(200).send(response);
+
 });
 
 app.put('/usersTypes/update', async (req, res) => {
@@ -139,7 +128,8 @@ app.post('/me', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-    usersRoute.login(req, res, contract);
+    const response = await usersRoute.login(req, res, contract);
+    res.status(200).send(response);
 });
 
 app.get('/users/name/:name', async (req, res) => {
