@@ -1,6 +1,6 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const { v4: uuidv4 } = require("uuid");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
 // search by key
 exports.getByKey = async (req, res, contract) => {
     try {
@@ -61,14 +61,14 @@ exports.createUsers = async (req, res, contract) => {
             return(`The email: ${email} already exist`);
         }
         const key = uuidv4();
-
+        const createdAt = new Date();
         const hashedPassword = await bcrypt.hash(password, 10);
         await contract.submitTransaction(
             "createUsers",
             key,
             name,
             email,
-            hashedPassword
+            hashedPassword,createdAt
         );
         const token = jwt.sign(
             {
