@@ -117,6 +117,10 @@ app.delete('/nodes/delete/:key', async (req, res) => {
     nodesRoute.deleteNodes(req, res, contract);
 });
 
+app.get('/searchNodes', async (req, res) => {
+    nodesRoute.searchNodes(req, res, contract);
+});
+
 
 // nodesTypes
 app.get('/nodesTypes/key/:key', async (req, res) => {
@@ -188,6 +192,7 @@ app.put('/votes/update', async (req, res) => {
 app.delete('/votes/delete/:key', async (req, res) => {
     votesRoute.deleteVotes(req, res, contract);
 });
+
 
 // LISTA de ROTAS
 /*
