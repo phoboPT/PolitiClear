@@ -1,82 +1,55 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- */
-
 module.exports = {
-    env: {
-        node: true,
-        mocha: true,
-    },
+    extends: ["@imaginary-cloud/react"],
+    // more configuration options here!
+    parser: "babel-eslint",
     parserOptions: {
-        ecmaVersion: 10,
-        sourceType: "module",
-    },
-    "extends": [
-        "airbnb",
-        "prettier",
-        "prettier/react"
-    ],
-    "parser": "babel-eslint",
-    "parserOptions": {
-        "ecmaVersion": 2018,
+        ecmaVersion: 2018,
         // Can I remove these now?
-        "ecmaFeatures": {
-            "impliedStrict": true,
-            "classes": true
-        }
+        ecmaFeatures: {
+            impliedStrict: true,
+            classes: true,
+        },
     },
-    "env": {
-        "browser": true,
-        "node": true,
-        "jquery": true,
-        "jest": true
+    env: {
+        browser: true,
+        node: true,
+        jquery: true,
+        jest: true,
     },
-    "rules": {
+    rules: {
         "no-debugger": 0,
         "no-alert": 0,
         "no-await-in-loop": 0,
-        "no-return-assign": [
-            "error",
-            "except-parens"
-        ],
+        "no-return-assign": ["error", "except-parens"],
         "no-restricted-syntax": [
             2,
             "ForInStatement",
             "LabeledStatement",
-            "WithStatement"
+            "WithStatement",
         ],
-        "no-unused-vars": [
-            1,
-            {
-                "ignoreSiblings": true,
-                "argsIgnorePattern": "res|next|^err"
-            }
-        ],
+
         "prefer-const": [
             "error",
             {
-                "destructuring": "all",
-            }
+                destructuring: "all",
+            },
         ],
-        "arrow-body-style": [
-            2,
-            "as-needed"
-        ],
+        "arrow-body-style": [2, "as-needed"],
         "no-unused-expressions": [
             2,
             {
-                "allowTaggedTemplates": true
-            }
+                allowTaggedTemplates: true,
+            },
         ],
         "no-param-reassign": [
             2,
             {
-                "props": false
-            }
+                props: false,
+            },
         ],
         "no-console": 0,
         "import/prefer-default-export": 0,
-        "import": 0,
+        import: 0,
         "func-names": 0,
         "space-before-function-paren": 0,
         "comma-dangle": 0,
@@ -95,58 +68,44 @@ module.exports = {
         "react/jsx-filename-extension": [
             1,
             {
-                "extensions": [
-                    ".js",
-                    ".jsx"
-                ]
-            }
+                extensions: [".js", ".jsx"],
+            },
         ],
-        "radix": 0,
+        radix: 0,
         "no-shadow": [
             2,
             {
-                "hoist": "all",
-                "allow": [
-                    "resolve",
-                    "reject",
-                    "done",
-                    "next",
-                    "err",
-                    "error"
-                ]
-            }
+                hoist: "all",
+                allow: ["resolve", "reject", "done", "next", "err", "error"],
+            },
         ],
-        "quotes": [
+        quotes: [
             2,
             "single",
             {
-                "avoidEscape": true,
-                "allowTemplateLiterals": true
-            }
+                avoidEscape: true,
+                allowTemplateLiterals: true,
+            },
         ],
         "prettier/prettier": [
             "error",
             {
-                "trailingComma": "es5",
-                "singleQuote": true,
-                "printWidth": 80,
-            }
+                trailingComma: "all",
+                singleQuote: true,
+                printWidth: 80,
+                semi: true,
+                endOfLine: "auto",
+            },
         ],
         "jsx-a11y/href-no-hash": "off",
         "jsx-a11y/anchor-is-valid": [
             "warn",
             {
-                "aspects": [
-                    "invalidHref"
-                ]
-            }
+                aspects: ["invalidHref"],
+            },
         ],
         "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn"
+        "react-hooks/exhaustive-deps": "warn",
     },
-    "plugins": [
-        "html",
-        "prettier",
-        "react-hooks"
-    ]
+    plugins: ["html", "prettier", "react-hooks"],
 };

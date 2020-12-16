@@ -48,6 +48,7 @@ exports.createUsers = async (req, res, contract) => {
         );
         // verify if there is already an email
         let users;
+        console.log(JSON.parse(user));
         JSON.parse(user).forEach((userData) => {
             if (userData.Record.email === email) {
                 users = {
@@ -58,7 +59,7 @@ exports.createUsers = async (req, res, contract) => {
         });
         // if exists throw error
         if (users) {
-            return(`The email: ${email} already exist`);
+            return ({ error: 0, errorMessage: `The email: ${email} already exist` });
         }
         const key = uuidv4();
         const createdAt = new Date();
@@ -68,7 +69,7 @@ exports.createUsers = async (req, res, contract) => {
             key,
             name,
             email,
-            hashedPassword,createdAt
+            hashedPassword, createdAt
         );
         const token = jwt.sign(
             {
@@ -77,7 +78,7 @@ exports.createUsers = async (req, res, contract) => {
             "MySecret"
         );
         res.token = token;
-        return({ token: "token " });
+        return ({ token: "token " });
     } catch (e) {
         res.status(500).json(e.message);
     }
@@ -119,7 +120,7 @@ exports.me = async (req, res, contract) => {
         );
         res.status(200).send(JSON.parse(response));
     } catch (e) {
-        res.status(500).json({ error: 0 });
+        res.status(500).json({ error: 0,errorMessage:"User not found" });
     }
 };
 // don't touch
@@ -144,7 +145,6 @@ exports.login = async (req, res, contract) => {
             return { error: "No email found" };
         }
         const valid = await bcrypt.compare(password, user.Record.password);
-        console.log("hey");
         if (!valid) {
             return { error: " email or password invalid " };
         }
