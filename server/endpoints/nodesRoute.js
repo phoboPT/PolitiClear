@@ -42,3 +42,13 @@ exports.deleteNodes = async function (req, res, contract) {
         res.status(500).json(e.message);
     }
 };
+
+
+exports.searchNodes = async function (req, res, contract) {
+    try {
+        const response = await contract.submitTransaction('searchNodes', req.body.description);
+        res.status(200).send(JSON.parse(response));
+    } catch (e) {
+        res.status(500).json(e.message);
+    }
+};
