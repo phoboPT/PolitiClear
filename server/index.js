@@ -2,9 +2,10 @@ import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
 import { Gateway, Wallets } from "fabric-network";
-const { join } = require("path");
-const { parse } = require("url");
 import ConnectionProfile from "../ConnectionProfile.json";
+
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 // import de endpoints
 const arcsRoute = require("./endpoints/arcsRoute");
@@ -15,8 +16,6 @@ const usersRoute = require("./endpoints/usersRoute");
 const usersTypesRoute = require("./endpoints/usersTypesRoute");
 const votesRoute = require("./endpoints/votesRoute");
 
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
 
 const connectToFabric = async () => {
   const walletPath = path.join(process.cwd(), "wallet/Org1");
@@ -153,7 +152,9 @@ app.post("/users/create", async (req, res) => {
 });
 
 app.put("/users/update", async (req, res) => {
-  usersRoute.updateUsers(req, res, contract);
+  const response = await usersRoute.updateUsers(req, res, contract);
+  console.log("response", response);
+  res.status(200).send(response);
 });
 
 app.delete("/users/delete/:key", async (req, res) => {
@@ -194,25 +195,10 @@ app.delete("/votes/delete/:key", async (req, res) => {
   votesRoute.deleteVotes(req, res, contract);
 });
 
-// LISTA de ROTAS
-/*
-    /:types
-    /:types/:key
-    /arcs
-    /forms
-        /:key
-    /graphs
-    /nodes
-    /nodesTypes
-    /users
-        /:key
-        /:name
-    /usersTypes
-        /:key
-*/
 
 app.post("/me", async (req, res) => {
-  usersRoute.me(req, res, contract);
+  const response = await usersRoute.me(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.post("/login", async (req, res) => {
@@ -227,8 +213,18 @@ app.get("/readByType/:type", async (req, res) => {
       "queryByObjectType",
       req.params.type
     );
+    const parsedData = JSON.parse(data);
+    if (req.params.type === "Users") {
+      
+      parsedData.map((item) => {
+        
+        delete item.Record["password"];
+        console.log(item);
+        return item;
+      });
+    }
 
-    res.status(200).send(JSON.parse(data));
+    res.status(200).send(parsedData);
   } catch (e) {
     res.status(500).json(e.message);
   }

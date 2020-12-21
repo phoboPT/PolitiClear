@@ -7,9 +7,11 @@ exports.getByKey = async (req, res, contract) => {
     const response = await contract.submitTransaction(
       "readUsers",
       req.params.key
-    );
+    );  
+    const parsedData = JSON.parse(response);
+    delete parsedData["password"];
 
-    res.status(200).send(JSON.parse(response));
+    res.status(200).send(parsedData);
   } catch (e) {
     res.status(500).json(e.message);
   }
@@ -28,6 +30,7 @@ exports.getByName = async (req, res, contract) => {
         };
       }
     });
+    delete user["password"];
     res.status(200).send(user);
   } catch (e) {
     res.status(500).json(e.message);
@@ -82,11 +85,29 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
-    const { id, name, email, password } = req.body;
-    await contract.submitTransaction("updateUsers", id, name, email, password);
-    res.sendStatus(204);
+    const id = await jwt.verify(req.body.token, "MySecret");
+    const { name = "", oldPassword = "", newPassword="",permission =""} = req.body;
+
+    if (oldPassword !== "" && newPassword !== "") {
+      const user = await contract.submitTransaction("readUsers", id.userId);
+      if (!user) {
+        return { error: "No email found" };
+      }
+      const valid = await bcrypt.compare(oldPassword, JSON.parse(user).password);
+      if (!valid) {
+        return { error: "password invalid" };
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await contract.submitTransaction("updateUsers", id.userId, name,hashedPassword,permission);
+      return { data: "Updated" };
+    } else {
+      
+      await contract.submitTransaction("updateUsers", id.userId, name,"",permission);
+      return ({ data: "updated" });
+    }
   } catch (e) {
-    res.status(500).json(e.message);
+    return ({ data: e.message });
   }
 };
 
@@ -104,7 +125,9 @@ exports.me = async (req, res, contract) => {
   try {
     const key = jwt.verify(req.body.token, "MySecret");
     const response = await contract.submitTransaction("readUsers", key.userId);
-    res.status(200).send(JSON.parse(response));
+    const parsedData = JSON.parse(response);
+    delete parsedData["password"]
+    return (parsedData);
   } catch (e) {
     res.status(500).json({ error: 0, errorMessage: "User not found" });
   }
@@ -116,6 +139,7 @@ exports.login = async (req, res, contract) => {
 
     const data = await contract.submitTransaction("queryByObjectType", "Users");
     let user;
+    console.log(JSON.parse(data));
     JSON.parse(data).forEach((userData) => {
       if (userData.Record.email === email) {
         user = {
