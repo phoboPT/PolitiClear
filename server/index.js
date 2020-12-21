@@ -119,7 +119,8 @@ app.delete("/nodes/delete/:key", async (req, res) => {
 });
 
 app.get("/searchNodes", async (req, res) => {
-  nodesRoute.searchNodes(req, res, contract);
+  const response = await nodesRoute.searchNodes(req, res, contract);
+  res.status(200).send(response);
 });
 
 // nodesTypes
@@ -143,7 +144,7 @@ app.get("/users/key/:key", async (req, res) => {
   usersRoute.getByKey(req, res, contract);
 });
 app.get("/users/name/:name", async (req, res) => {
-  const response = awaitusersRoute.getByName(req, res, contract);
+  const response = await usersRoute.getByName(req, res, contract);
   res.status(200).send(response);
 });
 app.post("/users/create", async (req, res) => {
