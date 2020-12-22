@@ -23,7 +23,9 @@ exports.createNodes = async function (req, res, contract) {
 		const { description, nodeType, creatorId, userCreated } = req.body;
 		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
 		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-		await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
+		if (userCreated !== '') {
+			await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
+		}
 
 		await contract.submitTransaction('createNodes', key, description, nodeType, creatorId, userCreated, createdAt);
 		res.sendStatus(201);
@@ -38,8 +40,10 @@ exports.updateNodes = async function (req, res, contract) {
 		const { key, description, nodeType, creatorId, userCreated } = req.body;
 		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
 		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-		await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
-		
+		if (userCreated !== '') {
+			await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
+		}
+
 		await contract.submitTransaction('updateNodes', key, description, nodeType, creatorId, userCreated,);
 		res.sendStatus(204);
 	} catch (e) {
@@ -136,8 +140,8 @@ exports.searchNodes = async function (req, res, contract) {
 		// ciclo para ver todos initialNodes
 		const result = [];
 		for await (const item of allData) {
-			const data={}
-			const buffer1 = await contract.submitTransaction('getByKey',item.arcKey);
+			const data = {}
+			const buffer1 = await contract.submitTransaction('getByKey', item.arcKey);
 			const asset = JSON.parse(buffer1.toString());
 			console.log(asset);
 			arc.initialNode = asset.initialNode;
@@ -147,10 +151,10 @@ exports.searchNodes = async function (req, res, contract) {
 			data.initial = (JSON.parse(initial.toString()));
 			const final = await contract.submitTransaction('getByKey', asset.finalNode);
 			data.final = (JSON.parse(final.toString()));
-			
+
 			const conection = await contract.submitTransaction('getByKey', item.arcKey);
 			data.arc = (JSON.parse(conection.toString()));
-			console.log("res",result);
+			console.log("res", result);
 			result.push(data)
 
 		};
