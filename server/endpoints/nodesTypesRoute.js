@@ -1,4 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
+const dataVerifications = require("./functions/dataVerifications");
+
 // Pesquisa por key
 exports.getByKey = async function (req, res, contract) {
     try {
@@ -13,9 +15,12 @@ exports.getByKey = async function (req, res, contract) {
 // cria novo tipo
 exports.createNodesTypes = async function (req, res, contract) {
     try {
+        const { name } = req.body
+        await dataVerifications.verifyNameAlreadyExists(name, 'NodesTypes', contract);
+
         const key = uuidv4();
         const createdAt = new Date();
-        await contract.submitTransaction('createNodesTypes', key, req.body.name, createdAt);
+        await contract.submitTransaction('createNodesTypes', key, name, createdAt);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);
@@ -26,6 +31,8 @@ exports.createNodesTypes = async function (req, res, contract) {
 exports.updateNodesTypes = async function (req, res, contract) {
     try {
         const { key, name } = req.body;
+        await dataVerifications.verifyNameAlreadyExists(name, 'NodesTypes', contract);
+        
         await contract.submitTransaction('updateNodesTypes', key, name);
         res.sendStatus(204);
     } catch (e) {

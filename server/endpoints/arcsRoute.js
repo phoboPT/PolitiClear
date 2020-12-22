@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
+const dataVerifications = require('./functions/dataVerifications');
 
 // search by key
 exports.getByKey = async function (req, res, contract) {
@@ -17,6 +18,10 @@ exports.createArcs = async function (req, res, contract) {
         const key = uuidv4();
         const createdAt = new Date();
         const { description, initialNode, finalNode, creatorId } = req.body;
+        await dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
+		await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
+        await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
+        
         await contract.submitTransaction('createArcs', key, description, initialNode, finalNode, creatorId, createdAt);
         res.sendStatus(201);
     } catch (e) {
@@ -27,6 +32,9 @@ exports.createArcs = async function (req, res, contract) {
 exports.updateArcs = async function (req, res, contract) {
     try {
         const { key, description, initialNode, finalNode, creatorId } = req.body;
+        await dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
+		await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
+        await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
         await contract.submitTransaction('updateArcs', key, description, initialNode, finalNode, creatorId);
         res.sendStatus(204);
     } catch (e) {
