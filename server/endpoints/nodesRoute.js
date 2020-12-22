@@ -24,7 +24,9 @@ exports.createNodes = async function (req, res, contract) {
 		const { description, nodeType, creatorId, userCreated } = req.body;
 		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
 		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-		await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
+		if (userCreated !== '') {
+			await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
+		}
 
 		await contract.submitTransaction('createNodes', key, description, nodeType, creatorId, userCreated, createdAt);
 		res.sendStatus(201);
@@ -37,9 +39,9 @@ exports.createNodes = async function (req, res, contract) {
 exports.updateNodes = async function (req, res, contract) {
 	try {
 		const { key, description, nodeType, creatorId, userCreated } = req.body;
-		// await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
-		// await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-		// await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
+		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
+		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
+		await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
 		
 		await contract.submitTransaction('updateNodes', key, description||"", nodeType||"", creatorId||""
 		, userCreated||"");
