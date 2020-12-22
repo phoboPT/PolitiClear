@@ -23,6 +23,7 @@ exports.getByName = async (req, res, contract) => {
     const data = await contract.submitTransaction("queryByObjectType", "Users");
     let user = {};
     JSON.parse(data).forEach((userData) => {
+      console.log(userData);
       if (userData.Record.email === req.params.name) {
         user = {
           ...user,

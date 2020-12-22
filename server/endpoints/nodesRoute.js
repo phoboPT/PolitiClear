@@ -62,15 +62,67 @@ exports.deleteNodes = async function (req, res, contract) {
 };
 
 
+const getNodes = async (nodeId, contract) => {
+	const allData = [];
+	const arc = {
+		arcKey: "",
+		initiaArc: "",
+		finalArc: ""
+	}
+	const queryArcsInitialNode = {
+		selector: {
+			initialNode: nodeId,
+			type: "Arcs",
+		},
+	};
+	const queryArcsFinalNode = {
+		selector: {
+			finalNode: nodeId,
+			type: "Arcs",
+		},
+	};
+	//procura todos os arcos com initialNode = id_nodo
+	const initial = await contract.submitTransaction('searchNodes',
+		JSON.stringify(queryArcsInitialNode));
+	const allArcsInitial = JSON.parse(initial);
+	allArcsInitial.forEach((arcsInitial) => {
+		arc.arcKey = arcsInitial
+	});
+
+	// procura todos os arcos com finalNode = id_nodo
+	const final = await contract.submitTransaction('searchNodes', JSON.stringify(queryArcsFinalNode));
+	const allArcsFinal = JSON.parse(final);
+	// percorre todos os arcos
+	allArcsFinal.forEach((arcsFinal) => {
+		arc.arcKey = arcsFinal;
+		let exists = 0;
+		//por cada arco, verifica se todos allData são diferentes
+		allData.forEach((item) => {
+			if (arcsFinal === item) {
+				//existe igual
+				exists = 1;
+			}
+		});
+
+		//Se todos forem diferentes insere
+		if (exists < 1) {
+			arc.arcKey = arcsFinal;
+			exists = 0;
+		}
+	});
+
+	return arc;
+
+}
+
 exports.searchNodes = async function (req, res, contract) {
 	try {
 		const arc = {
-			arcKey:"",
+			arcKey: "",
 			initialNode: "",
 			finalNode: ""
 		}
 		const { description } = req.headers;
-		const allData = [];
 		const queryNodes = {
 			selector: {
 				description: description,
@@ -79,71 +131,34 @@ exports.searchNodes = async function (req, res, contract) {
 		};
 		const res = await contract.submitTransaction('searchNodes', JSON.stringify(queryNodes));
 		const allNodes = JSON.parse(res);
-		// ciclo para ver todos initialNodes
+
+		const allData = [];
 		for (let i = 0; i < allNodes.length; i++) {
-			allData.push(allNodes[i]);
 
-			const queryArcsInitialNode = {
-				selector: {
-					initialNode: allNodes[i],
-					type: "Arcs",
-				},
-			};
-			const queryArcsFinalNode = {
-				selector: {
-					finalNode: allNodes[i],
-					type: "Arcs",
-				},
-			};
-			//procura todos os arcos com initialNode = id_nodo
-			const initial = await contract.submitTransaction('searchNodes',
-				JSON.stringify(queryArcsInitialNode));
-			const allArcsInitial = JSON.parse(initial);
-			allArcsInitial.forEach((arcsInitial) => {
-				arc.arcKey = arcsInitial
-			});
-
-			//procura todos os arcos com finalNode = id_nodo
-			const final = await contract.submitTransaction('searchNodes', JSON.stringify(queryArcsFinalNode));
-			const allArcsFinal = JSON.parse(final);
-			// percorre todos os arcos
-			allArcsFinal.forEach((arcsFinal) => {
-				arc.finalNode = arcsFinal;
-				let exists = 0;
-				//por cada arco, verifica se todos allData são diferentes
-				allData.forEach((item) => {
-					if (arcsFinal === item) {
-						//existe igual
-						exists = 1;
-					}
-				});
-
-				//Se todos forem diferentes insere
-				if (exists < 1) {
-					arc.finalNode = arcsFinal;
-					exists = 0;
-				}
-			});
+			const data = await getNodes(allNodes[i], contract);
+			allData.push(data);
 		}
-		arc.node = allData[0];
-		const result={}
-		if (arc.arcKey !== "") {
-			
-			const buffer1 = await contract.submitTransaction('getByKey', arc.arcKey);
+		// ciclo para ver todos initialNodes
+		const result = [];
+		for await (const item of allData) {
+			const data={}
+			const buffer1 = await contract.submitTransaction('getByKey',item.arcKey);
 			const asset = JSON.parse(buffer1.toString());
+			console.log(asset);
 			arc.initialNode = asset.initialNode;
 			arc.finalNode = asset.finalNode;
 
-			const initial= await contract.submitTransaction('getByKey', arc.initialNode);
-			result.initial=(JSON.parse(initial.toString()));
-
-			const final = await contract.submitTransaction('getByKey', arc.finalNode);
-			result.final=(JSON.parse(final.toString()));
+			const initial = await contract.submitTransaction('getByKey', asset.initialNode);
+			data.initial = (JSON.parse(initial.toString()));
+			const final = await contract.submitTransaction('getByKey', asset.finalNode);
+			data.final = (JSON.parse(final.toString()));
 			
-			const conection = await contract.submitTransaction('getByKey', arc.arcKey);
-			result.arc=( JSON.parse(conection.toString()));
-		}
-		
+			const conection = await contract.submitTransaction('getByKey', item.arcKey);
+			data.arc = (JSON.parse(conection.toString()));
+			console.log("res",result);
+			result.push(data)
+
+		};
 
 		return result;
 
