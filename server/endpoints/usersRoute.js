@@ -7,7 +7,7 @@ exports.getByKey = async (req, res, contract) => {
     const response = await contract.submitTransaction(
       "readUsers",
       req.params.key
-    );  
+    );
     const parsedData = JSON.parse(response);
     delete parsedData["password"];
 
@@ -50,8 +50,7 @@ exports.createUsers = async (req, res, contract) => {
     JSON.parse(user).forEach((userData) => {
       if (userData.Record.email === email) {
         users = {
-          ...users,
-          users: userData.Record,
+          ...users, users: userData.Record,
         };
       }
     });
@@ -62,20 +61,8 @@ exports.createUsers = async (req, res, contract) => {
     const key = uuidv4();
     const createdAt = new Date();
     const hashedPassword = await bcrypt.hash(password, 10);
-    await contract.submitTransaction(
-      "createUsers",
-      key,
-      name,
-      email,
-      hashedPassword,
-      createdAt
-    );
-    const token = jwt.sign(
-      {
-        userId: key,
-      },
-      "MySecret"
-    );
+    await contract.submitTransaction("createUsers", key, name, email, hashedPassword, createdAt);
+    const token = jwt.sign({ userId: key, }, "MySecret");
     res.token = token;
     return { token };
   } catch (e) {
@@ -87,7 +74,7 @@ exports.createUsers = async (req, res, contract) => {
 exports.updateUsers = async (req, res, contract) => {
   try {
     const id = await jwt.verify(req.body.token, "MySecret");
-    const { name = "", oldPassword = "", newPassword="",permission =""} = req.body;
+    const { name = "", oldPassword = "", newPassword = "", permission = "" } = req.body;
 
     if (oldPassword !== "" && newPassword !== "") {
       const user = await contract.submitTransaction("readUsers", id.userId);
@@ -100,11 +87,11 @@ exports.updateUsers = async (req, res, contract) => {
       }
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await contract.submitTransaction("updateUsers", id.userId, name,hashedPassword,permission);
+      await contract.submitTransaction("updateUsers", id.userId, name, hashedPassword, permission);
       return { data: "Updated" };
     } else {
-      
-      await contract.submitTransaction("updateUsers", id.userId, name,"",permission);
+
+      await contract.submitTransaction("updateUsers", id.userId, name, "", permission);
       return ({ data: "updated" });
     }
   } catch (e) {

@@ -1,4 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
+const dataVerifications = require("./functions/dataVerifications");
+
 // Pesquisa por key
 exports.getByKey = async function (req, res, contract) {
 	try {
@@ -19,15 +21,11 @@ exports.createNodes = async function (req, res, contract) {
 		const key = uuidv4();
 		const createdAt = new Date();
 		const { description, nodeType, creatorId, userCreated } = req.body;
-		await contract.submitTransaction(
-			'createNodes',
-			key,
-			description,
-			nodeType,
-			creatorId,
-			userCreated,
-			createdAt,
-		);
+		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
+		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
+		await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
+
+		await contract.submitTransaction('createNodes', key, description, nodeType, creatorId, userCreated, createdAt);
 		res.sendStatus(201);
 	} catch (e) {
 		res.status(500).json(e.message);
@@ -38,14 +36,11 @@ exports.createNodes = async function (req, res, contract) {
 exports.updateNodes = async function (req, res, contract) {
 	try {
 		const { key, description, nodeType, creatorId, userCreated } = req.body;
-		await contract.submitTransaction(
-			'updateNodes',
-			key,
-			description,
-			nodeType,
-			creatorId,
-			userCreated,
-		);
+		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
+		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
+		await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
+		
+		await contract.submitTransaction('updateNodes', key, description, nodeType, creatorId, userCreated,);
 		res.sendStatus(204);
 	} catch (e) {
 		res.status(500).json(e.message);
