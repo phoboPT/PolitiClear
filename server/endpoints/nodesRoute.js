@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
+const { format } = require('winston');
 const dataVerifications = require("./functions/dataVerifications");
 
 // Pesquisa por key
@@ -36,11 +37,12 @@ exports.createNodes = async function (req, res, contract) {
 exports.updateNodes = async function (req, res, contract) {
 	try {
 		const { key, description, nodeType, creatorId, userCreated } = req.body;
-		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
-		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-		await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
+		// await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
+		// await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
+		// await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
 		
-		await contract.submitTransaction('updateNodes', key, description, nodeType, creatorId, userCreated,);
+		await contract.submitTransaction('updateNodes', key, description||"", nodeType||"", creatorId||""
+		, userCreated||"");
 		res.sendStatus(204);
 	} catch (e) {
 		res.status(500).json(e.message);
@@ -59,11 +61,7 @@ exports.deleteNodes = async function (req, res, contract) {
 
 const getNodes = async (nodeId, contract) => {
 	const allData = [];
-	const arc = {
-		arcKey: "",
-		initiaArc: "",
-		finalArc: ""
-	}
+	let arc = [];
 	const queryArcsInitialNode = {
 		selector: {
 			initialNode: nodeId,
@@ -80,8 +78,9 @@ const getNodes = async (nodeId, contract) => {
 	const initial = await contract.submitTransaction('searchNodes',
 		JSON.stringify(queryArcsInitialNode));
 	const allArcsInitial = JSON.parse(initial);
+
 	allArcsInitial.forEach((arcsInitial) => {
-		arc.arcKey = arcsInitial
+		arc.push(arcsInitial)
 	});
 
 	// procura todos os arcos com finalNode = id_nodo
@@ -89,7 +88,6 @@ const getNodes = async (nodeId, contract) => {
 	const allArcsFinal = JSON.parse(final);
 	// percorre todos os arcos
 	allArcsFinal.forEach((arcsFinal) => {
-		arc.arcKey = arcsFinal;
 		let exists = 0;
 		//por cada arco, verifica se todos allData são diferentes
 		allData.forEach((item) => {
@@ -98,14 +96,14 @@ const getNodes = async (nodeId, contract) => {
 				exists = 1;
 			}
 		});
-
+		
 		//Se todos forem diferentes insere
 		if (exists < 1) {
-			arc.arcKey = arcsFinal;
+			arc.push(arcsFinal)
 			exists = 0;
 		}
 	});
-
+	arc=arc.flat()
 	return arc;
 
 }
@@ -113,7 +111,7 @@ const getNodes = async (nodeId, contract) => {
 exports.searchNodes = async function (req, res, contract) {
 	try {
 		const arc = {
-			arcKey: "",
+			arcDescription: "",
 			initialNode: "",
 			finalNode: ""
 		}
@@ -127,7 +125,7 @@ exports.searchNodes = async function (req, res, contract) {
 		const res = await contract.submitTransaction('searchNodes', JSON.stringify(queryNodes));
 		const allNodes = JSON.parse(res);
 
-		const allData = [];
+		let allData = [];
 		for (let i = 0; i < allNodes.length; i++) {
 
 			const data = await getNodes(allNodes[i], contract);
@@ -135,25 +133,28 @@ exports.searchNodes = async function (req, res, contract) {
 		}
 		// ciclo para ver todos initialNodes
 		const result = [];
-		for await (const item of allData) {
-			const data={}
-			const buffer1 = await contract.submitTransaction('getByKey',item.arcKey);
+		
+		allData=allData.flat();
+		console.log(allData);
+		for (let i = 0; i < allData.length; i++) {
+			// console.log(allData[i]);
+			const data = {}
+			const buffer1 = await contract.submitTransaction('getByKey', allData[i]);
 			const asset = JSON.parse(buffer1.toString());
-			console.log(asset);
-			arc.initialNode = asset.initialNode;
-			arc.finalNode = asset.finalNode;
+		
 
 			const initial = await contract.submitTransaction('getByKey', asset.initialNode);
 			data.initial = (JSON.parse(initial.toString()));
 			const final = await contract.submitTransaction('getByKey', asset.finalNode);
 			data.final = (JSON.parse(final.toString()));
 			
-			const conection = await contract.submitTransaction('getByKey', item.arcKey);
-			data.arc = (JSON.parse(conection.toString()));
-			console.log("res",result);
+		
+			data.arc = asset
 			result.push(data)
 
-		};
+		}
+		
+		
 
 		return result;
 
