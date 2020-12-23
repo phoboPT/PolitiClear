@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const dataVerifications = require('./functions/dataVerifications');
+const jwt = require("jsonwebtoken");
 
 // search by key
 exports.getByKey = async function (req, res, contract) {
@@ -15,9 +16,15 @@ exports.getByKey = async function (req, res, contract) {
 // create new form
 exports.createArcs = async function (req, res, contract) {
     try {
+        let creatorId;
+        if (req.body.token) {
+            const userID = jwt.verify(req.body.token, "MySecret");
+            creatorId = userID.userId;        
+
+        }
         const key = uuidv4();
         const createdAt = new Date();
-        const { description, initialNode, finalNode, creatorId } = req.body;
+        const { description, initialNode, finalNode } = req.body;
         await dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
 		await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
         await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
