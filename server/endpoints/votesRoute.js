@@ -16,32 +16,22 @@ exports.getByKey = async function (req, res, contract) {
 // cria novo tipo
 exports.createVotes = async function (req, res, contract) {
     try {
+        const { voter, arcId, nodeId, voteValue } = req.body;
+        if (voter === "" || voteValue === "" || (arcId === "" && nodeId === "") || (arcId !== "" && nodeId !== "")) {
+            throw new Error(`Error! The data provided can not be inserted!`);
+        };
+        await dataVerifications.verifyKeyExists(voter, 'Users', contract);
+        if (nodeId !== '') {
+            await dataVerifications.verifyKeyExists(nodeId, 'Nodes', contract);
+        }
+        if (arcId !== '') {
+            await dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
+        }
 
         const key = uuidv4();
         const createdAt = new Date();
-        const { voter, arcId, nodeId } = req.body;
-
-        await dataVerifications.verifyKeyExists(voter, 'Users', contract);
-        await dataVerifications.verifyKeyExists(nodeId, 'Nodes', contract);
-        await dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
-        await contract.submitTransaction('createVotes', key, voter, arcId, nodeId, createdAt);
+        await contract.submitTransaction('createVotes', key, voter, arcId, nodeId, voteValue, createdAt);
         res.sendStatus(201);
-    } catch (e) {
-        res.status(500).json(e.message);
-    }
-};
-
-// Update User
-exports.updateVotes = async function (req, res, contract) {
-    try {
-        const { key, voter, arcId, nodeId } = req.body;
-
-        await verifyKey(voter, 'Users', contract);
-        await verifyKey(nodeId, 'Nodes', contract);
-        await verifyKey(arcId, 'Arcs', contract);
-
-        await contract.submitTransaction('updateVotes', key, voter, arcId, nodeId);
-        res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);
     }
@@ -55,3 +45,4 @@ exports.deleteVotes = async function (req, res, contract) {
         res.status(500).json(e.message);
     }
 };
+

@@ -188,10 +188,6 @@ app.post("/votes/create", async (req, res) => {
   votesRoute.createVotes(req, res, contract);
 });
 
-app.put("/votes/update", async (req, res) => {
-  votesRoute.updateVotes(req, res, contract);
-});
-
 app.delete("/votes/delete/:key", async (req, res) => {
   votesRoute.deleteVotes(req, res, contract);
 });
