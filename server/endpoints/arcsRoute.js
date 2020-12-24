@@ -20,7 +20,6 @@ exports.createArcs = async function (req, res, contract) {
         if (req.body.token) {
             const userID = jwt.verify(req.body.token, "MySecret");
             creatorId = userID.userId;        
-
         }
         const key = uuidv4();
         const createdAt = new Date();
@@ -38,7 +37,13 @@ exports.createArcs = async function (req, res, contract) {
 
 exports.updateArcs = async function (req, res, contract) {
     try {
-        const { key, description, initialNode, finalNode, creatorId } = req.body;
+        let creatorId;
+        if (req.body.token) {
+            const userID = jwt.verify(req.body.token, "MySecret");
+            creatorId = userID.userId;        
+        }
+        const { key, description, initialNode, finalNode} = req.body;
+        
         await dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
 		await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
         await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
@@ -52,7 +57,7 @@ exports.updateArcs = async function (req, res, contract) {
 // delete user
 exports.deleteArcs = async function (req, res, contract) {
     try {
-        await contract.submitTransaction('deleteArcs', req.params.key);
+        await contract.submitTransaction('deleteArcs', req.headers.key);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);

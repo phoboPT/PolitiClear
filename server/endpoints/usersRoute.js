@@ -102,7 +102,7 @@ exports.updateUsers = async (req, res, contract) => {
 // delete user
 exports.deleteUsers = async (req, res, contract) => {
   try {
-    await contract.submitTransaction("deleteUsers", req.params.key);
+    await contract.submitTransaction("deleteUsers", req.headers.key);
     res.sendStatus(204);
   } catch (e) {
     res.status(500).json(e.message);

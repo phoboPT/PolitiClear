@@ -13,7 +13,6 @@ const formsRoute = require("./endpoints/formsRoute");
 const nodesRoute = require("./endpoints/nodesRoute");
 const nodesTypesRoute = require("./endpoints/nodesTypesRoute");
 const usersRoute = require("./endpoints/usersRoute");
-const usersTypesRoute = require("./endpoints/usersTypesRoute");
 const votesRoute = require("./endpoints/votesRoute");
 
 
@@ -81,7 +80,7 @@ app.put("/arcs/update", async (req, res) => {
   arcsRoute.updateArcs(req, res, contract);
 });
 
-app.delete("/arcs/delete/:key", async (req, res) => {
+app.delete("/arcs/delete", async (req, res) => {
   arcsRoute.deleteArcs(req, res, contract);
 });
 
@@ -98,7 +97,7 @@ app.put("/forms/update", async (req, res) => {
   formsRoute.updateForms(req, res, contract);
 });
 
-app.delete("/forms/delete/:key", async (req, res) => {
+app.delete("/forms/delete", async (req, res) => {
   formsRoute.deleteForms(req, res, contract);
 });
 
@@ -114,7 +113,7 @@ app.put("/nodes/update", async (req, res) => {
   nodesRoute.updateNodes(req, res, contract);
 });
 
-app.delete("/nodes/delete/:key", async (req, res) => {
+app.delete("/nodes/delete", async (req, res) => {
   nodesRoute.deleteNodes(req, res, contract);
 });
 
@@ -135,7 +134,7 @@ app.put("/nodesTypes/update", async (req, res) => {
   nodesTypesRoute.updateNodesTypes(req, res, contract);
 });
 
-app.delete("/nodesTypes/delete/:key", async (req, res) => {
+app.delete("/nodesTypes/delete", async (req, res) => {
   nodesTypesRoute.deleteNodesTypes(req, res, contract);
 });
 
@@ -158,26 +157,8 @@ app.put("/users/update", async (req, res) => {
   res.status(200).send(response);
 });
 
-app.delete("/users/delete/:key", async (req, res) => {
+app.delete("/users/delete", async (req, res) => {
   usersRoute.deleteUsers(req, res, contract);
-});
-
-// usertypes
-app.get("/usersTypes/key/:key", async (req, res) => {
-  usersTypesRoute.getByKey(req, res, contract);
-});
-
-app.post("/userTypes/create", async (req, res) => {
-  const response = await usersTypesRoute.createUsersTypes(req, res, contract);
-  res.status(200).send(response);
-});
-
-app.put("/usersTypes/update", async (req, res) => {
-  usersTypesRoute.updateUsersTypes(req, res, contract);
-});
-
-app.delete("/usersTypes/delete/:key", async (req, res) => {
-  usersTypesRoute.deleteUsersTypes(req, res, contract);
 });
 
 // Votes
@@ -188,7 +169,7 @@ app.post("/votes/create", async (req, res) => {
   votesRoute.createVotes(req, res, contract);
 });
 
-app.delete("/votes/delete/:key", async (req, res) => {
+app.delete("/votes/delete", async (req, res) => {
   votesRoute.deleteVotes(req, res, contract);
 });
 

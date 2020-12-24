@@ -35,9 +35,9 @@ exports.updateForms = async function (req, res, contract) {
 };
 
 // delete user
-exports.deleteUsers = async function (req, res, contract) {
+exports.deleteForms = async function (req, res, contract) {
     try {
-        await contract.submitTransaction('deleteForms', req.params.key);
+        await contract.submitTransaction('deleteForms', req.headers.key);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);

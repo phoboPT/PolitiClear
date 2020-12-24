@@ -42,7 +42,7 @@ exports.updateNodesTypes = async function (req, res, contract) {
 
 exports.deleteNodesTypes = async function (req, res, contract) {
     try {
-        await contract.submitTransaction('deleteNodesTypes', req.params.key);
+        await contract.submitTransaction('deleteNodesTypes', req.headers.key);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);

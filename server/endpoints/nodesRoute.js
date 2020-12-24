@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const { format } = require('winston');
 const dataVerifications = require("./functions/dataVerifications");
+const jwt = require("jsonwebtoken");
 
 // Pesquisa por key
 exports.getByKey = async function (req, res, contract) {
@@ -19,16 +20,22 @@ exports.getByKey = async function (req, res, contract) {
 // cria novo tipo
 exports.createNodes = async function (req, res, contract) {
 	try {
+		let creatorId;
+        if (req.body.token) {
+			const userID = jwt.verify(req.body.token, "MySecret");
+            creatorId = userID.userId;        
+        }
 		const key = uuidv4();
 		const createdAt = new Date();
-		const { description, nodeType, creatorId, userCreated } = req.body;
+		const { description, nodeType, userCreated } = req.body;
 		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
 		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-		if (userCreated !== '') {
+		console.log(userCreated);
+		if (userCreated !== '' && userCreated !== undefined) {
 			await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
 		}
 
-		await contract.submitTransaction('createNodes', key, description, nodeType, creatorId, userCreated, createdAt);
+		await contract.submitTransaction('createNodes', key, description, nodeType, creatorId, userCreated || '', createdAt);
 		res.sendStatus(201);
 	} catch (e) {
 		res.status(500).json(e.message);
@@ -53,7 +60,7 @@ exports.updateNodes = async function (req, res, contract) {
 
 exports.deleteNodes = async function (req, res, contract) {
 	try {
-		await contract.submitTransaction('deleteNodes', req.params.key);
+		await contract.submitTransaction('deleteNodes', req.headers.key);
 		res.sendStatus(204);
 	} catch (e) {
 		res.status(500).json(e.message);

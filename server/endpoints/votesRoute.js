@@ -16,21 +16,27 @@ exports.getByKey = async function (req, res, contract) {
 // cria novo tipo
 exports.createVotes = async function (req, res, contract) {
     try {
-        const { voter, arcId, nodeId, voteValue } = req.body;
+        let voter;
+        if (req.body.token) {
+            const userID = jwt.verify(req.body.token, "MySecret");
+            voter = userID.userId;       
+        }
+        const {arcId, nodeId, voteValue } = req.body;
+
         if (voter === "" || voteValue === "" || (arcId === "" && nodeId === "") || (arcId !== "" && nodeId !== "")) {
             throw new Error(`Error! The data provided can not be inserted!`);
         };
         await dataVerifications.verifyKeyExists(voter, 'Users', contract);
-        if (nodeId !== '') {
+        if (nodeId !== '' && nodeId !== undefined) {
             await dataVerifications.verifyKeyExists(nodeId, 'Nodes', contract);
         }
-        if (arcId !== '') {
+        if (arcId !== '' && arcId !== undefined) {
             await dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
         }
 
         const key = uuidv4();
         const createdAt = new Date();
-        await contract.submitTransaction('createVotes', key, voter, arcId, nodeId, voteValue, createdAt);
+        await contract.submitTransaction('createVotes', key, voter, arcId || '', nodeId || '', voteValue, createdAt);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);
@@ -39,7 +45,7 @@ exports.createVotes = async function (req, res, contract) {
 
 exports.deleteVotes = async function (req, res, contract) {
     try {
-        await contract.submitTransaction('deleteVotes', req.params.key);
+        await contract.submitTransaction('deleteVotes', req.headers.key);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);
