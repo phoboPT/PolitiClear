@@ -23,7 +23,6 @@ exports.getByName = async (req, res, contract) => {
     const data = await contract.submitTransaction("queryByObjectType", "Users");
     let user = {};
     JSON.parse(data).forEach((userData) => {
-      console.log(userData);
       if (userData.Record.email === req.params.name) {
         user = {
           ...user,
@@ -42,11 +41,9 @@ exports.getByName = async (req, res, contract) => {
 exports.createUsers = async (req, res, contract) => {
   try {
     const { name, email, password } = req.body;
-
     const user = await contract.submitTransaction("queryByObjectType", "Users");
     // verify if there is already an email
     let users;
-    console.log(JSON.parse(user));
     JSON.parse(user).forEach((userData) => {
       if (userData.Record.email === email) {
         users = {
@@ -127,7 +124,6 @@ exports.login = async (req, res, contract) => {
 
     const data = await contract.submitTransaction("queryByObjectType", "Users");
     let user;
-    console.log(JSON.parse(data));
     JSON.parse(data).forEach((userData) => {
       if (userData.Record.email === email) {
         user = {

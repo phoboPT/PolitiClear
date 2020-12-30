@@ -1,5 +1,4 @@
 const { v4: uuidv4 } = require('uuid');
-const { format } = require('winston');
 const dataVerifications = require("./functions/dataVerifications");
 const jwt = require("jsonwebtoken");
 
@@ -30,7 +29,6 @@ exports.createNodes = async function (req, res, contract) {
 		const { description, nodeType, userCreated } = req.body;
 		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
 		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-		console.log(userCreated);
 		if (userCreated !== '' && userCreated !== undefined) {
 			await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
 		}
@@ -144,9 +142,7 @@ exports.searchNodes = async function (req, res, contract) {
 		const result = [];
 		
 		allData=allData.flat();
-		console.log(allData);
 		for (let i = 0; i < allData.length; i++) {
-			// console.log(allData[i]);
 			const data = {}
 			const buffer1 = await contract.submitTransaction('getByKey', allData[i]);
 			const asset = JSON.parse(buffer1.toString());

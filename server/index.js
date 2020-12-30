@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
 import { Gateway, Wallets } from "fabric-network";
-import ConnectionProfile from "../ConnectionProfile.json";
+import ConnectionProfile from "./ConnectionProfile.json";
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -86,7 +86,8 @@ app.delete("/arcs/delete", async (req, res) => {
 
 // Forms
 app.post("/forms/create", async (req, res) => {
-  formsRoute.createForms(req, res, contract);
+  const response = await formsRoute.createForms(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.get("/forms/key/:key", async (req, res) => {
@@ -94,7 +95,8 @@ app.get("/forms/key/:key", async (req, res) => {
 });
 
 app.put("/forms/update", async (req, res) => {
-  formsRoute.updateForms(req, res, contract);
+  const response = await formsRoute.updateForms(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.delete("/forms/delete", async (req, res) => {
@@ -127,11 +129,13 @@ app.get("/nodesTypes/key/:key", async (req, res) => {
   nodesTypesRoute.getByKey(req, res, contract);
 });
 app.post("/nodesTypes/create", async (req, res) => {
-  nodesTypesRoute.createNodesTypes(req, res, contract);
+  const response= await nodesTypesRoute.createNodesTypes(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.put("/nodesTypes/update", async (req, res) => {
-  nodesTypesRoute.updateNodesTypes(req, res, contract);
+  const response =await nodesTypesRoute.updateNodesTypes(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.delete("/nodesTypes/delete", async (req, res) => {
@@ -153,7 +157,6 @@ app.post("/users/create", async (req, res) => {
 
 app.put("/users/update", async (req, res) => {
   const response = await usersRoute.updateUsers(req, res, contract);
-  console.log("response", response);
   res.status(200).send(response);
 });
 
@@ -197,7 +200,6 @@ app.get("/readByType/:type", async (req, res) => {
       parsedData.map((item) => {
         
         delete item.Record["password"];
-        console.log(item);
         return item;
       });
     }

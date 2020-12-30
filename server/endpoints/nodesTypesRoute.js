@@ -21,7 +21,7 @@ exports.createNodesTypes = async function (req, res, contract) {
         const key = uuidv4();
         const createdAt = new Date();
         await contract.submitTransaction('createNodesTypes', key, name, createdAt);
-        res.sendStatus(201);
+        return{data:"Created with sucess"}
     } catch (e) {
         res.status(500).json(e.message);
     }
@@ -34,7 +34,7 @@ exports.updateNodesTypes = async function (req, res, contract) {
         await dataVerifications.verifyNameAlreadyExists(name, 'NodesTypes', contract);
         
         await contract.submitTransaction('updateNodesTypes', key, name);
-        res.sendStatus(204);
+        return { data: "Updated" };
     } catch (e) {
         res.status(500).json(e.message);
     }
