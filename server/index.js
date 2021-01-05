@@ -124,6 +124,12 @@ app.get("/searchNodes", async (req, res) => {
   res.status(200).send(response);
 });
 
+app.get("/search", async (req, res) => {
+  const response = await nodesRoute.search(req, res, contract);
+  res.status(200).send(response);
+});
+
+
 // nodesTypes
 app.get("/nodesTypes/key/:key", async (req, res) => {
   nodesTypesRoute.getByKey(req, res, contract);
