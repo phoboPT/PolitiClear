@@ -117,14 +117,11 @@ const getNodes = async (nodeId, contract) => {
 exports.search = async function (req, res, contract) {
     try {
 		const { description } = req.headers;
-		console.log(description);
 	
 		const res1 = await contract.submitTransaction('queryByObjectType', "Nodes");
 		const res=JSON.parse(res1)
 		const key = []
-		console.log(res);
 		for (let i = 0; i < res.length; i++){
-			console.log(res[i].Record.description);
 			if (res[i].Record.description.includes(description)) {
 				key.push(res[i])
 			}
