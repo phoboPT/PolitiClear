@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
 import { Gateway, Wallets } from "fabric-network";
-import ConnectionProfile from "./ConnectionProfile.json";
+import ConnectionProfile from "../ConnectionProfile.json";
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");

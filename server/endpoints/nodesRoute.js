@@ -20,10 +20,10 @@ exports.getByKey = async function (req, res, contract) {
 exports.createNodes = async function (req, res, contract) {
 	try {
 		let creatorId;
-        if (req.body.token) {
+		if (req.body.token) {
 			const userID = jwt.verify(req.body.token, "MySecret");
-            creatorId = userID.userId;        
-        }
+			creatorId = userID.userId;
+		}
 		const key = uuidv4();
 		const createdAt = new Date();
 		const { description, nodeType, userCreated } = req.body;
@@ -47,9 +47,9 @@ exports.updateNodes = async function (req, res, contract) {
 		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
 		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
 		await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
-		
-		await contract.submitTransaction('updateNodes', key, description||"", nodeType||"", creatorId||""
-		, userCreated||"");
+
+		await contract.submitTransaction('updateNodes', key, description || "", nodeType || "", creatorId || ""
+			, userCreated || "");
 		res.sendStatus(204);
 	} catch (e) {
 		res.status(500).json(e.message);
@@ -103,66 +103,59 @@ const getNodes = async (nodeId, contract) => {
 				exists = 1;
 			}
 		});
-		
+
 		//Se todos forem diferentes insere
 		if (exists < 1) {
 			arc.push(arcsFinal)
 			exists = 0;
 		}
 	});
-	arc=arc.flat()
+	arc = arc.flat()
 	return arc;
 
 }
 
 exports.searchNodes = async function (req, res, contract) {
 	try {
-		const arc = {
-			arcDescription: "",
-			initialNode: "",
-			finalNode: ""
-		}
-		const { description } = req.headers;
-		const queryNodes = {
-			selector: {
-				description: description,
-				type: "Nodes",
-			},
-		};
-		const res = await contract.submitTransaction('searchNodes', JSON.stringify(queryNodes));
-		const allNodes = JSON.parse(res);
+		const { key } = req.headers;
+		// const key = "f7b139a1-11f1-4cd9-89f3-a4481c500b6e";
 
 		let allData = [];
-		for (let i = 0; i < allNodes.length; i++) {
-
-			const data = await getNodes(allNodes[i], contract);
-			allData.push(data);
-		}
-		// ciclo para ver todos initialNodes
+		allData.push(await getNodes(key, contract));
 		const result = [];
-		
-		allData=allData.flat();
+
+		allData = allData.flat();
 		for (let i = 0; i < allData.length; i++) {
-			const data = {}
+
 			const buffer1 = await contract.submitTransaction('getByKey', allData[i]);
 			const asset = JSON.parse(buffer1.toString());
-		
+			const data = {}
 
-			const initial = await contract.submitTransaction('getByKey', asset.initialNode);
-			data.initial = (JSON.parse(initial.toString()));
-			const final = await contract.submitTransaction('getByKey', asset.finalNode);
-			data.final = (JSON.parse(final.toString()));
+			if (asset.initialNode === key) {
+				const initial = await contract.submitTransaction('getByKey', asset.initialNode);
+				data.initial = (JSON.parse(initial.toString()));
+				const final = await contract.submitTransaction('getByKey', asset.finalNode);
+				data.final = (JSON.parse(final.toString()));
+				data.arc = asset
+			} 
+			else { //=== finalNode
+				const initial = await contract.submitTransaction('getByKey', asset.finalNode);
+				data.initial = (JSON.parse(initial.toString()));
+				const final = await contract.submitTransaction('getByKey', asset.initialNode);
+				data.final = (JSON.parse(final.toString()));
+				data.arc = asset
+			}
+
 			
-		
-			data.arc = asset
+			// const initial = await contract.submitTransaction('getByKey', asset.initialNode);
+			// data.initial = (JSON.parse(initial.toString()));
+			// const final = await contract.submitTransaction('getByKey', asset.finalNode);
+			// data.final = (JSON.parse(final.toString()));
+
+			// data.arc = asset
 			result.push(data)
-
 		}
-		
-		
-
 		return result;
-
 	} catch (e) {
 		res.status(500).json(e.message);
 	}
