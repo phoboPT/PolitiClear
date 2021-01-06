@@ -17,12 +17,12 @@ exports.createForms = async function (req, res, contract) {
     try {
         const key = uuidv4();
         const createdAt = new Date();
-        const { token, message,email="",upgradeRequest=false } = req.body;
+        const { token, message, email = "", upgradeRequest = false } = req.body;
         const createdBy = jwt.verify(token, "MySecret");
-        await contract.submitTransaction('createForms', key, email, message, createdAt,createdBy.userId,upgradeRequest);
-       return{data:"Created"}
+        await contract.submitTransaction('createForms', key, email, message, createdAt, false, "", createdBy.userId, upgradeRequest);
+        return { data: "Created" }
     } catch (e) {
-        return {data:e.message}
+        return { data: e.message }
     }
 };
 
@@ -30,11 +30,11 @@ exports.updateForms = async function (req, res, contract) {
     try {
 
         const { key, email = "", message = "", status = "", response = "" } = req.body;
-        
-       await contract.submitTransaction('updateForms', key, email, message,status,response);
-        return {data:"Updated"}
+
+        await contract.submitTransaction('updateForms', key, email, message, status, response);
+        return { data: "Updated" }
     } catch (e) {
-        return {error:e.message}
+        return { error: e.message }
     }
 };
 
