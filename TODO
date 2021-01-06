@@ -17,7 +17,3 @@ GRAPHS
     - Criar clicks, votos
     - cada click buscar novamente nodos
 
-
-BACKEND
-    - Criar script para quando mudar para ACCREDITED ou POLITIC criar um nodo
-    - Script para ao criar novo nodo criar um user
