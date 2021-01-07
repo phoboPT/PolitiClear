@@ -54,16 +54,7 @@ exports.updateArcs = async function (req, res, contract) {
             await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
         }
 
-        //contagem do total votos do arco
-        const data = await contract.submitTransaction("queryByObjectType", "Votes");
-        let totalVotes = 0;
-        JSON.parse(data).forEach((votesData) => {
-            if (votesData.Record.arcId === key) {
-                totalVotes = totalVotes + Number(votesData.Record.vote);
-            }
-        });
-
-        await contract.submitTransaction('updateArcs', key, description, initialNode, finalNode, creatorId, totalVotes);
+        await contract.submitTransaction('updateArcs', key, description, initialNode, finalNode, creatorId, '');
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);
