@@ -69,6 +69,9 @@ exports.deleteNodes = async function (req, res, contract) {
 const getNodes = async (nodeId, contract) => {
 	const allData = [];
 	let arc = [];
+		
+		
+	
 	const queryArcsInitialNode = {
 		selector: {
 			initialNode: nodeId,
@@ -85,11 +88,10 @@ const getNodes = async (nodeId, contract) => {
 	const initial = await contract.submitTransaction('searchNodes',
 		JSON.stringify(queryArcsInitialNode));
 	const allArcsInitial = JSON.parse(initial);
-
 	allArcsInitial.forEach((arcsInitial) => {
 		arc.push(arcsInitial)
 	});
-
+	
 	// procura todos os arcos com finalNode = id_nodo
 	const final = await contract.submitTransaction('searchNodes', JSON.stringify(queryArcsFinalNode));
 	const allArcsFinal = JSON.parse(final);
@@ -103,14 +105,15 @@ const getNodes = async (nodeId, contract) => {
 				exists = 1;
 			}
 		});
-
+		
 		//Se todos forem diferentes insere
 		if (exists < 1) {
 			arc.push(arcsFinal)
 			exists = 0;
 		}
 	});
-	arc = arc.flat()
+	
+	
 	return arc;
 
 }
@@ -140,30 +143,30 @@ exports.searchNodes = async function (req, res, contract) {
 		const { key } = req.headers;
 		// const key = "f7b139a1-11f1-4cd9-89f3-a4481c500b6e";
 
-		let allData = [];
-		allData.push(await getNodes(key, contract));
+		const allData=await getNodes(key, contract);
 		const result = [];
 
-		allData = allData.flat();
+		
 		for (let i = 0; i < allData.length; i++) {
 
 			const buffer1 = await contract.submitTransaction('getByKey', allData[i]);
 			const asset = JSON.parse(buffer1.toString());
-			const data = {}
+			const data = {};
+			data.arcId = allData[i];
 
 			if (asset.initialNode === key) {
 				const initial = await contract.submitTransaction('getByKey', asset.initialNode);
 				data.initial = (JSON.parse(initial.toString()));
 				const final = await contract.submitTransaction('getByKey', asset.finalNode);
 				data.final = (JSON.parse(final.toString()));
-				data.arc = asset
+				data.arc = asset;
 			} 
 			else { //=== finalNode
 				const initial = await contract.submitTransaction('getByKey', asset.finalNode);
 				data.initial = (JSON.parse(initial.toString()));
 				const final = await contract.submitTransaction('getByKey', asset.initialNode);
 				data.final = (JSON.parse(final.toString()));
-				data.arc = asset
+				data.arc = asset;
 			}
 
 			
@@ -173,7 +176,7 @@ exports.searchNodes = async function (req, res, contract) {
 			// data.final = (JSON.parse(final.toString()));
 
 			// data.arc = asset
-			result.push(data)
+			result.push(data);
 		}
 		return result;
 	} catch (e) {
