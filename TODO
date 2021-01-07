@@ -14,6 +14,10 @@ POLITIC
     - Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
     - Solicitar permissões para outros users
 GRAPHS
-    - Criar clicks, votos
-    - cada click buscar novamente nodos
+    - Resolução dos grafos está muito pequena
+    - As tabelas estão muito grandes e saem do tamanho da janela
 
+    -Quando carrego no filho tem de fazer o update da janela e mostrar
+
+Alterar mensagens de erro das query
+Eliminar os formularios respondidos do front-end
