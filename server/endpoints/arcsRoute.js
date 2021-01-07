@@ -28,7 +28,7 @@ exports.createArcs = async function (req, res, contract) {
 		await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
         await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
         
-        await contract.submitTransaction('createArcs', key, description, initialNode, finalNode, creatorId, createdAt);
+        await contract.submitTransaction('createArcs', key, description, initialNode, finalNode, creatorId, createdAt,0);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);

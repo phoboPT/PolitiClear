@@ -70,11 +70,19 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
-    const id = await jwt.verify(req.body.token, "MySecret");
-    const { name = "", oldPassword = "", newPassword = "", permission = "" } = req.body;
-
+    let id = "";
+    if (req.body.token) {
+      
+      id = jwt.verify(req.body.token, "MySecret");
+      id=id.userId
+    } else {
+      id=req.body.key
+    }
+    console.log(req.body.permission);
+    const { name = "", oldPassword = "", newPassword = "", permission = "" ,} = req.body;
+    console.log("permission",permission);
     if (oldPassword !== "" && newPassword !== "") {
-      const user = await contract.submitTransaction("readUsers", id.userId);
+      const user = await contract.submitTransaction("readUsers", id);
       if (!user) {
         return { error: "No email found" };
       }
@@ -84,11 +92,11 @@ exports.updateUsers = async (req, res, contract) => {
       }
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await contract.submitTransaction("updateUsers", id.userId, name, hashedPassword, permission);
+      await contract.submitTransaction("updateUsers", id, name, hashedPassword, permission);
       return { data: "Updated" };
     } else {
 
-      await contract.submitTransaction("updateUsers", id.userId, name, "", permission);
+      await contract.submitTransaction("updateUsers", id, name, "", permission);
       return ({ data: "updated" });
     }
   } catch (e) {
