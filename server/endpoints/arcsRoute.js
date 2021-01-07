@@ -54,6 +54,13 @@ exports.updateArcs = async function (req, res, contract) {
 exports.deleteArcs = async function (req, res, contract) {
     try {
         await contract.submitTransaction('deleteArcs', req.headers.key);
+        const data = await contract.submitTransaction("queryByObjectType", "Votes");
+        
+        JSON.parse(data).forEach((votesData) => {
+            if (votesData.Record.arcId === req.headers.key) {
+                contract.submitTransaction('deleteVotes', votesData.Key);
+            }
+        });
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);
