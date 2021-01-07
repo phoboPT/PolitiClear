@@ -175,7 +175,8 @@ app.get("/votes/key", async (req, res) => {
   votesRoute.getByKey(req, res, contract);
 });
 app.post("/votes/create", async (req, res) => {
-  votesRoute.createVotes(req, res, contract);
+  const response = await votesRoute.createVotes(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.delete("/votes/delete", async (req, res) => {
