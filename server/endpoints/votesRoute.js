@@ -18,25 +18,49 @@ exports.getByKey = async function (req, res, contract) {
 exports.createVotes = async function (req, res, contract) {
     try {
         let voter;
+        console.log(req.body);
         if (req.body.token) {
-            const userID = jwt.verify(req.body.token, "MySecret");
-            voter = userID.userId;
+            voter= jwt.verify(req.body.token, "MySecret");
         }
         const { arcId, vote } = req.body;
+
+        // console.log(arcId,voter.userId,vote);
 
         if (voter === "" || vote === "" || arcId === "") {
             throw new Error(`Error! The data provided can not be inserted!`);
         };
-        await dataVerifications.verifyKeyExists(voter, 'Users', contract);
+        await dataVerifications.verifyKeyExists(voter.userId, 'Users', contract);
         await dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
 
-        console.log('resultado: ' + voter + arcId + vote);
+        // console.log('resultado: ', " ", voter.userId, " ", arcId, " ", vote);
+        const arc = await contract.submitTransaction('getByKey', arcId);
+        const parsedData = JSON.parse(arc);
+        const voteData = await contract.submitTransaction('queryByObjectType', "Votes");
+        const parsedVote = JSON.parse(voteData);
+       
+        let alreadyVoted = false;
+        for (let i = 0; i < parsedVote.length; i++) {
+            if (parsedVote[i].Record.voter === voter.userId) {
+                if (parsedVote[i].Record.arcId === arcId) {
+                    alreadyVoted = true;
+                    break;
+               }
+            }
+          }
+       
+        if (alreadyVoted) {
+            return ({ data: "Already voted" });
+        }
+
+     
         const key = uuidv4();
         const createdAt = new Date();
-        await contract.submitTransaction('createVotes', key, voter, arcId, vote, createdAt);
-        res.sendStatus(201);
+        const total = (parseInt(parsedData.totalVotes) || 0)+parseInt(vote);
+        await contract.submitTransaction('updateArcs', arcId, "", "", "", "", parseInt(total));
+       await contract.submitTransaction('createVotes', key, voter.userId, arcId, vote, createdAt);
+        return ({ data: "Created" });
     } catch (e) {
-        res.status(500).json(e.message);
+        return ({ data: e.message });
     }
 };
 
