@@ -171,7 +171,7 @@ app.delete("/users/delete", async (req, res) => {
 });
 
 // Votes
-app.get("/votes/key/:key", async (req, res) => {
+app.get("/votes/key", async (req, res) => {
   votesRoute.getByKey(req, res, contract);
 });
 app.post("/votes/create", async (req, res) => {
