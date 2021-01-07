@@ -24,15 +24,12 @@ exports.createVotes = async function (req, res, contract) {
         }
         const { arcId, vote } = req.body;
 
-        // console.log(arcId,voter.userId,vote);
-
         if (voter === "" || vote === "" || arcId === "") {
             throw new Error(`Error! The data provided can not be inserted!`);
         };
         await dataVerifications.verifyKeyExists(voter.userId, 'Users', contract);
         await dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
 
-        // console.log('resultado: ', " ", voter.userId, " ", arcId, " ", vote);
         const arc = await contract.submitTransaction('getByKey', arcId);
         const parsedData = JSON.parse(arc);
         const voteData = await contract.submitTransaction('queryByObjectType', "Votes");
@@ -50,9 +47,7 @@ exports.createVotes = async function (req, res, contract) {
        
         if (alreadyVoted) {
             return ({ data: "Already voted" });
-        }
-
-     
+        }     
         const key = uuidv4();
         const createdAt = new Date();
         const total = (parseInt(parsedData.totalVotes) || 0)+parseInt(vote);
@@ -66,7 +61,23 @@ exports.createVotes = async function (req, res, contract) {
 
 exports.deleteVotes = async function (req, res, contract) {
     try {
+        //atualizar quantidade votos nos arcos
+        const data = await contract.submitTransaction("queryByObjectType", "Votes");
+        let arcId = '';
+        let totalVotes = 0;
+        JSON.parse(data).forEach((votesData) => {
+            if (votesData.Key === req.headers.key) {
+                arcId = votesData.Record.arcId;
+            }
+        });
+        JSON.parse(data).forEach((votesData) => {
+            if (votesData.Record.arcId === arcId && votesData.Key !== req.headers.key) {
+                totalVotes = totalVotes + Number(votesData.Record.vote);
+            }
+        });
+        
         await contract.submitTransaction('deleteVotes', req.headers.key);
+        await contract.submitTransaction('updateArcs', arcId, "", "", "", "", totalVotes);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);
