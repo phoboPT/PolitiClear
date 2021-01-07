@@ -19,16 +19,16 @@ exports.createArcs = async function (req, res, contract) {
         let creatorId;
         if (req.body.token) {
             const userID = jwt.verify(req.body.token, "MySecret");
-            creatorId = userID.userId;        
+            creatorId = userID.userId;
         }
         const key = uuidv4();
         const createdAt = new Date();
-        const { description, initialNode, finalNode } = req.body;
+        const { description, initialNode, finalNode, totalVotes } = req.body;
         await dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
-		await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
+        await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
         await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-        
-        await contract.submitTransaction('createArcs', key, description, initialNode, finalNode, creatorId, createdAt);
+
+        await contract.submitTransaction('createArcs', key, description, initialNode, finalNode, creatorId, createdAt, totalVotes);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);
@@ -40,14 +40,13 @@ exports.updateArcs = async function (req, res, contract) {
         let creatorId;
         if (req.body.token) {
             const userID = jwt.verify(req.body.token, "MySecret");
-            creatorId = userID.userId;        
+            creatorId = userID.userId;
         }
-        const { key, description, initialNode, finalNode} = req.body;
-        
+        const { key, description, initialNode, finalNode, totalVotes } = req.body;
         await dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
-		await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
+        await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
         await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-        await contract.submitTransaction('updateArcs', key, description, initialNode, finalNode, creatorId);
+        await contract.submitTransaction('updateArcs', key, description, initialNode, finalNode, creatorId, totalVotes);
         res.sendStatus(204);
     } catch (e) {
         res.status(500).json(e.message);

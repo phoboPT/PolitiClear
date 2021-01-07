@@ -1,11 +1,12 @@
 const { CLIEngine } = require('eslint');
+const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require('uuid');
 const dataVerifications = require("./functions/dataVerifications");
 
 // Pesquisa por key
 exports.getByKey = async function (req, res, contract) {
     try {
-        const response = await contract.submitTransaction('readVotes', req.params.key);
+        const response = await contract.submitTransaction('readVotes', req.headers.key);
 
         res.status(200).send(JSON.parse(response));
     } catch (e) {
@@ -19,24 +20,20 @@ exports.createVotes = async function (req, res, contract) {
         let voter;
         if (req.body.token) {
             const userID = jwt.verify(req.body.token, "MySecret");
-            voter = userID.userId;       
+            voter = userID.userId;
         }
-        const {arcId, nodeId, voteValue } = req.body;
+        const { arcId, vote } = req.body;
 
-        if (voter === "" || voteValue === "" || (arcId === "" && nodeId === "") || (arcId !== "" && nodeId !== "")) {
+        if (voter === "" || vote === "" || arcId === "") {
             throw new Error(`Error! The data provided can not be inserted!`);
         };
         await dataVerifications.verifyKeyExists(voter, 'Users', contract);
-        if (nodeId !== '' && nodeId !== undefined) {
-            await dataVerifications.verifyKeyExists(nodeId, 'Nodes', contract);
-        }
-        if (arcId !== '' && arcId !== undefined) {
-            await dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
-        }
+        await dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
 
+        console.log('resultado: ' + voter + arcId + vote);
         const key = uuidv4();
         const createdAt = new Date();
-        await contract.submitTransaction('createVotes', key, voter, arcId || '', nodeId || '', voteValue, createdAt);
+        await contract.submitTransaction('createVotes', key, voter, arcId, vote, createdAt);
         res.sendStatus(201);
     } catch (e) {
         res.status(500).json(e.message);
