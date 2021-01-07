@@ -26,14 +26,12 @@ exports.createNodes = async function (req, res, contract) {
 		}
 		const key = uuidv4();
 		const createdAt = new Date();
-		const { description, nodeType, userCreated } = req.body;
+		const { description, nodeType } = req.body;
 		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
 		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-		if (userCreated !== '' && userCreated !== undefined) {
-			await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
-		}
+		
 
-		await contract.submitTransaction('createNodes', key, description, nodeType, creatorId, userCreated || '', createdAt);
+		await contract.submitTransaction('createNodes', key, description, nodeType, creatorId, createdAt);
 		res.sendStatus(201);
 	} catch (e) {
 		res.status(500).json(e.message);
@@ -43,13 +41,11 @@ exports.createNodes = async function (req, res, contract) {
 // Update User
 exports.updateNodes = async function (req, res, contract) {
 	try {
-		const { key, description, nodeType, creatorId, userCreated } = req.body;
+		const { key, description, nodeType, creatorId } = req.body;
 		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
 		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-		await dataVerifications.verifyKeyExists(userCreated, 'Users', contract);
 
-		await contract.submitTransaction('updateNodes', key, description || "", nodeType || "", creatorId || ""
-			, userCreated || "");
+		await contract.submitTransaction('updateNodes', key, description || "", nodeType || "", creatorId || "");
 		res.sendStatus(204);
 	} catch (e) {
 		res.status(500).json(e.message);

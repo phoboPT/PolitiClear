@@ -1,0 +1,19 @@
+ADMIN
+    -NODES - criar formulário edição
+        - buscar Ids
+    -USERS - criar formulário edição
+        - Trocar ordem description e idCreator (alterar para userID)
+    -ARCS - criar formulário edição
+        - buscar Ids
+ACCOUNT
+    -VERIFY - botão back nao funciona
+SIGN OUT
+    -Não volta ao home, deveria remover todas as perms (forçar o refresh do site é o mais simples)
+POLITIC
+    - Criar novos Nodos (Requer script para criar novo User)
+    - Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
+    - Solicitar permissões para outros users
+GRAPHS
+    - Criar clicks, votos
+    - cada click buscar novamente nodos
+
