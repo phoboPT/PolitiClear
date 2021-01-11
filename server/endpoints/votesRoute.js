@@ -6,10 +6,9 @@ const dataVerifications = require("./functions/dataVerifications");
 exports.getByKey = async function (req, res, contract) {
     try {
         const response = await contract.submitTransaction('readVotes', req.headers.key);
-
-        res.status(200).send(JSON.parse(response));
+        return { data: JSON.parse(response) };
     } catch (e) {
-        res.status(500).json(e.message);
+        return { error: e.message };
     }
 };
 
@@ -19,7 +18,7 @@ exports.createVotes = async function (req, res, contract) {
         let voter;
         console.log(req.body);
         if (req.body.token) {
-            voter= jwt.verify(req.body.token, "MySecret");
+            voter = jwt.verify(req.body.token, "MySecret");
         }
         const { arcId, vote } = req.body;
 
@@ -33,28 +32,27 @@ exports.createVotes = async function (req, res, contract) {
         const parsedData = JSON.parse(arc);
         const voteData = await contract.submitTransaction('queryByObjectType', "Votes");
         const parsedVote = JSON.parse(voteData);
-       
+
         let alreadyVoted = false;
         for (let i = 0; i < parsedVote.length; i++) {
             if (parsedVote[i].Record.voter === voter.userId) {
                 if (parsedVote[i].Record.arcId === arcId) {
                     alreadyVoted = true;
                     break;
-               }
+                }
             }
-          }
-       
+        }
         if (alreadyVoted) {
             return ({ data: "Already voted" });
-        }     
+        }
         const key = uuidv4();
         const createdAt = new Date();
-        const total = (parseInt(parsedData.totalVotes) || 0)+parseInt(vote);
+        const total = (parseInt(parsedData.totalVotes) || 0) + parseInt(vote);
         await contract.submitTransaction('updateArcs', arcId, "", "", "", "", parseInt(total));
-       await contract.submitTransaction('createVotes', key, voter.userId, arcId, vote, createdAt);
+        await contract.submitTransaction('createVotes', key, voter.userId, arcId, vote, createdAt);
         return ({ data: "Created" });
     } catch (e) {
-        return ({ data: e.message });
+        return ({ error: e.message });
     }
 };
 
@@ -74,12 +72,12 @@ exports.deleteVotes = async function (req, res, contract) {
                 totalVotes = totalVotes + Number(votesData.Record.vote);
             }
         });
-        
+
         await contract.submitTransaction('deleteVotes', req.headers.key);
         await contract.submitTransaction('updateArcs', arcId, "", "", "", "", totalVotes);
-        res.sendStatus(204);
+        return { data: response };
     } catch (e) {
-        res.status(500).json(e.message);
+        return { error: e.message };
     }
 };
 
