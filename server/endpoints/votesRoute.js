@@ -1,4 +1,3 @@
-const { CLIEngine } = require('eslint');
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require('uuid');
 const dataVerifications = require("./functions/dataVerifications");
