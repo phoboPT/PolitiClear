@@ -9,6 +9,7 @@ ACCOUNT
     -VERIFY - botão back nao funciona
 SIGN OUT
     -Não volta ao home, deveria remover todas as perms (forçar o refresh do site é o mais simples)
+    Done
 POLITIC
     - Criar novos Nodos (Requer script para criar novo User)
     - Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
