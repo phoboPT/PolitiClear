@@ -40,14 +40,11 @@ exports.createNodes = async function (req, res, contract) {
 // Update User
 exports.updateNodes = async function (req, res, contract) {
 	try {
-		const { key, description, nodeType, creatorId } = req.body;
+		const { key, description, nodeType } = req.body;
 		if (nodeType !== "" && nodeType !== undefined) {
 			await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
 		}
-		if (creatorId !== "" && creatorId !== undefined) {
-			await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-		}
-		await contract.submitTransaction('updateNodes', key, description || "", nodeType || "", creatorId || "");
+		await contract.submitTransaction('updateNodes', key, description || "", nodeType || "");
 		return { data: "Updated" }
 	} catch (e) {
 		return { error: e.message }
