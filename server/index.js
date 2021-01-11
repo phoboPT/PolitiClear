@@ -69,7 +69,8 @@ app.listen(5000, () => {
 /* -----  ROUTES  ----- */
 // Arcs
 app.post("/arcs/create", async (req, res) => {
-  arcsRoute.createArcs(req, res, contract);
+  const response = await arcsRoute.createArcs(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.get("/arcs/key/:key", async (req, res) => {

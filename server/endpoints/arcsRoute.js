@@ -21,17 +21,17 @@ exports.createArcs = async function (req, res, contract) {
             const userID = jwt.verify(req.body.token, "MySecret");
             creatorId = userID.userId;        
         }
-        const key = uuidv4();
+        const key = uuidv4(); 
         const createdAt = new Date();
         const { description, initialNode, finalNode } = req.body;
         await dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
 		await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
         await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
         
-        await contract.submitTransaction('createArcs', key, description, initialNode, finalNode, creatorId, createdAt,0);
-        res.sendStatus(201);
+      const res=  await contract.submitTransaction('createArcs', key, description, initialNode, finalNode, creatorId, createdAt,0);
+        return {data:res}
     } catch (e) {
-        res.status(500).json(e.message);
+        return {  error: e.message  }
     }
 };
 

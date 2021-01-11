@@ -19,7 +19,7 @@ exports.createForms = async function (req, res, contract) {
         const createdAt = new Date();
         const { token, message, email = "", upgradeRequest = false } = req.body;
         const createdBy = jwt.verify(token, "MySecret");
-        await contract.submitTransaction('createForms', key, email, message, createdAt, false, "", createdBy.userId, upgradeRequest);
+        await contract.submitTransaction('createForms', key, email, message, createdAt, "Open", "", createdBy.userId, upgradeRequest);
         return { data: "Created" }
     } catch (e) {
         return { data: e.message }
