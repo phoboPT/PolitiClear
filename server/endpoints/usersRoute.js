@@ -11,9 +11,9 @@ exports.getByKey = async (req, res, contract) => {
     const parsedData = JSON.parse(response);
     delete parsedData["password"];
 
-    res.status(200).send(parsedData);
+    return { data: "parsedData" }
   } catch (e) {
-    res.status(500).json(e.message);
+    return { error: "e.message" };
   }
 };
 
@@ -31,9 +31,9 @@ exports.getByName = async (req, res, contract) => {
       }
     });
     delete user["password"];
-    res.status(200).send(user);
+    return { data: JSON.parse(user) }
   } catch (e) {
-    res.status(500).json(e.message);
+    return { error: e.message };
   }
 };
 
@@ -63,7 +63,7 @@ exports.createUsers = async (req, res, contract) => {
     res.token = token;
     return { token };
   } catch (e) {
-    res.status(500).json(e.message);
+    return { error: e.message };
   }
 };
 
@@ -72,15 +72,15 @@ exports.updateUsers = async (req, res, contract) => {
   try {
     let id = "";
     if (req.body.token) {
-      
+
       id = jwt.verify(req.body.token, "MySecret");
-      id=id.userId
+      id = id.userId
     } else {
-      id=req.body.key
+      id = req.body.key
     }
     console.log(req.body.permission);
-    const { name = "", oldPassword = "", newPassword = "", permission = "" ,} = req.body;
-    console.log("permission",permission);
+    const { name = "", oldPassword = "", newPassword = "", permission = "", } = req.body;
+    console.log("permission", permission);
     if (oldPassword !== "" && newPassword !== "") {
       const user = await contract.submitTransaction("readUsers", id);
       if (!user) {
@@ -97,7 +97,7 @@ exports.updateUsers = async (req, res, contract) => {
     } else {
 
       await contract.submitTransaction("updateUsers", id, name, "", permission);
-      return ({ data: "updated" });
+      return ({ data: "Updated" });
     }
   } catch (e) {
     return ({ data: e.message });
@@ -108,9 +108,9 @@ exports.updateUsers = async (req, res, contract) => {
 exports.deleteUsers = async (req, res, contract) => {
   try {
     await contract.submitTransaction("deleteUsers", req.headers.key);
-    res.sendStatus(204);
+    return { data: "Deleted" };
   } catch (e) {
-    res.status(500).json(e.message);
+    return { error: e.message };
   }
 };
 
@@ -122,7 +122,8 @@ exports.me = async (req, res, contract) => {
     delete parsedData["password"]
     return (parsedData);
   } catch (e) {
-    res.status(500).json({ error: 0, errorMessage: "User not found" });
+    // res.status(500).json({ error: 0, errorMessage: "User not found" });
+    return { error: e.message };
   }
 };
 // don't touch
@@ -155,6 +156,7 @@ exports.login = async (req, res, contract) => {
     );
     return { token: token };
   } catch (e) {
-    res.status(500).json(JSON.stringify(e.message));
+    // res.status(500).json(JSON.stringify(e.message));
+    return { error: e.message };
   }
 };

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import bodyParser from "body-parser";
 import path from "path";
 import { Gateway, Wallets } from "fabric-network";
@@ -74,15 +74,18 @@ app.post("/arcs/create", async (req, res) => {
 });
 
 app.get("/arcs/key/:key", async (req, res) => {
-  arcsRoute.getByKey(req, res, contract);
+  const response = await arcsRoute.getByKey(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.put("/arcs/update", async (req, res) => {
-  arcsRoute.updateArcs(req, res, contract);
+  const response = await arcsRoute.updateArcs(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.delete("/arcs/delete", async (req, res) => {
-  arcsRoute.deleteArcs(req, res, contract);
+  const response = await arcsRoute.deleteArcs(req, res, contract);
+  res.status(200).send(response);
 });
 
 // Forms
@@ -92,7 +95,8 @@ app.post("/forms/create", async (req, res) => {
 });
 
 app.get("/forms/key/:key", async (req, res) => {
-  formsRoute.getByKey(req, res, contract);
+  const response = await formsRoute.getByKey(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.put("/forms/update", async (req, res) => {
@@ -101,23 +105,28 @@ app.put("/forms/update", async (req, res) => {
 });
 
 app.delete("/forms/delete", async (req, res) => {
-  formsRoute.deleteForms(req, res, contract);
+  const response = await formsRoute.deleteForms(req, res, contract);
+  res.status(200).send(response);
 });
 
 // nodes
 app.get("/nodes/key/:key", async (req, res) => {
-  nodesRoute.getByKey(req, res, contract);
+  const response = await nodesRoute.getByKey(req, res, contract);
+  res.status(200).send(response);
 });
 app.post("/nodes/create", async (req, res) => {
-  nodesRoute.createNodes(req, res, contract);
+  const response = await nodesRoute.createNodes(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.put("/nodes/update", async (req, res) => {
-  nodesRoute.updateNodes(req, res, contract);
+  const response = await nodesRoute.updateNodes(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.delete("/nodes/delete", async (req, res) => {
-  nodesRoute.deleteNodes(req, res, contract);
+  const response = await nodesRoute.deleteNodes(req, res, contract);
+  res.status(200).send(response);
 });
 
 app.get("/searchNodes", async (req, res) => {
@@ -133,7 +142,8 @@ app.get("/search", async (req, res) => {
 
 // nodesTypes
 app.get("/nodesTypes/key/:key", async (req, res) => {
-  nodesTypesRoute.getByKey(req, res, contract);
+  const response = await nodesTypesRoute.getByKey(req, res, contract);
+  res.status(200).send(response);
 });
 app.post("/nodesTypes/create", async (req, res) => {
   const response= await nodesTypesRoute.createNodesTypes(req, res, contract);
@@ -146,12 +156,14 @@ app.put("/nodesTypes/update", async (req, res) => {
 });
 
 app.delete("/nodesTypes/delete", async (req, res) => {
-  nodesTypesRoute.deleteNodesTypes(req, res, contract);
+  const response = await nodesTypesRoute.deleteNodesTypes(req, res, contract);
+  res.status(200).send(response);
 });
 
 // users
 app.get("/users/key/:key", async (req, res) => {
-  usersRoute.getByKey(req, res, contract);
+  const response = usersRoute.getByKey(req, res, contract);
+  res.status(200).send(response);
 });
 app.get("/users/name/:name", async (req, res) => {
   const response = await usersRoute.getByName(req, res, contract);
@@ -168,20 +180,24 @@ app.put("/users/update", async (req, res) => {
 });
 
 app.delete("/users/delete", async (req, res) => {
-  usersRoute.deleteUsers(req, res, contract);
+  const response = await usersRoute.deleteUsers(req, res, contract);
+  res.status(200).send(response);
 });
 
 // Votes
 app.get("/votes/key", async (req, res) => {
-  votesRoute.getByKey(req, res, contract);
+  const response = await votesRoute.getByKey(req, res, contract);
+  res.status(200).send(response);
 });
+
 app.post("/votes/create", async (req, res) => {
   const response = await votesRoute.createVotes(req, res, contract);
   res.status(200).send(response);
 });
 
 app.delete("/votes/delete", async (req, res) => {
-  votesRoute.deleteVotes(req, res, contract);
+  const response = await votesRoute.deleteVotes(req, res, contract);
+  res.status(200).send(response);
 });
 
 

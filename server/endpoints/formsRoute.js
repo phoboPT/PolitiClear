@@ -5,10 +5,9 @@ const jwt = require("jsonwebtoken");
 exports.getByKey = async function (req, res, contract) {
     try {
         const response = await contract.submitTransaction('readForms', req.params.key);
-
-        res.status(200).send(JSON.parse(response));
+        return { data: JSON.parse(response) }
     } catch (e) {
-        res.status(500).json(e.message);
+        return { error: e.message }
     }
 };
 
@@ -22,7 +21,7 @@ exports.createForms = async function (req, res, contract) {
         await contract.submitTransaction('createForms', key, email, message, createdAt, "Open", "", createdBy.userId, upgradeRequest);
         return { data: "Created" }
     } catch (e) {
-        return { data: e.message }
+        return { error: e.message }
     }
 };
 
@@ -42,8 +41,8 @@ exports.updateForms = async function (req, res, contract) {
 exports.deleteForms = async function (req, res, contract) {
     try {
         await contract.submitTransaction('deleteForms', req.headers.key);
-        res.sendStatus(204);
+        return { data: "Deleted" }
     } catch (e) {
-        res.status(500).json(e.message);
+        return { error: e.message }
     }
 };

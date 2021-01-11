@@ -5,10 +5,9 @@ const dataVerifications = require("./functions/dataVerifications");
 exports.getByKey = async function (req, res, contract) {
     try {
         const response = await contract.submitTransaction('readNodesTypes', req.params.key);
-
-        res.status(200).send(JSON.parse(response));
+        return { data: JSON.parse(response) }
     } catch (e) {
-        res.status(500).json(e.message);
+        return {error: e.message};
     }
 };
 
@@ -21,9 +20,9 @@ exports.createNodesTypes = async function (req, res, contract) {
         const key = uuidv4();
         const createdAt = new Date();
         await contract.submitTransaction('createNodesTypes', key, name, createdAt);
-        return{data:"Created with sucess"}
+        return { data: "Created" };
     } catch (e) {
-        res.status(500).json(e.message);
+        return {error: e.message};
     }
 };
 
@@ -32,20 +31,19 @@ exports.updateNodesTypes = async function (req, res, contract) {
     try {
         const { key, name } = req.body;
         await dataVerifications.verifyNameAlreadyExists(name, 'NodesTypes', contract);
-        
         await contract.submitTransaction('updateNodesTypes', key, name);
         return { data: "Updated" };
     } catch (e) {
-        res.status(500).json(e.message);
+        return {error: e.message};
     }
 };
 
 exports.deleteNodesTypes = async function (req, res, contract) {
     try {
         await contract.submitTransaction('deleteNodesTypes', req.headers.key);
-        res.sendStatus(204);
+        return { data: "Deleted" };
     } catch (e) {
-        res.status(500).json(e.message);
+        return {error: e.message};
     }
 };
 
