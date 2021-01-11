@@ -162,7 +162,7 @@ app.delete("/nodesTypes/delete", async (req, res) => {
 
 // users
 app.get("/users/key/:key", async (req, res) => {
-  const response = usersRoute.getByKey(req, res, contract);
+  const response = await usersRoute.getByKey(req, res, contract);
   res.status(200).send(response);
 });
 app.get("/users/name/:name", async (req, res) => {

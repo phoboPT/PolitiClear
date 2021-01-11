@@ -4,11 +4,11 @@ const { v4: uuidv4 } = require("uuid");
 // search by key
 exports.getByKey = async (req, res, contract) => {
   try {
+    console.log(req.params.key);
     const response = await contract.submitTransaction("readUsers", req.params.key);
     const parsedData = JSON.parse(response);
     delete parsedData["password"];
-
-    return { data: response }
+    return { data: parsedData }
   } catch (e) {
     return { error: e.message };
   }
