@@ -16,7 +16,6 @@ exports.getByKey = async function (req, res, contract) {
 exports.createVotes = async function (req, res, contract) {
     try {
         let voter;
-        console.log(req.body);
         if (req.body.token) {
             voter = jwt.verify(req.body.token, "MySecret");
         }

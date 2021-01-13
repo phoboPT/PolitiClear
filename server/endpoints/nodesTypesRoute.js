@@ -20,17 +20,22 @@ exports.createNodesTypes = async function (req, res, contract) {
         const key = uuidv4();
         const createdAt = new Date();
         await contract.submitTransaction('createNodesTypes', key, name, createdAt);
+
+
+
         return { data: "Created" };
     } catch (e) {
         return {error: e.message};
     }
 };
 
+
+
 // update tipo nodo
 exports.updateNodesTypes = async function (req, res, contract) {
     try {
-        const { key, name } = req.body;
-        await dataVerifications.verifyNameAlreadyExists(name, 'NodesTypes', contract);
+        const { name, key } = req.body;
+       await dataVerifications.verifyNameAlreadyExists(name, 'NodesTypes', contract);
         await contract.submitTransaction('updateNodesTypes', key, name);
         return { data: "Updated" };
     } catch (e) {

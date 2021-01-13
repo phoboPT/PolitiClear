@@ -6,12 +6,26 @@ const jwt = require("jsonwebtoken");
 exports.getByKey = async function (req, res, contract) {
     try {
         const response = await contract.submitTransaction('readArcs', req.params.key);
-        return { data: JSON.parse(response) }
+
+        res.status(200).send(JSON.parse(response));
     } catch (e) {
-        return { error: e.message }
+        res.status(500).json(e.message);
     }
 };
 
+const verify = async (contract,data,creatorId) => {
+    const {  initialNode, finalNode } =data;
+    console.log( initialNode);
+    const a = dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
+    const b = dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
+    const c = dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
+    await Promise.all(
+
+        [a, b, c]
+
+    );
+    return Promise.resolve();
+}
 // create new form
 exports.createArcs = async function (req, res, contract) {
     try {
@@ -20,15 +34,12 @@ exports.createArcs = async function (req, res, contract) {
             const userID = jwt.verify(req.body.token, "MySecret");
             creatorId = userID.userId;
         }
-        const key = uuidv4(); 
+        const key = uuidv4();
         const createdAt = new Date();
         const { description, initialNode, finalNode } = req.body;
-        await dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
-        await dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
-        await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-
+        await verify(contract, req.body, creatorId)
         await contract.submitTransaction('createArcs', key, description, initialNode, finalNode, creatorId, createdAt, 0);
-        return { data: "Created" }
+        return { data: JSON.parse(res) }
     } catch (e) {
         return { error: e.message }
     }
@@ -36,32 +47,42 @@ exports.createArcs = async function (req, res, contract) {
 
 exports.updateArcs = async function (req, res, contract) {
     try {
+        const { key, description, initialNode, finalNode } = req.body;
         let creatorId;
         if (req.body.token) {
             const userID = jwt.verify(req.body.token, "MySecret");
             creatorId = userID.userId;
         }
-        const { key, description, initialNode, finalNode } = req.body;
-        await contract.submitTransaction('updateArcs', key, description, initialNode, finalNode, creatorId, '');
-        return { data: "Updated" }
+        await contract.submitTransaction('updateArcs', key, description, initialNode||"", finalNode||"", creatorId||"", '');
+        console.log(key,description);
+        return { data: "Updated"}
     } catch (e) {
         return { error: e.message }
     }
 };
 
+const deleteOneArc = async (contract, key) => {
+    const delArc = contract.submitTransaction('deleteArcs', key);
+    const data = contract.submitTransaction("queryByObjectType", "Votes");
+    const res = await Promise.all(
+
+        [delArc, data]
+
+    );
+    return Promise.resolve(res)
+}
+
 // delete user
 exports.deleteArcs = async function (req, res, contract) {
     try {
-        await contract.submitTransaction('deleteArcs', req.headers.key);
-        const data = await contract.submitTransaction("queryByObjectType", "Votes");
-
-        JSON.parse(data).forEach((votesData) => {
+        const res = await deleteOneArc(contract, req.headers.key)
+        JSON.parse(res[1]).forEach((votesData) => {
             if (votesData.Record.arcId === req.headers.key) {
                 contract.submitTransaction('deleteVotes', votesData.Key);
             }
         });
-        return { data: "Deleted" }
+        res.sendStatus(204);
     } catch (e) {
-        return { error: e.message }
+        res.status(500).json(e.message);
     }
 };

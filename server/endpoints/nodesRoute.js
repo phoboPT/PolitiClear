@@ -14,7 +14,16 @@ exports.getByKey = async function (req, res, contract) {
 		return { error: e.message }
 	}
 };
+const verify = async (contract, nodeType,creatorId) => {
 
+	const a= dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
+	const b = dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
+	const res = Promise.all(
+		
+		[a,b]
+	)
+	return Promise.resolve(res);
+}
 // cria novo tipo
 exports.createNodes = async function (req, res, contract) {
 	try {
@@ -26,9 +35,8 @@ exports.createNodes = async function (req, res, contract) {
 		const key = uuidv4();
 		const createdAt = new Date();
 		const { description, nodeType } = req.body;
-		await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
-		await dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-
+		
+		await verify(contract,nodeType,creatorId);
 
 		await contract.submitTransaction('createNodes', key, description, nodeType, creatorId, createdAt);
 		return { data: "Created" }
@@ -122,7 +130,19 @@ exports.search = async function (req, res, contract) {
 		return { error: e.message };
 	}
 };
+const search = async (contract,asset) => {
+	
+	const initial =  contract.submitTransaction('getByKey', asset.initialNode);
+	const final =  contract.submitTransaction('getByKey', asset.finalNode);
 
+const res =await Promise.all(
+
+	[ initial, final ]
+		
+	);
+	return Promise.resolve(res)
+
+}
 exports.searchNodes = async function (req, res, contract) {
 	try {
 		const { key } = req.headers;
@@ -134,19 +154,18 @@ exports.searchNodes = async function (req, res, contract) {
 			const asset = JSON.parse(buffer1.toString());
 			const data = {};
 			data.arcId = allData[i];
-
 			if (asset.initialNode === key) {
-				const initial = await contract.submitTransaction('getByKey', asset.initialNode);
-				data.initial = (JSON.parse(initial.toString()));
-				const final = await contract.submitTransaction('getByKey', asset.finalNode);
-				data.final = (JSON.parse(final.toString()));
+				const res = await search(contract, asset)
+				console.log(JSON.parse(res[0]));
+				data.initial = JSON.parse(res[0].toString());
+				data.final = JSON.parse(res[1].toString());
 				data.arc = asset;
 			}
 			else { //=== finalNode
-				const initial = await contract.submitTransaction('getByKey', asset.finalNode);
-				data.initial = (JSON.parse(initial.toString()));
-				const final = await contract.submitTransaction('getByKey', asset.initialNode);
-				data.final = (JSON.parse(final.toString()));
+				const res = await search(contract, asset)
+				console.log(JSON.parse(res[1]));
+				data.initial = JSON.parse(res[0].toString());
+				data.final = JSON.parse(res[1].toString());
 				data.arc = asset;
 			}
 			result.push(data);

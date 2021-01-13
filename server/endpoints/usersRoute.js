@@ -75,10 +75,10 @@ exports.updateUsers = async (req, res, contract) => {
     } else {
       id = req.body.key
     }
-    console.log(req.body.permission);
     const { name = "", oldPassword = "", newPassword = "", permission = "", } = req.body;
-    console.log("permission", permission);
+    console.log(id,name,permission);
     if (oldPassword !== "" && newPassword !== "") {
+      console.log("entrou");
       const user = await contract.submitTransaction("readUsers", id);
       if (!user) {
         return { error: "No email found" };
@@ -93,11 +93,11 @@ exports.updateUsers = async (req, res, contract) => {
       return { data: "Updated" };
     } else {
 
-      await contract.submitTransaction("updateUsers", id, name, "", permission);
+       await contract.submitTransaction("updateUsers", id, name, "", permission);
       return ({ data: "Updated" });
     }
   } catch (e) {
-    return ({ data: e.message });
+    return ({ error: e.message });
   }
 };
 

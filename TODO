@@ -1,25 +1,25 @@
 ADMIN
-    -NODES - criar formulário edição
+    -NODES - criar formulário edição Fixed
         - buscar Ids
-    -USERS - criar formulário edição
+    -USERS - criar formulário edição Fixed
         - Trocar ordem description e idCreator (alterar para userID)
-    -ARCS - criar formulário edição
+    -ARCS - criar formulário edição Fixed
         - buscar Ids
 ACCOUNT
-    -VERIFY - botão back nao funciona
+    -VERIFY - botão back nao funciona -Fixed
 SIGN OUT
-    -Não volta ao home, deveria remover todas as perms (forçar o refresh do site é o mais simples)
+    -Não volta ao home, deveria remover todas as perms (forçar o refresh do site é o mais simples) -Fixed
     Done
 POLITIC
     - Criar novos Nodos (Requer script para criar novo User)
     - Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
     - Solicitar permissões para outros users
 GRAPHS
-    - Resolução dos grafos está muito pequena
-    - As tabelas estão muito grandes e saem do tamanho da janela
+    - Resolução dos grafos está muito pequena -Fixed
+    - As tabelas estão muito grandes e saem do tamanho da janela -Fixed
 
     -Quando carrego no filho tem de fazer o update da janela e mostrar
 
-Alterar mensagens de erro das query
-Eliminar os formularios respondidos do front-end
+Alterar mensagens de erro das query Fixed
+Eliminar os formularios respondidos do front-end 
 
