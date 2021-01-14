@@ -12,6 +12,13 @@ ADMIN
 ACCOUNT
     - ao pedir permissões dá um erro (envia o formulario)
     - admin e acredited não devem ter o botão de verificação
+        - buscar Ids
+        - Trocar ordem description e idCreator (alterar para userID)
+        - buscar Ids
+ACCOUNT
+    
+SIGN OUT
+  
 POLITIC
     - Criar novos Nodos (Requer script para criar novo User)
     - Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
@@ -29,4 +36,6 @@ BACKEND
     - Apagar Nodos apenas se os arcos tiverem votos negativos
     - alterar o formato das datas
     - Adicionar descrição aos ids dos nodos
+    - ao votar mostrar mensagens de erro ou sucesso
+    - Atualizar o valor dos votos
 

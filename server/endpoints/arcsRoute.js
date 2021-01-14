@@ -13,17 +13,12 @@ exports.getByKey = async function (req, res, contract) {
     }
 };
 
-const verify = async (contract,data,creatorId) => {
-    const {  initialNode, finalNode } =data;
-    console.log( initialNode);
+const verify = async (contract, data, creatorId) => {
+    const { initialNode, finalNode } = data;
     const a = dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
     const b = dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
     const c = dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-    await Promise.all(
-
-        [a, b, c]
-
-    );
+    await Promise.all([a, b, c]);
     return Promise.resolve();
 }
 // create new form
@@ -53,9 +48,8 @@ exports.updateArcs = async function (req, res, contract) {
             const userID = jwt.verify(req.body.token, "MySecret");
             creatorId = userID.userId;
         }
-        await contract.submitTransaction('updateArcs', key, description, initialNode||"", finalNode||"", creatorId||"", '');
-        console.log(key,description);
-        return { data: "Updated"}
+        await contract.submitTransaction('updateArcs', key, description, initialNode || "", finalNode || "", creatorId || "", '');
+        return { data: "Updated" }
     } catch (e) {
         return { error: e.message }
     }
@@ -79,8 +73,8 @@ exports.deleteArcs = async function (req, res, contract) {
                 contract.submitTransaction('deleteVotes', votesData.Key);
             }
         });
-        res.sendStatus(204);
+        return { data: "Deleted" }
     } catch (e) {
-        res.status(500).json(e.message);
+        return { error: e.message }
     }
 };
