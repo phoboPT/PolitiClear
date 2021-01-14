@@ -4,7 +4,6 @@ const { v4: uuidv4 } = require("uuid");
 // search by key
 exports.getByKey = async (req, res, contract) => {
   try {
-    console.log(req.params.key);
     const response = await contract.submitTransaction("readUsers", req.params.key);
     const parsedData = JSON.parse(response);
     delete parsedData["password"];
@@ -76,9 +75,7 @@ exports.updateUsers = async (req, res, contract) => {
       id = req.body.key
     }
     const { name = "", oldPassword = "", newPassword = "", permission = "", } = req.body;
-    console.log(id,name,permission);
     if (oldPassword !== "" && newPassword !== "") {
-      console.log("entrou");
       const user = await contract.submitTransaction("readUsers", id);
       if (!user) {
         return { error: "No email found" };

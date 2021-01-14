@@ -12,20 +12,30 @@ exports.getByKey = async function (req, res, contract) {
     }
 };
 
+const verify = async (contract, userId, arcId) => {
+    const a = dataVerifications.verifyKeyExists(userId, 'Users', contract);
+    const b = dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
+    await Promise.all([a, b]);
+    return Promise.resolve();
+}
 // cria novo tipo
 exports.createVotes = async function (req, res, contract) {
     try {
-        let voter;
+        if (vote === "") {
+            throw new Error(`Error! The vote must be provided!`);
+        };
+
+        let voter, voterDescription;
         if (req.body.token) {
             voter = jwt.verify(req.body.token, "MySecret");
         }
         const { arcId, vote } = req.body;
 
-        if (voter === "" || vote === "" || arcId === "") {
-            throw new Error(`Error! The data provided can not be inserted!`);
-        };
-        await dataVerifications.verifyKeyExists(voter.userId, 'Users', contract);
-        await dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
+        //verifica em simultaneo os parametros
+        await verify(contract, voter.userId, arcId);
+
+        voterDescription = await contract.submitTransaction('readUsers', voter.userId);
+        voterDescription = JSON.parse(voterDescription).name
 
         const arc = await contract.submitTransaction('getByKey', arcId);
         const parsedData = JSON.parse(arc);
@@ -47,7 +57,7 @@ exports.createVotes = async function (req, res, contract) {
         const key = uuidv4();
         const createdAt = new Date();
         const total = (parseInt(parsedData.totalVotes) || 0) + parseInt(vote);
-        await contract.submitTransaction('createVotes', key, voter.userId, arcId, vote, createdAt);
+        await contract.submitTransaction('createVotes', key, voter.userId, voterDescription, arcId, vote, createdAt);
         await contract.submitTransaction('updateArcs', arcId, "", "", "", "", "", "", parseInt(total));
         return ({ data: "Created" });
     } catch (e) {
@@ -74,7 +84,7 @@ exports.deleteVotes = async function (req, res, contract) {
 
         await contract.submitTransaction('deleteVotes', req.headers.key);
         await contract.submitTransaction('updateArcs', arcId, "", "", "", "", "", "", totalVotes);
-        return { data: response };
+        return { data: "Deleted" };
     } catch (e) {
         return { error: e.message };
     }
