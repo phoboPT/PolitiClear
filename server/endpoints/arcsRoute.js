@@ -65,9 +65,7 @@ const deleteOneArc = async (contract, key) => {
     const delArc = contract.submitTransaction('deleteArcs', key);
     const data = contract.submitTransaction("queryByObjectType", "Votes");
     const res = await Promise.all(
-
         [delArc, data]
-
     );
     return Promise.resolve(res)
 }
