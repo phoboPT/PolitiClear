@@ -21,20 +21,36 @@ const verify = async (contract, data, creatorId) => {
     await Promise.all([a, b, c]);
     return Promise.resolve();
 }
+const getNodesDescription = async (contract, initialNode, finalNode) => {
+    const initial = contract.submitTransaction('readNodes', initialNode);
+    const final = contract.submitTransaction('readNodes', finalNode);
+    const res = await Promise.all(
+        [initial, final]
+    );
+    return Promise.resolve(res)
+}
 // create new form
 exports.createArcs = async function (req, res, contract) {
     try {
-        let creatorId;
+        const { description, initialNode, finalNode } = req.body;
+        let creatorId, initialNodeDescription, finalNodeDescription;
         if (req.body.token) {
             const userID = jwt.verify(req.body.token, "MySecret");
             creatorId = userID.userId;
         }
+
         const key = uuidv4();
         const createdAt = new Date();
-        const { description, initialNode, finalNode } = req.body;
-        await verify(contract, req.body, creatorId)
-        await contract.submitTransaction('createArcs', key, description, initialNode, finalNode, creatorId, createdAt, 0);
-        return { data: JSON.parse(res) }
+        
+        await verify(contract, req.body, creatorId);
+
+        //buscar as descricoes dos nodos
+        const nodesDescriptions = await getNodesDescription(contract, initialNode, finalNode);
+        initialNodeDescription = JSON.parse(nodesDescriptions[0]).description;
+        finalNodeDescription = JSON.parse(nodesDescriptions[1]).description;
+
+        await contract.submitTransaction('createArcs', key, description, initialNode, initialNodeDescription, finalNode, finalNodeDescription, creatorId, createdAt, 0);
+        return { data: "Created" }
     } catch (e) {
         return { error: e.message }
     }
@@ -43,12 +59,35 @@ exports.createArcs = async function (req, res, contract) {
 exports.updateArcs = async function (req, res, contract) {
     try {
         const { key, description, initialNode, finalNode } = req.body;
-        let creatorId;
+        let creatorId, initialNodeDescription, finalNodeDescription;
         if (req.body.token) {
             const userID = jwt.verify(req.body.token, "MySecret");
             creatorId = userID.userId;
         }
-        await contract.submitTransaction('updateArcs', key, description, initialNode || "", finalNode || "", creatorId || "", '');
+        if (initialNode !== "" && initialNode !== undefined && finalNode !== "" && finalNode !== undefined) {
+            const nodesDescriptions = await getNodesDescription(contract, initialNode, finalNode);
+            initialNodeDescription = JSON.parse(nodesDescriptions[0]).description;
+            finalNodeDescription = JSON.parse(nodesDescriptions[1]).description;
+
+        } else {
+            if (initialNode !== "" && initialNode !== undefined) {
+                const response = await contract.submitTransaction('readNodes', initialNode);
+                initialNodeDescription = JSON.parse(response).description;
+            }
+            if (finalNode !== "" && finalNode !== undefined) {
+                const response = await contract.submitTransaction('readNodes', finalNode);
+                finalNodeDescription = JSON.parse(response).description;
+            }
+        }
+
+        
+        await contract.submitTransaction('updateArcs', key,
+            description || "",
+            initialNode || "",
+            initialNodeDescription || "",
+            finalNode || "",
+            finalNodeDescription || "",
+            creatorId, '');
         return { data: "Updated" }
     } catch (e) {
         return { error: e.message }

@@ -19,7 +19,6 @@ const verify = async (contract, nodeType, creatorId) => {
 	const a = dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
 	const b = dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
 	const res = Promise.all(
-
 		[a, b]
 	)
 	return Promise.resolve(res);
@@ -60,38 +59,28 @@ exports.updateNodes = async function (req, res, contract) {
 };
 
 const deleteNodesAux = async (contract, key) => {
-    const delNode = contract.submitTransaction('deleteNodes', key);
-    const data = contract.submitTransaction("queryByObjectType", "Arcs");
-    const res = await Promise.all(
-        [delNode, data]
-    );
-    return Promise.resolve(res)
+	const delNode = contract.submitTransaction('deleteNodes', key);
+	const data = contract.submitTransaction("queryByObjectType", "Arcs");
+	const res = await Promise.all(
+		[delNode, data]
+	);
+	return Promise.resolve(res)
 }
 
 // delete user
 exports.deleteNodes = async function (req, res, contract) {
-    try {
-        const res = await deleteNodesAux(contract, req.headers.key)
-        JSON.parse(res[1]).forEach((arcsData) => {
-            if (arcsData.Record.finalNode === req.headers.key || arcsData.Record.initialNode === req.headers.key) {
-                contract.submitTransaction('deleteArcs', arcsData.Key);
-            }
-        });
-        res.sendStatus(204);
-    } catch (e) {
-        res.status(500).json(e.message);
-    }
+	try {
+		const res = await deleteNodesAux(contract, req.headers.key)
+		JSON.parse(res[1]).forEach((arcsData) => {
+			if (arcsData.Record.finalNode === req.headers.key || arcsData.Record.initialNode === req.headers.key) {
+				contract.submitTransaction('deleteArcs', arcsData.Key);
+			}
+		});
+		res.sendStatus(204);
+	} catch (e) {
+		res.status(500).json(e.message);
+	}
 };
-
-// exports.deleteNodes = async function (req, res, contract) {
-// 	try {
-// 		await contract.submitTransaction('deleteNodes', req.headers.key);
-// 		return { data: "Deleted" }
-// 	} catch (e) {
-// 		return { error: e.message }
-// 	}
-// };
-
 
 const getNodes = async (nodeId, contract) => {
 	const allData = [];

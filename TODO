@@ -9,6 +9,7 @@ ADMIN
         - Trocar ordem description e idCreator (alterar para userID)
     - ARCS
         - buscar Ids
+        - EDITAR vai para a form errada
 ACCOUNT
     - ao pedir permissões dá um erro (envia o formulario)
     - admin e acredited não devem ter o botão de verificação
@@ -29,6 +30,7 @@ GRAPHS
     - Quando há arcos multidirecionais, ao clicar no arco deve mostrar apenas uma direção
     - Quando se clica num novo nodo a tabela deve desaparecer para não ser inconsistente
     - Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando
+    - VOTES dá erro no backend por falta parametros
 
 BACKEND
     - Eliminar os formularios respondidos do front-end
