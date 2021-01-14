@@ -1,25 +1,32 @@
 ADMIN
-    -NODES - criar formulário edição Fixed
+    - NODESTYPES
+        -Ao criar node type dá erro(O nodetype é criado)
+    - RELATIONS
         - buscar Ids
-    -USERS - criar formulário edição Fixed
+        - ao adicionar novo evento/pessoa diz "sucess", se criar um de seguida a mensagem premanece imovel
+        - adicionar relações não dá feedback de sucesso
+    - USERS
         - Trocar ordem description e idCreator (alterar para userID)
-    -ARCS - criar formulário edição Fixed
+    - ARCS
         - buscar Ids
 ACCOUNT
-    -VERIFY - botão back nao funciona -Fixed
-SIGN OUT
-    -Não volta ao home, deveria remover todas as perms (forçar o refresh do site é o mais simples) -Fixed
-    Done
+    - ao pedir permissões dá um erro (envia o formulario)
+    - admin e acredited não devem ter o botão de verificação
 POLITIC
     - Criar novos Nodos (Requer script para criar novo User)
     - Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
     - Solicitar permissões para outros users
 GRAPHS
-    - Resolução dos grafos está muito pequena -Fixed
-    - As tabelas estão muito grandes e saem do tamanho da janela -Fixed
-
     -Quando carrego no filho tem de fazer o update da janela e mostrar
+    - Primeira vez que pesquisa, ao clicar os nodos desaparecem
+    - Quando há arcos multidirecionais, ao clicar no arco deve mostrar apenas uma direção
+    - Quando se clica num novo nodo a tabela deve desaparecer para não ser inconsistente
+    - Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando
 
-Alterar mensagens de erro das query Fixed
-Eliminar os formularios respondidos do front-end 
+BACKEND
+    - Eliminar os formularios respondidos do front-end
+    - Apagar arcos apenas se tiverem votos negativos
+    - Apagar Nodos apenas se os arcos tiverem votos negativos
+    - alterar o formato das datas
+    - Adicionar descrição aos ids dos nodos
 
