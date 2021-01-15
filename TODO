@@ -16,10 +16,7 @@ POLITIC
     - Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
     - Solicitar permissões para outros users
 GRAPHS
-    -Quando carrego no filho tem de fazer o update da janela e mostrar
-    - Primeira vez que pesquisa, ao clicar os nodos desaparecem
     - Quando há arcos multidirecionais, ao clicar no arco deve mostrar apenas uma direção
-    - Quando se clica num novo nodo a tabela deve desaparecer para não ser inconsistente
     - Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando
 
 BACKEND
