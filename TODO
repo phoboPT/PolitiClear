@@ -1,18 +1,13 @@
 ADMIN
-    - NODESTYPES
-        -Ao criar node type dá erro(O nodetype é criado)
     - RELATIONS
         - buscar Ids
         - ao adicionar novo evento/pessoa diz "sucess", se criar um de seguida a mensagem premanece imovel
-        - adicionar relações não dá feedback de sucesso
     - USERS
         - Trocar ordem description e idCreator (alterar para userID)
     - ARCS
         - buscar Ids
         - EDITAR vai para a form errada
 ACCOUNT
-    - ao pedir permissões dá um erro (envia o formulario)
-    - admin e acredited não devem ter o botão de verificação
         - buscar Ids
         - Trocar ordem description e idCreator (alterar para userID)
         - buscar Ids
