@@ -31,13 +31,17 @@ exports.createNodes = async function (req, res, contract) {
 			const userID = jwt.verify(req.body.token, "MySecret");
 			creatorId = userID.userId;
 		}
+		const { description, nodeType } = req.body;
+		await verify(contract, nodeType, creatorId);
 		const key = uuidv4();
 		const createdAt = new Date();
-		const { description, nodeType } = req.body;
 
-		await verify(contract, nodeType, creatorId);
+		let creatorIdDescription = await contract.submitTransaction('readUsers', creatorId);
+		creatorIdDescription = JSON.parse(creatorIdDescription).name;
+		let nodeTypeDescription = await contract.submitTransaction('readNodesTypes', nodeType);
+		nodeTypeDescription = JSON.parse(nodeTypeDescription).name;
 
-		await contract.submitTransaction('createNodes', key, description, nodeType, creatorId, createdAt);
+		await contract.submitTransaction('createNodes', key, description, creatorId, creatorIdDescription, nodeType, nodeTypeDescription, createdAt);
 		return { data: "Created" }
 	} catch (e) {
 		return { error: e.message }
@@ -48,10 +52,14 @@ exports.createNodes = async function (req, res, contract) {
 exports.updateNodes = async function (req, res, contract) {
 	try {
 		const { key, description, nodeType } = req.body;
+		let nodeTypeDescription;
 		if (nodeType !== "" && nodeType !== undefined) {
 			await dataVerifications.verifyKeyExists(nodeType, 'NodesTypes', contract);
+			nodeTypeDescription = await contract.submitTransaction('readNodesTypes', nodeType);
+			nodeTypeDescription = JSON.parse(nodeTypeDescription).name;
 		}
-		await contract.submitTransaction('updateNodes', key, description || "", nodeType || "");
+
+		await contract.submitTransaction('updateNodes', key, description || "", nodeType || "", nodeTypeDescription || "");
 		return { data: "Updated" }
 	} catch (e) {
 		return { error: e.message }
