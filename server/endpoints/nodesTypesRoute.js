@@ -26,20 +26,6 @@ exports.createNodesTypes = async function (req, res, contract) {
     }
 };
 
-
-
-// update tipo nodo
-exports.updateNodesTypes = async function (req, res, contract) {
-    try {
-        const { name, key } = req.body;
-        await dataVerifications.verifyNameAlreadyExists(name, 'NodesTypes', contract);
-        await contract.submitTransaction('updateNodesTypes', key, name);
-        return { data: "Updated" };
-    } catch (e) {
-        return { error: e.message };
-    }
-};
-
 exports.deleteNodesTypes = async function (req, res, contract) {
     try {
         await contract.submitTransaction('deleteNodesTypes', req.headers.key);
