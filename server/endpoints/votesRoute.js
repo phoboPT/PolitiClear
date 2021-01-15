@@ -22,7 +22,7 @@ const verify = async (contract, userId, arcId) => {
 exports.createVotes = async function (req, res, contract) {
     try {
         if (vote === "") {
-            throw new Error(`Error! The vote must be provided!`);
+            throw new Error(`The vote must be provided!`);
         };
 
         let voter, voterDescription;
@@ -52,7 +52,8 @@ exports.createVotes = async function (req, res, contract) {
             }
         }
         if (alreadyVoted) {
-            return ({ data: "Already voted" });
+            console.log("hey")
+            return ({ error: "You already voted" });
         }
         const key = uuidv4();
         const createdAt = new Date();

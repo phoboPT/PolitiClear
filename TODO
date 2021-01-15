@@ -1,12 +1,11 @@
 ADMIN
     - RELATIONS
         - buscar Ids
-        - ao adicionar novo evento/pessoa diz "sucess", se criar um de seguida a mensagem premanece imovel
+       
     - USERS
         - Trocar ordem description e idCreator (alterar para userID)
     - ARCS
         - buscar Ids
-        - EDITAR vai para a form errada
 ACCOUNT
         - buscar Ids
         - Trocar ordem description e idCreator (alterar para userID)
@@ -25,7 +24,6 @@ GRAPHS
     - Quando há arcos multidirecionais, ao clicar no arco deve mostrar apenas uma direção
     - Quando se clica num novo nodo a tabela deve desaparecer para não ser inconsistente
     - Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando
-    - VOTES dá erro no backend por falta parametros
 
 BACKEND
     - Eliminar os formularios respondidos do front-end
