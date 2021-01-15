@@ -41,7 +41,7 @@ exports.createArcs = async function (req, res, contract) {
 
         const key = uuidv4();
         const createdAt = new Date();
-        
+
         await verify(contract, req.body, creatorId);
 
         //buscar as descricoes dos nodos
@@ -80,7 +80,7 @@ exports.updateArcs = async function (req, res, contract) {
             }
         }
 
-        
+
         await contract.submitTransaction('updateArcs', key,
             description || "",
             initialNode || "",
@@ -106,13 +106,16 @@ const deleteOneArc = async (contract, key) => {
 // delete user
 exports.deleteArcs = async function (req, res, contract) {
     try {
-        const res = await deleteOneArc(contract, req.headers.key)
-        JSON.parse(res[1]).forEach((votesData) => {
-            if (votesData.Record.arcId === req.headers.key) {
-                contract.submitTransaction('deleteVotes', votesData.Key);
-            }
-        });
-        return { data: "Deleted" }
+        if (JSON.parse(await contract.submitTransaction('readArcs', req.headers.key)).totalVotes < 1) {
+            const res = await deleteOneArc(contract, req.headers.key)
+            JSON.parse(res[1]).forEach((votesData) => {
+                if (votesData.Record.arcId === req.headers.key) {
+                    contract.submitTransaction('deleteVotes', votesData.Key);
+                }
+            });
+            return { data: "Deleted" }
+        }
+        return { error: "Delete denied! Already have votes!" }
     } catch (e) {
         return { error: e.message }
     }

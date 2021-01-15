@@ -98,6 +98,10 @@ app.get("/forms/key/:key", async (req, res) => {
   const response = await formsRoute.getByKey(req, res, contract);
   res.status(200).send(response);
 });
+app.get("/forms/open", async (req, res) => {
+  const response = await formsRoute.getFormsOpen(req, res, contract);
+  res.status(200).send(response);
+});
 
 app.put("/forms/update", async (req, res) => {
   const response = await formsRoute.updateForms(req, res, contract);

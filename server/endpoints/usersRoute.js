@@ -116,7 +116,6 @@ exports.me = async (req, res, contract) => {
     delete parsedData["password"]
     return (parsedData);
   } catch (e) {
-    // res.status(500).json({ error: 0, errorMessage: "User not found" });
     return { error: e.message };
   }
 };

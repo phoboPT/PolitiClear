@@ -18,7 +18,7 @@ exports.createForms = async function (req, res, contract) {
         const createdBy = jwt.verify(token, "MySecret");
         const key = uuidv4();
         const createdAt = new Date();
-        
+
         let creatorByDescription = await contract.submitTransaction('readUsers', createdBy.userId);
         creatorByDescription = JSON.parse(creatorByDescription).name;
 
@@ -32,8 +32,6 @@ exports.createForms = async function (req, res, contract) {
 exports.updateForms = async function (req, res, contract) {
     try {
         const { key, status = "", response = "" } = req.body;
-        let creatorByDescription = await contract.submitTransaction('readUsers', createdBy.userId);
-        creatorByDescription = JSON.parse(creatorByDescription).name;
 
         await contract.submitTransaction('updateForms', key, status, response);
         return { data: "Updated" }
@@ -47,6 +45,24 @@ exports.deleteForms = async function (req, res, contract) {
     try {
         await contract.submitTransaction('deleteForms', req.headers.key);
         return { data: "Deleted" }
+    } catch (e) {
+        return { error: e.message }
+    }
+};
+
+exports.getFormsOpen = async function (req, res, contract) {
+    try {
+        const response = await contract.submitTransaction('queryByObjectType', "Forms");
+        let data = [];
+
+        JSON.parse(response).forEach((arcsData) => {
+            console.log(arcsData.Record.status)
+            if (arcsData.Record.status === "Open") {
+                data.push(arcsData);
+            }
+        });
+        // console.log(JSON.parse(response).data)
+        return { data: data };
     } catch (e) {
         return { error: e.message }
     }

@@ -1,7 +1,6 @@
 ADMIN
     - RELATIONS
         - buscar Ids
-       
     - USERS
         - Trocar ordem description e idCreator (alterar para userID)
     - ARCS
@@ -12,8 +11,6 @@ ACCOUNT
         - buscar Ids
 ACCOUNT
     
-SIGN OUT
-  
 POLITIC
     - Criar novos Nodos (Requer script para criar novo User)
     - Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
@@ -27,7 +24,6 @@ GRAPHS
 
 BACKEND
     - Eliminar os formularios respondidos do front-end
-    - Apagar arcos apenas se tiverem votos negativos
     - Apagar Nodos apenas se os arcos tiverem votos negativos
     - alterar o formato das datas
     - Adicionar descrição aos ids dos nodos
@@ -35,5 +31,4 @@ BACKEND
     - Atualizar o valor dos votos
     - Pensar como fica os formularios para os visitantes
     
-    - Falta adicionar nos nodes as descriptions
 
