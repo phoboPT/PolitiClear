@@ -120,7 +120,9 @@ const getNodes = async (nodeId, contract) => {
 	allArcsFinal.forEach((arcsFinal) => {
 		let exists = 0;
 		//por cada arco, verifica se todos allData são diferentes
+		console.log(allData.length)
 		allData.forEach((item) => {
+			console.log("hey")
 			if (arcsFinal === item) {
 				//existe igual
 				exists = 1;
