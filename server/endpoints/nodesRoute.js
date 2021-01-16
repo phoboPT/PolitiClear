@@ -78,15 +78,29 @@ const deleteNodesAux = async (contract, key) => {
 // delete user
 exports.deleteNodes = async function (req, res, contract) {
 	try {
-		const res = await deleteNodesAux(contract, req.headers.key)
-		JSON.parse(res[1]).forEach((arcsData) => {
-			if (arcsData.Record.finalNode === req.headers.key || arcsData.Record.initialNode === req.headers.key) {
-				contract.submitTransaction('deleteArcs', arcsData.Key);
+		const response = await contract.submitTransaction("queryByObjectType", "Arcs");
+		//verifica se existem arcos com votos positivos
+		for (let i = 0; i < JSON.parse(response).length; i++) {
+			if (JSON.parse(response)[i].Record.finalNode === req.headers.key ||
+				JSON.parse(response)[i].Record.initialNode === req.headers.key) {
+				if (JSON.parse(response)[i].Record.totalVotes > 0) {
+					return { error: 'Delete denied! Arcs already have votes' };
+				}
 			}
-		});
-		res.sendStatus(204);
+
+		};
+		//remove nodo e arcos caso não haja votos em nenhum deles
+		for (let i = 0; i < JSON.parse(response).length; i++) {
+			if (JSON.parse(response)[i].Record.finalNode === req.headers.key ||
+				JSON.parse(response)[i].Record.initialNode === req.headers.key) {
+				await contract.submitTransaction('deleteArcs', JSON.parse(response)[i].Key);
+			}
+		};
+		await contract.submitTransaction('deleteNodes', req.headers.key);
+
+		return { data: "Deleted" }
 	} catch (e) {
-		res.status(500).json(e.message);
+		return { error: e.message }
 	}
 };
 

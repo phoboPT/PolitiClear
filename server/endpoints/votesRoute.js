@@ -59,7 +59,7 @@ exports.createVotes = async function (req, res, contract) {
         const createdAt = new Date();
         const total = (parseInt(parsedData.totalVotes) || 0) + parseInt(vote);
         await contract.submitTransaction('createVotes', key, voter.userId, voterDescription, arcId, vote, createdAt);
-        await contract.submitTransaction('updateArcs', arcId, "", "", "", "", "", "", parseInt(total));
+        await contract.submitTransaction('updateArcs', arcId, "",  parseInt(total));
         return ({ data: "Created" });
     } catch (e) {
         return ({ error: e.message });
@@ -84,7 +84,7 @@ exports.deleteVotes = async function (req, res, contract) {
         });
 
         await contract.submitTransaction('deleteVotes', req.headers.key);
-        await contract.submitTransaction('updateArcs', arcId, "", "", "", "", "", "", totalVotes);
+        await contract.submitTransaction('updateArcs', arcId, "", totalVotes);
         return { data: "Deleted" };
     } catch (e) {
         return { error: e.message };
