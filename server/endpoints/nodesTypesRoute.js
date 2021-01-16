@@ -28,8 +28,20 @@ exports.createNodesTypes = async function (req, res, contract) {
 
 exports.deleteNodesTypes = async function (req, res, contract) {
     try {
+        if (req.headers.key === "" || req.headers.key === undefined) {
+            return { error: "Key must be provided!" };
+        }
+        const response = await contract.submitTransaction("queryByObjectType", "Nodes");
+
+        for (let i = 0; i < JSON.parse(response).length; i++) {
+            if (JSON.parse(response)[i].Record.nodeType === req.headers.key) {
+                return { error: 'Delete denied! The system use this type' };
+            }
+        };
+
         await contract.submitTransaction('deleteNodesTypes', req.headers.key);
-        return { data: "Deleted" };
+        return { data: "Deleted" }
+
     } catch (e) {
         return { error: e.message };
     }
