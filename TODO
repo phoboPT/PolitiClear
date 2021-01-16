@@ -1,15 +1,9 @@
 ADMIN
     - RELATIONS
-        - buscar Ids
     - USERS
-        - Trocar ordem description e idCreator (alterar para userID)
     - ARCS
-        - buscar Ids
         - VERIFICAR MUDANÇAS DO BACKEND, agora só altera a descriçao
 ACCOUNT
-        - buscar Ids
-        - Trocar ordem description e idCreator (alterar para userID)
-        - buscar Ids
 ACCOUNT
     
 POLITIC
@@ -17,7 +11,6 @@ POLITIC
 
 GRAPHS
     - Quando há arcos multidirecionais, ao clicar no arco deve mostrar apenas uma direção
-    - Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando
 
 BACKEND
     - Apagar Nodos apenas se os arcos tiverem votos negativos
