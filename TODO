@@ -2,6 +2,8 @@ ADMIN
     - RELATIONS
     - USERS
     - ARCS
+        - buscar Ids
+        - VERIFICAR MUDANÇAS DO BACKEND, agora só altera a descriçao
 ACCOUNT
 ACCOUNT
     
@@ -16,7 +18,8 @@ GRAPHS
 BACKEND
     - Apagar Nodos apenas se os arcos tiverem votos negativos
     - alterar o formato das datas
-    - Adicionar descrição aos ids dos nodos
+    - ao votar mostrar mensagens de erro ou sucesso
     - Pensar como fica os formularios para os visitantes
+    - NODESTYPES delete apenas quando não tem nada nesse tipo
     
 
