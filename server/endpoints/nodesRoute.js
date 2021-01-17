@@ -166,6 +166,8 @@ const search = async (contract, asset) => {
 	return Promise.resolve(res)
 
 }
+
+
 exports.searchNodes = async function (req, res, contract) {
 	try {
 		const { key } = req.headers;

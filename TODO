@@ -1,22 +1,23 @@
-ADMIN
-    - RELATIONS
-    - USERS
-    - ARCS
-        - buscar Ids
-        - VERIFICAR MUDANÇAS DO BACKEND, agora só altera a descriçao
-ACCOUNT
-ACCOUNT
+FIX:
+    Frontend:
+        ADMIN:
+            NodesTypes:
+                ☐ remover botão para editar @low
+            ARCS:
+                ☐ VERIFICAR MUDANÇAS DO BACKEND, agora só altera a descriçao @critical
+                ☐ modificar o metodo de introdução de relações, substituir inputs por searchbox. Se não existir nenhum registo, permitir criar um novo. @high
+                ☐ adicionar NodesTypes terá de ser noutro step, (permitir que os Acredited-User criem NodeTypes?) @high
+                
+        POLITIC:
+            ☐ Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
+
+        GRAPHS:
+            ☐ Quando há arcos multidirecionais, ao clicar no arco deve mostrar apenas uma direção
+
+    BACKEND:
+        ☐ Apagar Nodos apenas se os arcos tiverem votos negativos
+        ☐ alterar o formato das datas
+        ☐ Pensar como fica os formularios para os visitantes
     
-POLITIC
-    - Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
-
-GRAPHS
-    - Quando há arcos multidirecionais, ao clicar no arco deve mostrar apenas uma direção
-    - Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando
-
-BACKEND
-    - Apagar Nodos apenas se os arcos tiverem votos negativos
-    - alterar o formato das datas
-    - Pensar como fica os formularios para os visitantes
-    
-
+Archive:
+  ✔ Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando @done(21-01-17 02:17) @project(FIX.Frontend.GRAPHS)

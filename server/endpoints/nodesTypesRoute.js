@@ -31,15 +31,15 @@ exports.deleteNodesTypes = async function (req, res, contract) {
         if (req.headers.key === "" || req.headers.key === undefined) {
             return { error: "Key must be provided!" };
         }
-        const response = await contract.submitTransaction("queryByObjectType", "Nodes");
-
-        for (let i = 0; i < JSON.parse(response).length; i++) {
-            if (JSON.parse(response)[i].Record.nodeType === req.headers.key) {
+        const data = await contract.submitTransaction("queryByObjectType", "Nodes");
+        const response=JSON.parse(data)
+        for (let i = 0; i < response.length; i++) {
+            if (response[i].Record.nodeType === req.headers.key) {
                 return { error: 'Delete denied! The system use this type' };
             }
         };
 
-        await contract.submitTransaction('deleteNodesTypes', req.headers.key);
+       // await contract.submitTransaction('deleteNodesTypes', req.headers.key);
         return { data: "Deleted" }
 
     } catch (e) {

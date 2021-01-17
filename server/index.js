@@ -1,8 +1,9 @@
-import express, { response } from "express";
+import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
 import { Gateway, Wallets } from "fabric-network";
 import ConnectionProfile from "./ConnectionProfile.json";
+const { v4: uuidv4 } = require('uuid');
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -209,6 +210,24 @@ app.post("/me", async (req, res) => {
 app.post("/login", async (req, res) => {
   const response = await usersRoute.login(req, res, contract);
   res.status(200).send(response);
+});
+app.get("/createArcs", async (req, res) => {
+  try{
+    for (let i = 0; i < 500; i++){
+     
+     const key = uuidv4();  
+     const createdAt = new Date();
+     
+     
+     
+     console.log("created",i)
+     await contract.submitTransaction('createArcs', key, "treste", "initialNode", "teste", "1d9f057b-304e-42b3-8c79-34cd1d152cca", "teste", "sadsadas", "teste", createdAt, 0);
+    }
+     res.status(200).send({data:"created"});
+  // return { data: "Created" }
+} catch (e) {
+  return { error: e.message }
+}
 });
 
 // rota para buscar por tipo e id

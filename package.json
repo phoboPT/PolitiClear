@@ -1,6 +1,6 @@
 {
 	"name": "fabric",
-	"version": "0.0.8",
+	"version": "0.0.4",
 	"description": "PolitiClear Contract",
 	"main": "index.js",
 	"engines": {
