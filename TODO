@@ -2,7 +2,6 @@ FIX:
     Frontend:
         ADMIN:
             ARCS:
-                ☐ VERIFICAR MUDANÇAS DO BACKEND, agora só altera a descriçao (Os arcs so tem descrição para podermos inserir, todos os outros parametros são automaticos) @low
                 ☐ adicionar NodesTypes terá de ser noutro step, (permitir que os Acredited-User criem NodeTypes?) @high
                 
         POLITIC:
@@ -10,13 +9,19 @@ FIX:
 
         GRAPHS:
             ☐ Quando há arcos multidirecionais, ao clicar no arco deve mostrar apenas uma direção
+        
+        Home:
+            ☐ apenas apresentar o floatingIcon se o User não estiver logado apenas
 
     BACKEND:
         ☐ Apagar Nodos apenas se os arcos tiverem votos negativos
         ☐ alterar o formato das datas
         ☐ Pensar como fica os formularios para os visitantes
-        ☐ Ao criar um nodeType verificar se já existe algum e dar erro caso exista
+
+
+
 Archive:
+  ✔ VERIFICAR MUDANÇAS DO BACKEND, agora só altera a descriçao (Os arcs so tem descrição para podermos inserir, todos os outros parametros são automaticos) @low @done(21-01-17 19:39) @project(FIX.Frontend.ADMIN.ARCS)
   ✔ modificar o metodo de introdução de relações, substituir inputs por searchbox. Se não existir nenhum registo, permitir criar um novo. @high @done(21-01-17 14:59) @project(FIX.Frontend.ADMIN.ARCS)
   ✔ remover botão para editar @low @done(21-01-17 13:38) @project(FIX.Frontend.ADMIN.NodesTypes)
   ✔ Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando @project(FIX.Frontend.GRAPHS) @done(21-01-17 18:50)

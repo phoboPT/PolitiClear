@@ -32,6 +32,7 @@ exports.createNodes = async function (req, res, contract) {
 			creatorId = userID.userId;
 		}
 		const { description, nodeType } = req.body;
+		console.log(req.body)
 		await verify(contract, nodeType, creatorId);
 		const key = uuidv4();
 		const createdAt = new Date();
@@ -156,7 +157,7 @@ exports.search = async function (req, res, contract) {
 		const res = JSON.parse(res1)
 		const key = []
 		for (let i = 0; i < res.length; i++) {
-			if (res[i].Record.description.includes(description)) {
+			if (res[i].Record.description.toLowerCase().includes(description.toLowerCase())) {
 				key.push(res[i])
 			}
 		}
@@ -166,14 +167,11 @@ exports.search = async function (req, res, contract) {
 	}
 };
 const search = async (contract, asset) => {
-
 	const initial = contract.submitTransaction('getByKey', asset.initialNode);
 	const final = contract.submitTransaction('getByKey', asset.finalNode);
 
 	const res = await Promise.all(
-
 		[initial, final]
-
 	);
 	return Promise.resolve(res)
 
@@ -224,7 +222,7 @@ exports.userNodes = async function (req, res, contract) {
 		const buffer1 = await contract.submitTransaction('queryByObjectType', "Nodes" );
 		const asset = JSON.parse(buffer1.toString());
 		const result=asset.filter(item => {
-			return item.Record.creatorId===creatorId
+			return item.Record.creatorId === creatorId;
 		})
 		
 		return result;

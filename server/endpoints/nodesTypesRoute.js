@@ -39,7 +39,7 @@ exports.deleteNodesTypes = async function (req, res, contract) {
             }
         };
 
-       // await contract.submitTransaction('deleteNodesTypes', req.headers.key);
+        await contract.submitTransaction('deleteNodesTypes', req.headers.key);
         return { data: "Deleted" }
 
     } catch (e) {
