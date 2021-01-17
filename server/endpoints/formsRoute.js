@@ -15,14 +15,22 @@ exports.getByKey = async function (req, res, contract) {
 exports.createForms = async function (req, res, contract) {
     try {
         const { token, message, email = "", upgradeRequest = false } = req.body;
-        const createdBy = jwt.verify(token, "MySecret");
+
+        let createdBy = ""
+        let creatorByDescription=""
+        if (token) {
+            
+            createdBy = jwt.verify(token, "MySecret");
+            createdBy=createdBy.userId
+             creatorByDescription = await contract.submitTransaction('readUsers', createdBy.userId);
+            creatorByDescription = JSON.parse(creatorByDescription).name;
+        }
+        console.log(req.body)
         const key = uuidv4();
         const createdAt = new Date();
 
-        let creatorByDescription = await contract.submitTransaction('readUsers', createdBy.userId);
-        creatorByDescription = JSON.parse(creatorByDescription).name;
 
-        await contract.submitTransaction('createForms', key, email, message, createdAt, "Open", "", createdBy.userId, creatorByDescription, upgradeRequest);
+        await contract.submitTransaction('createForms', key, email, message, createdAt, "Open", "", createdBy, creatorByDescription, upgradeRequest);
         return { data: "Created" }
     } catch (e) {
         return { error: e.message }
