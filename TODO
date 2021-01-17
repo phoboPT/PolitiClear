@@ -1,11 +1,8 @@
 FIX:
     Frontend:
         ADMIN:
-            NodesTypes:
-                ☐ remover botão para editar @low
             ARCS:
-                ☐ VERIFICAR MUDANÇAS DO BACKEND, agora só altera a descriçao @critical
-                ☐ modificar o metodo de introdução de relações, substituir inputs por searchbox. Se não existir nenhum registo, permitir criar um novo. @high
+                ☐ VERIFICAR MUDANÇAS DO BACKEND, agora só altera a descriçao (Os arcs so tem descrição para podermos inserir, todos os outros parametros são automaticos) @low
                 ☐ adicionar NodesTypes terá de ser noutro step, (permitir que os Acredited-User criem NodeTypes?) @high
                 
         POLITIC:
@@ -18,6 +15,8 @@ FIX:
         ☐ Apagar Nodos apenas se os arcos tiverem votos negativos
         ☐ alterar o formato das datas
         ☐ Pensar como fica os formularios para os visitantes
-    
+        ☐ Ao criar um nodeType verificar se já existe algum e dar erro caso exista
 Archive:
-  ✔ Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando @done(21-01-17 02:17) @project(FIX.Frontend.GRAPHS)
+  ✔ modificar o metodo de introdução de relações, substituir inputs por searchbox. Se não existir nenhum registo, permitir criar um novo. @high @done(21-01-17 14:59) @project(FIX.Frontend.ADMIN.ARCS)
+  ✔ remover botão para editar @low @done(21-01-17 13:38) @project(FIX.Frontend.ADMIN.NodesTypes)
+  ✔ Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando @project(FIX.Frontend.GRAPHS) @done(21-01-17 18:50)

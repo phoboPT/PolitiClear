@@ -143,6 +143,10 @@ app.get("/search", async (req, res) => {
   const response = await nodesRoute.search(req, res, contract);
   res.status(200).send(response);
 });
+app.get("/nodes/userNodes", async (req, res) => {
+  const response = await nodesRoute.userNodes(req, res, contract);
+  res.status(200).send(response);
+});
 
 
 // nodesTypes
@@ -211,24 +215,7 @@ app.post("/login", async (req, res) => {
   const response = await usersRoute.login(req, res, contract);
   res.status(200).send(response);
 });
-app.get("/createArcs", async (req, res) => {
-  try{
-    for (let i = 0; i < 500; i++){
-     
-     const key = uuidv4();  
-     const createdAt = new Date();
-     
-     
-     
-     console.log("created",i)
-     await contract.submitTransaction('createArcs', key, "treste", "initialNode", "teste", "1d9f057b-304e-42b3-8c79-34cd1d152cca", "teste", "sadsadas", "teste", createdAt, 0);
-    }
-     res.status(200).send({data:"created"});
-  // return { data: "Created" }
-} catch (e) {
-  return { error: e.message }
-}
-});
+
 
 // rota para buscar por tipo e id
 app.get("/readByType/:type", async (req, res) => {
