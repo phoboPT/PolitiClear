@@ -32,6 +32,7 @@ exports.createNodes = async function (req, res, contract) {
 			creatorId = userID.userId;
 		}
 		const { description, nodeType } = req.body;
+		console.log(req.body)
 		await verify(contract, nodeType, creatorId);
 		const key = uuidv4();
 		const createdAt = new Date();
@@ -66,14 +67,14 @@ exports.updateNodes = async function (req, res, contract) {
 	}
 };
 
-const deleteNodesAux = async (contract, key) => {
-	const delNode = contract.submitTransaction('deleteNodes', key);
-	const data = contract.submitTransaction("queryByObjectType", "Arcs");
-	const res = await Promise.all(
-		[delNode, data]
-	);
-	return Promise.resolve(res)
-}
+// const deleteNodesAux = async (contract, key) => {
+// 	const delNode = contract.submitTransaction('deleteNodes', key);
+// 	const data = contract.submitTransaction("queryByObjectType", "Arcs");
+// 	const res = await Promise.all(
+// 		[delNode, data]
+// 	);
+// 	return Promise.resolve(res)
+// }
 
 // delete user
 exports.deleteNodes = async function (req, res, contract) {
@@ -134,9 +135,7 @@ const getNodes = async (nodeId, contract) => {
 	allArcsFinal.forEach((arcsFinal) => {
 		let exists = 0;
 		//por cada arco, verifica se todos allData são diferentes
-		console.log(allData.length)
 		allData.forEach((item) => {
-			console.log("hey")
 			if (arcsFinal === item) {
 				//existe igual
 				exists = 1;
@@ -158,7 +157,7 @@ exports.search = async function (req, res, contract) {
 		const res = JSON.parse(res1)
 		const key = []
 		for (let i = 0; i < res.length; i++) {
-			if (res[i].Record.description.includes(description)) {
+			if (res[i].Record.description.toLowerCase().includes(description.toLowerCase())) {
 				key.push(res[i])
 			}
 		}
@@ -168,18 +167,17 @@ exports.search = async function (req, res, contract) {
 	}
 };
 const search = async (contract, asset) => {
-
 	const initial = contract.submitTransaction('getByKey', asset.initialNode);
 	const final = contract.submitTransaction('getByKey', asset.finalNode);
 
 	const res = await Promise.all(
-
 		[initial, final]
-
 	);
 	return Promise.resolve(res)
 
 }
+
+
 exports.searchNodes = async function (req, res, contract) {
 	try {
 		const { key } = req.headers;
@@ -205,6 +203,28 @@ exports.searchNodes = async function (req, res, contract) {
 			}
 			result.push(data);
 		}
+		return result;
+	} catch (e) {
+		return { error: e.message };
+	}
+};
+
+
+exports.userNodes = async function (req, res, contract) {
+	try {
+		const { key } = req.headers;
+		if (!key) {
+			throw new Error("Your token is invalid");
+		}
+		const userID = jwt.verify(key, "MySecret");
+		const creatorId = userID.userId;
+		
+		const buffer1 = await contract.submitTransaction('queryByObjectType', "Nodes" );
+		const asset = JSON.parse(buffer1.toString());
+		const result=asset.filter(item => {
+			return item.Record.creatorId === creatorId;
+		})
+		
 		return result;
 	} catch (e) {
 		return { error: e.message };

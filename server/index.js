@@ -1,8 +1,9 @@
-import express, { response } from "express";
+import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
 import { Gateway, Wallets } from "fabric-network";
 import ConnectionProfile from "./ConnectionProfile.json";
+const { v4: uuidv4 } = require('uuid');
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -149,6 +150,10 @@ app.get("/search", async (req, res) => {
   const response = await nodesRoute.search(req, res, contract);
   res.status(200).send(response);
 });
+app.get("/nodes/userNodes", async (req, res) => {
+  const response = await nodesRoute.userNodes(req, res, contract);
+  res.status(200).send(response);
+});
 
 
 // nodesTypes
@@ -217,6 +222,7 @@ app.post("/login", async (req, res) => {
   const response = await usersRoute.login(req, res, contract);
   res.status(200).send(response);
 });
+
 
 // rota para buscar por tipo e id
 app.get("/readByType/:type", async (req, res) => {
