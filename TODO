@@ -2,7 +2,9 @@ FIX:
     Frontend:
         ADMIN:
             ARCS:
-                ☐ adicionar NodesTypes terá de ser noutro step, (permitir que os Acredited-User criem NodeTypes?) @high
+                ☐ adicionar NodesTypes terá de ser noutro step, (permitir que os Acredited-User criem NodeTypes?) @high~
+            Users:
+                ☐ consigo apagar o meu próprio utilizador. Temos de passar contas a inativo e não apagar.
                 
         POLITIC:
             ☐ Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
@@ -13,11 +15,20 @@ FIX:
         Home:
             ☐ apenas apresentar o floatingIcon se o User não estiver logado
 
+        ☐ Ao criar conta crasha
+        FORMS:
+            ☐ ao criar uma mensagem e enviar tem de limpar campos, como está só altera o estado se modificar um campo,
+            ☐ no entanto se continuar a clicar em enviar ele manda multiplos registos sem mexer na mensagem. Suponho que aconteça nos outros formularios também.
+
     BACKEND:
         ☐ Apagar Nodos apenas se os arcos tiverem votos negativos
         ☐ alterar o formato das datas
         ☐ Pensar como fica os formularios para os visitantes
 
+
+
+
+  
 
 
 Archive:

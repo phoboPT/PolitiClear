@@ -16,6 +16,8 @@ const nodesTypesRoute = require("./endpoints/nodesTypesRoute");
 const usersRoute = require("./endpoints/usersRoute");
 const votesRoute = require("./endpoints/votesRoute");
 
+const addData = require("./endpoints/functions/addData");
+
 
 const connectToFabric = async () => {
   const walletPath = path.join(process.cwd(), "wallet/Org1");
@@ -115,6 +117,11 @@ app.delete("/forms/delete", async (req, res) => {
 });
 
 // nodes
+app.post("/nodes/createRandom", async (req, res) => {
+  const response = await addData.addData(req, res, contract);
+  res.status(200).send(response);
+});
+
 app.get("/nodes/key/:key", async (req, res) => {
   const response = await nodesRoute.getByKey(req, res, contract);
   res.status(200).send(response);
