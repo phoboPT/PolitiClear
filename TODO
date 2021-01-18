@@ -1,3 +1,5 @@
+Ao criar conta crasha!
+
 ADMIN
     - RELATIONS
         - buscar Ids
@@ -10,7 +12,6 @@ ACCOUNT
         - buscar Ids
         - Trocar ordem description e idCreator (alterar para userID)
         - buscar Ids
-ACCOUNT
     
 POLITIC
     - Falta alterar próprias relações. (mostrar o mesmo do backend dos arcos mas filtrar a pesquisa)
@@ -20,7 +21,6 @@ GRAPHS
     - Há um problema de ZOOM, quanto mais se clica nos nodos mais pequenos vao ficando
 
 BACKEND
-    - Apagar Nodos apenas se os arcos tiverem votos negativos
     - alterar o formato das datas
     - Pensar como fica os formularios para os visitantes
     
