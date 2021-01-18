@@ -7,9 +7,9 @@ exports.getByKey = async function (req, res, contract) {
     try {
         const response = await contract.submitTransaction('readArcs', req.params.key);
 
-        res.status(200).send(JSON.parse(response));
+        return { data: JSON.parse(response) };
     } catch (e) {
-        res.status(500).json(e.message);
+        return { error: e.message };
     }
 };
 
@@ -64,6 +64,10 @@ exports.updateArcs = async function (req, res, contract) {
             return { error: "Key must be provided!" }
         }
         const { key, description } = req.body;
+        const response = await contract.submitTransaction('readArcs', key);
+        if (JSON.parse(response).totalVotes > 0) { 
+            return {error: 'Arc already have votes!'}
+        }
 
         await contract.submitTransaction('updateArcs', key, description || '', '');
         return { data: "Updated" }
