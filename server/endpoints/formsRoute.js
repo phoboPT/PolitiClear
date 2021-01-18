@@ -25,11 +25,8 @@ exports.createForms = async function (req, res, contract) {
              creatorByDescription = await contract.submitTransaction('readUsers', createdBy.userId);
             creatorByDescription = JSON.parse(creatorByDescription).name;
         }
-        console.log(req.body)
         const key = uuidv4();
         const createdAt = new Date();
-
-
         await contract.submitTransaction('createForms', key, email, message, createdAt, "Open", "", createdBy, creatorByDescription, upgradeRequest);
         return { data: "Created" }
     } catch (e) {
@@ -64,12 +61,10 @@ exports.getFormsOpen = async function (req, res, contract) {
         let data = [];
 
         JSON.parse(response).forEach((arcsData) => {
-            console.log(arcsData.Record.status)
             if (arcsData.Record.status === "Open") {
                 data.push(arcsData);
             }
         });
-        // console.log(JSON.parse(response).data)
         return { data: data };
     } catch (e) {
         return { error: e.message }

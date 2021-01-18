@@ -11,7 +11,7 @@ FIX:
             ☐ Quando há arcos multidirecionais, ao clicar no arco deve mostrar apenas uma direção
         
         Home:
-            ☐ apenas apresentar o floatingIcon se o User não estiver logado apenas
+            ☐ apenas apresentar o floatingIcon se o User não estiver logado
 
     BACKEND:
         ☐ Apagar Nodos apenas se os arcos tiverem votos negativos
