@@ -64,9 +64,17 @@ exports.updateArcs = async function (req, res, contract) {
             return { error: "Key must be provided!" }
         }
         const { key, description } = req.body;
-        const response = await contract.submitTransaction('readArcs', key);
-        if (JSON.parse(response).totalVotes > 0) { 
-            return {error: 'Arc already have votes!'}
+
+        const res = await contract.submitTransaction("queryByObjectType", "Votes");
+        let aux = 0;
+        JSON.parse(res).forEach((votesData) => {
+            if (votesData.Record.arcId === key) {
+                aux = 1;
+                
+            }
+        });
+        if(aux ===1) {
+            return { error: 'Arc already have votes!' };
         }
 
         await contract.submitTransaction('updateArcs', key, description || '', '');
