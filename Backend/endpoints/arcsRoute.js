@@ -63,10 +63,6 @@ exports.updateArcs = async function (req, res, contract) {
             return { error: "Key must be provided!" }
         }
         const creatorId = await dataVerifications.verifyToken(contract, token);
-        // const creatorId = verificationData[0]
-        // if (verificationData[1] !== permissions[0] && verificationData[1] !== permissions[1]) {
-        //     return { error: 'You do not have permissions!' }
-        // }
 
         const creatorIdDescription = JSON.parse(await contract.submitTransaction('readUsers', creatorId)).name;
         const res = await contract.submitTransaction("queryByObjectType", "Votes");
@@ -100,12 +96,13 @@ const deleteOneArc = async (contract, key) => {
 // delete user
 exports.deleteArcs = async function (req, res, contract) {
     try {
-        await dataVerifications.verifyToken(contract, req.headers.token, 'ADMIN');
+        const {key, token} = req.body;
+        await dataVerifications.verifyToken(contract, token, 'ADMIN');
 
-        if (JSON.parse(await contract.submitTransaction('readArcs', req.headers.key)).totalVotes < 1) {
-            const res = await deleteOneArc(contract, req.headers.key)
+        if (JSON.parse(await contract.submitTransaction('readArcs', key)).totalVotes < 1) {
+            const res = await deleteOneArc(contract, key)
             JSON.parse(res[1]).forEach((votesData) => {
-                if (votesData.Record.arcId === req.headers.key) {
+                if (votesData.Record.arcId === key) {
                     contract.submitTransaction('deleteVotes', votesData.Key);
                 }
             });

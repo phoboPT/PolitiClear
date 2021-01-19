@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
+const dataVerifications = require('./functions/dataVerifications');
 // search by key
 exports.getByKey = async (req, res, contract) => {
   try {
@@ -36,7 +37,7 @@ exports.getByName = async (req, res, contract) => {
 // Create user
 exports.createUsers = async (req, res, contract) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, permission = "" } = req.body;
     const user = await contract.submitTransaction("queryByObjectType", "Users");
     // verify if there is already an email
     let users;
@@ -49,12 +50,11 @@ exports.createUsers = async (req, res, contract) => {
     });
     // if exists throw error
     if (users) {
-      return { error:  `The email: ${email} already exist` };
+      return { error: `The email: ${email} already exist` };
     }
     const key = uuidv4();
-    const createdAt = new Date();
     const hashedPassword = await bcrypt.hash(password, 10);
-    await contract.submitTransaction("createUsers", key, name, email, hashedPassword, createdAt);
+    await contract.submitTransaction("createUsers", key, name, email, hashedPassword, permission);
     const token = jwt.sign({ userId: key, }, "MySecret");
     res.token = token;
     return { token };
@@ -66,6 +66,8 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
+    // const {key, token} = req.body;
+    // await dataVerifications.verifyToken(contract, token, 'ADMIN');
     let id = "";
     if (req.body.token) {
 
@@ -90,7 +92,7 @@ exports.updateUsers = async (req, res, contract) => {
       return { data: "Updated" };
     } else {
 
-       await contract.submitTransaction("updateUsers", id, name, "", permission);
+      await contract.submitTransaction("updateUsers", id, name, "", permission);
       return ({ data: "Updated" });
     }
   } catch (e) {
@@ -101,7 +103,9 @@ exports.updateUsers = async (req, res, contract) => {
 // delete user
 exports.deleteUsers = async (req, res, contract) => {
   try {
-    await contract.submitTransaction("deleteUsers", req.headers.key);
+    const { key, token } = req.body;
+    await dataVerifications.verifyToken(contract, token, 'ADMIN');
+    await contract.submitTransaction("deleteUsers", key);
     return { data: "Deleted" };
   } catch (e) {
     return { error: e.message };

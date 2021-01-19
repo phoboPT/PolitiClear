@@ -8,7 +8,7 @@ class Nodes {
         this.creatorIdDescription = creatorIdDescription;
         this.nodeType = nodeType;
         this.nodeTypeDescription = nodeTypeDescription;
-        this.createdAt = createdAt === '' ? new Date() : createdAt;
+        this.createdAt = (createdAt === '' || createdAt === undefined) ? new Date() : createdAt;
         this.updatedAt = '';
         this.updatedBy = ''
         this.type = 'Nodes';

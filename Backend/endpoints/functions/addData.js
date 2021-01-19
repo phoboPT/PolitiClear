@@ -1,16 +1,17 @@
 const { v4: uuidv4 } = require('uuid');
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const dataVerifications = require('./dataVerifications');
 
 exports.addData = async function (req, res, contract) {
     try {
+        await contract.submitTransaction('createUsers', 1, 'Administrator', 'admin@politiclear.pt', await bcrypt.hash('admin', 10), 'ADMIN');
+        await contract.submitTransaction('createUsers', 2, 'Acredited-User', 'acredited@politiclear.pt', await bcrypt.hash('acredited', 10),'ACREDITED-USER');
+        await contract.submitTransaction('createUsers', 3, 'User', 'user@politiclear.pt', await bcrypt.hash('user', 10),'');
+
         const createdAt = new Date();
-        let creatorId;
-        if (req.body.token) {
-            const userID = jwt.verify(req.body.token, "MySecret");
-            creatorId = userID.userId;
-        }
-        let creatorIdDescription = await contract.submitTransaction('readUsers', creatorId);
-        creatorIdDescription = JSON.parse(creatorIdDescription).name;
+        const creatorId = await dataVerifications.verifyToken(contract, req.body.token, 'ADMIN');
+        const creatorIdDescription = JSON.parse(await contract.submitTransaction('readUsers', creatorId)).name;
 
         const nodeType = ['Partido Político', 'Representante Político', 'Politico', 'Função Politica', 'Eventos'];
         const nodeTypeKey = [];
@@ -25,6 +26,8 @@ exports.addData = async function (req, res, contract) {
         const candidatosPresidencia = ['Marcelo Rebelo de Sousa', 'Ana Gomes', 'João Ferreira', 'Marisa Matias', 'Tiago Mayan', 'Vitorino Silva']
         let candidatosPresidenciaKey = [];
 
+        
+        
 
         for (let i = 0; i < nodeType.length; i++) {
             const key = uuidv4();
@@ -34,27 +37,27 @@ exports.addData = async function (req, res, contract) {
         for (let i = 0; i < cargosPoliticos.length; i++) {
             const key = uuidv4();
             cargosPoliticosKey.push(key);
-            await contract.submitTransaction('createNodes', key, cargosPoliticos[i], creatorId, creatorIdDescription, nodeTypeKey[3], nodeType[3], createdAt);
+            await contract.submitTransaction('createNodes', key, cargosPoliticos[i], creatorId, creatorIdDescription, nodeTypeKey[3], nodeType[3]);
         }
 
         // Partidos politicos
         for (let i = 0; i < partidos.length; i++) {
             const key = uuidv4();
             partidosKey.push(key);
-            await contract.submitTransaction('createNodes', key, partidos[i], creatorId, creatorIdDescription, nodeTypeKey[0], nodeType[0], createdAt);
+            await contract.submitTransaction('createNodes', key, partidos[i], creatorId, creatorIdDescription, nodeTypeKey[0], nodeType[0]);
         }
 
         for (let i = 0; i < eventos.length; i++) {
             const key = uuidv4();
             eventosKey.push(key);
-            await contract.submitTransaction('createNodes', key, eventos[i], creatorId, creatorIdDescription, nodeTypeKey[4], nodeType[4], createdAt);
+            await contract.submitTransaction('createNodes', key, eventos[i], creatorId, creatorIdDescription, nodeTypeKey[4], nodeType[4]);
         }
 
         //Representantes Politicos
         for (let i = 0; i < representantesPartidos.length; i++) {
             const key = uuidv4();
             representantesPartidosKey.push(key);
-            await contract.submitTransaction('createNodes', key, representantesPartidos[i], creatorId, creatorIdDescription, nodeTypeKey[1], nodeType[1], createdAt);
+            await contract.submitTransaction('createNodes', key, representantesPartidos[i], creatorId, creatorIdDescription, nodeTypeKey[1], nodeType[1]);
             // await contract.submitTransaction('createArcs', uuidv4(), 'Representante', representantesPartidosKey[i], representantesPartidos[i], partidosKey[i], partidos[i], creatorId, creatorIdDescription, createdAt, 0);
         }
 
@@ -62,7 +65,7 @@ exports.addData = async function (req, res, contract) {
         for (let i = 0; i < candidatosPresidencia.length; i++) {
             const key = uuidv4();
             candidatosPresidenciaKey.push(key);
-            await contract.submitTransaction('createNodes', key, candidatosPresidencia[i], creatorId, creatorIdDescription, nodeTypeKey[2], nodeType[2], createdAt);
+            await contract.submitTransaction('createNodes', key, candidatosPresidencia[i], creatorId, creatorIdDescription, nodeTypeKey[2], nodeType[2]);
             // await contract.submitTransaction('createArcs', uuidv4(), 'Candidato', candidatosPresidenciaKey[i], candidatosPresidencia[i], cargosPoliticosKey[0], cargosPoliticos[0], creatorId, creatorIdDescription, createdAt, 0);
         }
 

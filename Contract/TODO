@@ -25,6 +25,9 @@ FIX:
         ☐ alterar o formato das datas
         ☐ Pensar como fica os formularios para os visitantes
 
+        ALTERAR o parametro createdAT, verificar se é undefined e nao passar nada
+        Quando faz update a um nodo tem de atualizar os arcos
+
 
 
 
