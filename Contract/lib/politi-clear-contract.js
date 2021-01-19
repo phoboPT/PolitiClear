@@ -16,8 +16,18 @@ class PolitiClearContract extends Contract {
   }
 
   //ARCS
-  async createArcs(ctx, key, description, initialNode, initialNodeDescription, finalNode, finalNodeDescription, creatorId, creatorIdDescription, createdAt, totalVotes) {
-    const asset = new Arcs(description, initialNode, initialNodeDescription, finalNode, finalNodeDescription, creatorId, creatorIdDescription, createdAt, totalVotes);
+  async createArcs(ctx, key, description,
+    initialNode, initialNodeDescription, initialNodeCreatorId, initialNodeCreatorIdDescription,
+    initialNodeNodeType, initialNodeNodeTypeDescription, initialNodeCreatedAt, initialNodeUpdatedAt,
+    finalNode, finalNodeDescription, finalNodeCreatorId, finalNodeCreatorIdDescription,
+    finalNodeNodeType, finalNodeNodeTypeDescription, finalNodeCreatedAt, finalNodeUpdatedAt,
+    creatorId, creatorIdDescription, totalVotes) {
+
+    const asset = new Arcs(description, initialNode, initialNodeDescription, initialNodeCreatorId, initialNodeCreatorIdDescription,
+      initialNodeNodeType, initialNodeNodeTypeDescription, initialNodeCreatedAt, initialNodeUpdatedAt,
+      finalNode, finalNodeDescription, finalNodeCreatorId, finalNodeCreatorIdDescription,
+      finalNodeNodeType, finalNodeNodeTypeDescription, finalNodeCreatedAt, finalNodeUpdatedAt,
+      creatorId, creatorIdDescription, '', totalVotes);
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
     return JSON.parse(buffer.toString());
@@ -39,7 +49,7 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async updateArcs(ctx, key, description, totalVotes) {
+  async updateArcs(ctx, key, description, totalVotes, updatedBy, updatedByDescription) {
     if (!(await this.dataExists(ctx, key, "Arcs"))) {
       throw new Error(`Error! The arc ${key} does not exist`);
     }
@@ -47,10 +57,14 @@ class PolitiClearContract extends Contract {
     const asset = JSON.parse(buffer1.toString());
 
     const arcUpdated = new Arcs(
-      asset.description, asset.initialNode, asset.initialNodeDescription, asset.finalNode,
-      asset.finalNodeDescription, asset.creatorId, asset.creatorIdDescription, asset.createdAt, asset.totalVotes);
+      asset.description, asset.initialNode, asset.initialNodeDescription,
+      asset.initialNodeCreatorId, asset.initialNodeCreatorIdDescription,
+      asset.initialNodeNodeType, asset.initialNodeNodeTypeDescription, asset.initialNodeCreatedAt, asset.initialNodeUpdatedAt,
+      asset.finalNode, asset.finalNodeDescription, asset.finalNodeCreatorId, asset.finalNodeCreatorIdDescription,
+      asset.finalNodeNodeType, asset.finalNodeNodeTypeDescription, asset.finalNodeCreatedAt, asset.finalNodeUpdatedAt,
+      asset.creatorId, asset.creatorIdDescription, asset.createdAt, asset.totalVotes);
 
-    arcUpdated.updateArcs(description, totalVotes);
+    arcUpdated.updateArcs(description, totalVotes, updatedBy, updatedByDescription);
     const buffer = Buffer.from(JSON.stringify(arcUpdated));
     await ctx.stub.putState(key, buffer);
   }
@@ -64,7 +78,7 @@ class PolitiClearContract extends Contract {
 
   //FORMS
   async createForms(ctx, key, email, message, createdAt, status, response, createdBy, creatorByDescription, upgradeRequest) {
-    
+
     const asset = new Forms(email, message, createdAt, status, response, createdBy, creatorByDescription, upgradeRequest);
 
 
