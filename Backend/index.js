@@ -153,6 +153,11 @@ app.get("/nodes/userNodes", async (req, res) => {
   res.status(200).send(response);
 });
 
+app.get("/nodes/getRelations/", async (req, res) => {
+  const response = await nodesRoute.getRelations(req, res, contract);
+  res.status(200).send(response);
+});
+
 
 // nodesTypes
 app.get("/nodesTypes/key/:key", async (req, res) => {

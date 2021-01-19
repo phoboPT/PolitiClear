@@ -15,11 +15,17 @@ exports.getByKey = async function (req, res, contract) {
 exports.createNodesTypes = async function (req, res, contract) {
     try {
         const { name } = req.body
-        await dataVerifications.verifyNameAlreadyExists(name, 'NodesTypes', contract);
+        
 
         const key = uuidv4();
         const createdAt = new Date();
-        await contract.submitTransaction('createNodesTypes', key, name, createdAt);
+
+        const payload = {
+            key,name,createdAt
+        }
+
+
+        await contract.submitTransaction('createNodesTypes', payload);
         return { data: "Created" };
     } catch (e) {
         return { error: e.message };

@@ -7,6 +7,7 @@ const Nodes = require("./Nodes");
 const NodesTypes = require("./NodesTypes");
 const Users = require("./Users");
 const Votes = require("./Votes");
+const dataVerifications = require("./functions/dataVerifications");
 
 class PolitiClearContract extends Contract {
   async dataExists(ctx, key, type) {
@@ -153,7 +154,11 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async createNodesTypes(ctx, key, name, createdAt) {
+  async createNodesTypes(ctx, payload) {
+    const { key, name, createdAt } = payload;
+
+    await dataVerifications.verifyNameAlreadyExists(name, 'NodesTypes', ctx);
+
     const asset = new NodesTypes(name, createdAt);
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
@@ -250,7 +255,6 @@ class PolitiClearContract extends Contract {
   };
 
   async searchNodes(ctx, query) {
-    console.log("querySearch", query);
     return this.searchNodesAux(ctx, query);
 
   }
@@ -271,7 +275,6 @@ class PolitiClearContract extends Contract {
   /* ------------------------------------------------ */
 
   async queryWithQueryString(ctx, queryString) {
-    console.log(JSON.stringify(queryString));
 
     const resultsIterator = await ctx.stub.getQueryResult(queryString);
     const allResults = [];
@@ -283,14 +286,12 @@ class PolitiClearContract extends Contract {
       if (res.value && res.value.value.toString()) {
         let jsonRes = {};
 
-        console.log(res.value.value.toString("utf8"));
 
         jsonRes.Key = res.value.key;
 
         try {
           jsonRes.Record = JSON.parse(res.value.value.toString("utf8"));
         } catch (err) {
-          console.log(err);
           jsonRes.Record = res.value.value.toString("utf8");
         }
 
@@ -298,8 +299,6 @@ class PolitiClearContract extends Contract {
       }
       if (res.done) {
         await resultsIterator.close();
-        console.info(allResults);
-        console.log(JSON.stringify(allResults));
         return JSON.stringify(allResults);
       }
     }
