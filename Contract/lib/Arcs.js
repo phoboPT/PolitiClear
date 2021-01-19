@@ -28,7 +28,7 @@ class Arcs {
 
         this.creatorId = creatorId;
         this.creatorIdDescription = creatorIdDescription;
-        this.createdAt = createdAt===''? new Date():createdAt;
+        this.createdAt = createdAt === '' ? new Date() : createdAt;
         this.totalVotes = parseInt(totalVotes);
         this.updatedAt = '';
         this.updatedBy = '';
