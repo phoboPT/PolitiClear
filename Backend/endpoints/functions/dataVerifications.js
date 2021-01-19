@@ -1,5 +1,6 @@
 //verificar se existem keys antes de inserir
 const jwt = require("jsonwebtoken");
+const { permissions } = require('./permissions')
 
 exports.verifyKeyExists = async function (key, dataType, contract) {
     const query = await contract.submitTransaction("queryByObjectType", dataType);
@@ -29,9 +30,17 @@ exports.verifyNameAlreadyExists = async function (name, dataType, contract) {
     return data;
 }
 
-exports.verifyToken = async function(token) {
+exports.verifyToken = async function (contract, token, admin) {
     if (token) {
         const userID = jwt.verify(token, "MySecret");
+        const permission = JSON.parse(await contract.submitTransaction("readUsers", userID.userId)).permission;
+
+        if(admin==='ADMIN' && permission !== permissions[0]) {
+            throw new Error('Error! You do not have administrator permissions!');
+        }
+        if (permission !== permissions[0] && permission !== permissions[1]) {
+            throw new Error('Error! You do not have permissions!');
+        }
         return userID.userId;
     }
     throw new Error('Error! Invalid or null Token');

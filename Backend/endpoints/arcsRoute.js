@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const dataVerifications = require('./functions/dataVerifications');
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");;
 
 // search by key
 exports.getByKey = async function (req, res, contract) {
@@ -32,8 +32,9 @@ const getNodesDescription = async (contract, initialNode, finalNode, creatorId) 
 // create new form
 exports.createArcs = async function (req, res, contract) {
     try {
-        const { description, initialNode, finalNode,token="" } = req.body;
-        const creatorId = await dataVerifications.verifyToken(token);
+        const { description, initialNode, finalNode, token = "" } = req.body;
+        const creatorId = await dataVerifications.verifyToken(contract, token);
+
         await verify(contract, req.body);
         const key = uuidv4();
 
@@ -44,9 +45,9 @@ exports.createArcs = async function (req, res, contract) {
         const creatorIdInfo = JSON.parse(nodesData[2]);
 
         await contract.submitTransaction('createArcs', key, description,
-            initialNode, initialNodeInfo.description, initialNodeInfo.creatorId, initialNodeInfo.creatorIdDescription, 
+            initialNode, initialNodeInfo.description, initialNodeInfo.creatorId, initialNodeInfo.creatorIdDescription,
             initialNodeInfo.nodeType, initialNodeInfo.nodeTypeDescription, initialNodeInfo.createdAt, initialNodeInfo.updatedAt,
-            finalNode, finalNodeInfo.description, finalNodeInfo.creatorId, finalNodeInfo.creatorIdDescription, 
+            finalNode, finalNodeInfo.description, finalNodeInfo.creatorId, finalNodeInfo.creatorIdDescription,
             finalNodeInfo.nodeType, finalNodeInfo.nodeTypeDescription, finalNodeInfo.createdAt, finalNodeInfo.updatedAt,
             creatorId, creatorIdInfo.name, 0);
         return { data: "Created" }
@@ -57,13 +58,17 @@ exports.createArcs = async function (req, res, contract) {
 
 exports.updateArcs = async function (req, res, contract) {
     try {
-        const { key, description, token} = req.body;
+        const { key, description, token } = req.body;
         if (key === "" || key === undefined) {
             return { error: "Key must be provided!" }
         }
-        const creatorId = await dataVerifications.verifyToken(token);
+        const creatorId = await dataVerifications.verifyToken(contract, token);
+        // const creatorId = verificationData[0]
+        // if (verificationData[1] !== permissions[0] && verificationData[1] !== permissions[1]) {
+        //     return { error: 'You do not have permissions!' }
+        // }
+
         const creatorIdDescription = JSON.parse(await contract.submitTransaction('readUsers', creatorId)).name;
-        console.log(creatorIdDescription);
         const res = await contract.submitTransaction("queryByObjectType", "Votes");
         let aux = 0;
         JSON.parse(res).forEach((votesData) => {
@@ -95,6 +100,8 @@ const deleteOneArc = async (contract, key) => {
 // delete user
 exports.deleteArcs = async function (req, res, contract) {
     try {
+        await dataVerifications.verifyToken(contract, req.headers.token, 'ADMIN');
+
         if (JSON.parse(await contract.submitTransaction('readArcs', req.headers.key)).totalVotes < 1) {
             const res = await deleteOneArc(contract, req.headers.key)
             JSON.parse(res[1]).forEach((votesData) => {
