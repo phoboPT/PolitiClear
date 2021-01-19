@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import Form from "../styles/Form";
-import Error from "../ErrorMessage";
-import SuccessMessage from "../styles/SuccessMessage";
-import { sendRequest, getData } from "../../lib/requests";
-import SickButton from "../styles/SickButton";
-import styled from "styled-components";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Form from '../styles/Form';
+import Error from '../ErrorMessage';
+import SuccessMessage from '../styles/SuccessMessage';
+import { sendRequest, getData } from '../../lib/requests';
+import SickButton from '../styles/SickButton';
 
 const ButtonDiv = styled.div`
   button {
@@ -18,8 +18,8 @@ class EditArcs extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: "",
-      error: "",
+      data: '',
+      error: '',
     };
   }
 
@@ -35,21 +35,25 @@ class EditArcs extends Component {
       nodeType: this.state.nodeType,
     };
     const res = await sendRequest(
-      "PUT",
-      "http://127.0.0.1:5000/arcs/update",
-      data
+      'PUT',
+      'http://127.0.0.1:5000/arcs/update',
+      data,
     );
-    this.setState({ data: res.data.data, error: "", loading: false });
+    this.setState({ data: res.data.data, error: '', loading: false });
     this.hideTimeout = setTimeout(
       () => this.setState({ data: null, error: null, loading: false }),
-      3000
+      3000,
     );
 
     if (res.data.error) {
-      this.setState({ error: res.data.error || "", data: "", loading: false });
+      this.setState({ error: res.data.error || '', data: '', loading: false });
     }
     this.props.refetch();
   };
+
+  componentWillUnmount() {
+    clearTimeout(this.hideTimeout);
+  }
 
   render() {
     const { description } = this.props.data.Record;
@@ -76,7 +80,7 @@ class EditArcs extends Component {
             </SickButton>
 
             <SickButton type="button" onClick={this.props.changeForm}>
-              Sav{loading ? "ing" : "e"}
+              Sav{loading ? 'ing' : 'e'}
             </SickButton>
           </ButtonDiv>
         </fieldset>

@@ -7,11 +7,14 @@ const Nodes = require("./Nodes");
 const NodesTypes = require("./NodesTypes");
 const Users = require("./Users");
 const Votes = require("./Votes");
-const dataVerifications = require("./functions/dataVerifications");
 class PolitiClearContract extends Contract {
   async dataExists(ctx, key, type) {
     const buffer = await ctx.stub.getState(key);
-    return (!!buffer && buffer.length > 0 && JSON.parse(buffer.toString()).type === type);
+    return (
+      !!buffer &&
+      buffer.length > 0 &&
+      JSON.parse(buffer.toString()).type === type
+    );
   }
 
   //ARCS
@@ -42,13 +45,19 @@ class PolitiClearContract extends Contract {
   }
 
   async getByKey(ctx, key) {
-
     const buffer = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer.toString());
     return asset;
   }
 
-  async updateArcs(ctx, key, description, totalVotes, updatedBy, updatedByDescription) {
+  async updateArcs(
+    ctx,
+    key,
+    description,
+    totalVotes,
+    updatedBy,
+    updatedByDescription
+  ) {
     if (!(await this.dataExists(ctx, key, "Arcs"))) {
       throw new Error(`Error! The arc ${key} does not exist`);
     }
@@ -76,10 +85,28 @@ class PolitiClearContract extends Contract {
   }
 
   //FORMS
-  async createForms(ctx, key, email, message, createdAt, status, response, createdBy, creatorByDescription, upgradeRequest) {
-
-    const asset = new Forms(email, message, createdAt, status, response, createdBy, creatorByDescription, upgradeRequest);
-
+  async createForms(
+    ctx,
+    key,
+    email,
+    message,
+    createdAt,
+    status,
+    response,
+    createdBy,
+    creatorByDescription,
+    upgradeRequest
+  ) {
+    const asset = new Forms(
+      email,
+      message,
+      createdAt,
+      status,
+      response,
+      createdBy,
+      creatorByDescription,
+      upgradeRequest
+    );
 
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
@@ -96,13 +123,20 @@ class PolitiClearContract extends Contract {
   }
 
   async updateForms(ctx, key, status, response) {
-
     if (!(await this.dataExists(ctx, key, "Forms"))) {
       throw new Error(`Error! The forms Id ${key} does not exist`);
     }
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
-    const formUpdated = new Forms(asset.email, asset.message, asset.createdAt, asset.status, asset.response, asset.createdBy, asset.creatorByDescription);
+    const formUpdated = new Forms(
+      asset.email,
+      asset.message,
+      asset.createdAt,
+      asset.status,
+      asset.response,
+      asset.createdBy,
+      asset.creatorByDescription
+    );
     formUpdated.updateForms(status, response);
     const buffer = Buffer.from(JSON.stringify(formUpdated));
     await ctx.stub.putState(key, buffer);
@@ -168,14 +202,11 @@ class PolitiClearContract extends Contract {
   }
 
   async createNodesTypes(ctx, key, name, createdAt) {
-
-
     const query = await this.verifyNameAlreadyExists(ctx, name, "NodesTypes");
 
     if (query) {
       return { error: `Error! The NodesTypes ${name} already exists` }
     }
-    // const data=await dataVerifications.verifyNameAlreadyExists(name, query);0
 
     const asset = new NodesTypes(name, createdAt);
     const buffer = Buffer.from(JSON.stringify(asset));
@@ -270,12 +301,11 @@ class PolitiClearContract extends Contract {
         return allNodes;
       }
     }
-  };
+  }
 
   async searchNodes(ctx, query) {
     console.log("querySearch", query);
     return this.searchNodesAux(ctx, query);
-
   }
 
   async queryByObjectType(ctx, objectType) {
@@ -296,7 +326,6 @@ class PolitiClearContract extends Contract {
   /* ------------------------------------------------ */
 
   async queryWithQueryString(ctx, queryString) {
-
     const resultsIterator = await ctx.stub.getQueryResult(queryString);
     const allResults = [];
 
@@ -306,7 +335,6 @@ class PolitiClearContract extends Contract {
 
       if (res.value && res.value.value.toString()) {
         let jsonRes = {};
-
 
         jsonRes.Key = res.value.key;
 

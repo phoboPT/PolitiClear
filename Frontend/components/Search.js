@@ -1,19 +1,20 @@
-import Downshift, { resetIdCounter } from "downshift";
-import debounce from "lodash.debounce";
-import React from "react";
-import { Graph } from "react-d3-graph";
-import styled from "styled-components";
-import { searchNodes, search, sendRequest } from "../lib/requests";
-import { DropDown, DropDownItem, SearchStyles } from "./styles/DropDown";
-import Table from "./styles/Table";
-import Cookies from "js-cookie";
-import formatString from "../lib/formatString";
-import ToolTip from "./styles/ToolTip";
-import Error from "./ErrorMessage";
-import SuccessMessage from "./styles/SuccessMessage";
-import FloatingIcon from "./styles/FloatingIcon";
-import swal from "@sweetalert/with-react";
-import HelpForm from "./HelpForm";
+import Downshift, { resetIdCounter } from 'downshift';
+import debounce from 'lodash.debounce';
+import React from 'react';
+import { Graph } from 'react-d3-graph';
+import styled from 'styled-components';
+import Cookies from 'js-cookie';
+import swal from '@sweetalert/with-react';
+import { searchNodes, search, sendRequest } from '../lib/requests';
+import { DropDown, DropDownItem, SearchStyles } from './styles/DropDown';
+import Table from './styles/Table';
+import formatString from '../lib/formatString';
+import ToolTip from './styles/ToolTip';
+import Error from './ErrorMessage';
+import SuccessMessage from './styles/SuccessMessage';
+import FloatingIcon from './styles/FloatingIcon';
+import HelpForm from './HelpForm';
+import formatDate from '../lib/formatDate';
 
 const TreeWrapper = styled.div`
   #graph-id-graph-wrapper {
@@ -77,32 +78,32 @@ const myConfig = {
     disableLinkForce: false,
   },
   node: {
-    color: "lightgreen",
-    highlightStrokeColor: "blue",
-    labelProperty: "id",
-    mouseCursor: "pointer",
+    color: 'lightgreen',
+    highlightStrokeColor: 'blue',
+    labelProperty: 'id',
+    mouseCursor: 'pointer',
     opacity: 1,
     fontSize: 12,
-    fontWeight: "normal",
+    fontWeight: 'normal',
     highlightFontSize: 12,
-    highlightFontWeight: "bold",
+    highlightFontWeight: 'bold',
     highlightStrokeWidth: 1.5,
-    mouseCursor: "pointer",
+    mouseCursor: 'pointer',
     opacity: 1,
     renderLabel: true,
     size: 450,
-    strokeColor: "none",
+    strokeColor: 'none',
     strokeWidth: 1.5,
-    symbolType: "circle",
+    symbolType: 'circle',
   },
   link: {
-    highlightColor: "lightblue",
+    highlightColor: 'lightblue',
     fontSize: 10,
     strokeLinecap: '"round"',
-    fontWeight: "normal",
+    fontWeight: 'normal',
     highlightFontSize: 8,
-    highlightFontWeight: "bold",
-    mouseCursor: "pointer",
+    highlightFontWeight: 'bold',
+    mouseCursor: 'pointer',
     opacity: 1,
     renderLabel: false,
     semanticStrokeWidth: false,
@@ -111,7 +112,7 @@ const myConfig = {
     markerWidth: 6,
     strokeDasharray: 0,
     strokeDashoffset: 0,
-    type: "CURVE_SMOOTH",
+    type: 'CURVE_SMOOTH',
   },
 };
 
@@ -123,14 +124,65 @@ class Search extends React.Component {
       show: false,
       data: null,
       nodes: [],
-      voted: { arcId: "", vote: 0 },
+      voted: { arcId: '', vote: 0 },
     };
   }
+
+  populate = async (item) => {
+    this.setState({ loading: true, key: item.Key, data: null });
+    const relations = await searchNodes(
+      'http://localhost:5000/searchNodes',
+      item.Key,
+    );
+    if (relations.data.data.length > 0) {
+      let graph = {
+        nodes: [],
+
+        links: [],
+      };
+      relations.data.data.forEach((relation) => {
+        graph.nodes.push({
+          id: relation.finalNode.Record.description,
+          arc: relation.arc,
+          keyNode: relation.arc.Record.finalNode,
+          arcId: relation.arc.Key,
+        });
+        graph.nodes.push({
+          id: relation.initialNode.Record.description,
+          arc: relation.arc,
+          keyNode: relation.arc.Record.initialNode,
+          arcId: relation.arc.Key,
+        });
+
+        graph.links.push({
+          source: relation.initialNode.Record.description,
+          target: relation.finalNode.Record.description,
+        });
+      });
+
+      graph = {
+        ...graph,
+      };
+      this.setState({
+        show: true,
+        loading: false,
+        message: null,
+        data: { ...graph },
+      });
+    } else {
+      this.setState({
+        show: false,
+        loading: false,
+        message: 'The politician don´t exist or don´t have any relation',
+      });
+    }
+  };
+
   // populate = async (item) => {
   //   this.setState({ loading: true, key: item.Key, data: null });
   //   const user = await searchNodes(
-  //     "http://localhost:5000/nodes/getRelations",
-  //     item.Key
+  //     'http://localhost:5000/nodes/getRelations',
+  //     item.Key,
   //   );
   //   console.log(user);
 
@@ -141,7 +193,7 @@ class Search extends React.Component {
   //       links: [],
   //     };
   //     for (let i = 0; i < user.data.nodes.length; i++) {
-  //       console.log(user.data.nodes[i])
+  //       console.log(user.data.nodes[i]);
   //       graph.nodes.push({
   //         id: user.data.nodes[i].Record.description,
   //         keyNode: user.data.nodes[i].Key,
@@ -171,63 +223,10 @@ class Search extends React.Component {
   //     this.setState({
   //       show: false,
   //       loading: false,
-  //       message: "The politician don´t exist or don´t have any relation",
+  //       message: 'The politician don´t exist or don´t have any relation',
   //     });
   //   }
   // };
-
-  populate = async (item) => {
-    this.setState({ loading: true, key: item.Key, data: null });
-    const user = await searchNodes(
-      "http://localhost:5000/searchNodes",
-      item.Key
-    );
-    console.log(user);
-    if (user.data.length > 0) {
-      let graph = {
-        nodes: [],
-
-        links: [],
-      };
-      for (let i = 0; i < user.data.length; i++) {
-        if (user.data[i].arc.finalNode !== user.data[i].arc.initialNode) {
-          graph.nodes.push({
-            id: user.data[i].initial.description,
-            keyNode: user.data[i].arc.initialNode,
-            arc: user.data[i],
-            arcId: user.data[i].arcId,
-          });
-
-          graph.nodes.push({
-            id: user.data[i].final.description,
-            arc: user.data[i],
-            keyNode: user.data[i].arc.finalNode,
-            arcId: user.data[i].arcId,
-          });
-
-          graph.links.push({
-            source: user.data[i].initial.description,
-            target: user.data[i].final.description,
-          });
-        }
-      }
-      graph = {
-        ...graph,
-      };
-      this.setState({
-        show: true,
-        loading: false,
-        message: null,
-        data: { ...graph },
-      });
-    } else {
-      this.setState({
-        show: false,
-        loading: false,
-        message: "The politician don´t exist or don´t have any relation",
-      });
-    }
-  };
 
   onChange = debounce(async () => {
     // turn loading on
@@ -239,17 +238,17 @@ class Search extends React.Component {
     const nodes = {};
     this.state.data.nodes.map((item) => {
       if (
-        (item.arc.final.description === source ||
-          item.arc.final.description === target) &&
-        (item.arc.initial.description === source ||
-          item.arc.initial.description === target)
+        (item.arc.Record.finalNodeDescription === source ||
+          item.arc.Record.finalNodeDescription === target) &&
+        (item.arc.Record.initialNodeDescription === source ||
+          item.arc.Record.initialNodeDescription === target)
       ) {
-        if (!nodes[item.arc.arc.description]) {
-          nodes[item.arc.arc.description] = {
-            arc: item.arc.arc,
-            from: item.arc.initial.description,
-            to: item.arc.final.description,
-            arcId: item.arcId,
+        if (!nodes[item.arc.Record.description]) {
+          nodes[item.arc.Record.description] = {
+            arc: item.arc.Record,
+            from: item.arc.Record.initialNodeDescription,
+            to: item.arc.Record.finalNodeDescription,
+            arcId: item.arc.Key,
           };
         }
       }
@@ -270,16 +269,17 @@ class Search extends React.Component {
     };
     this.populate(item);
   };
+
   fetch = async () => {
     const data = await search(
-      "http://127.0.0.1:5000/search",
-      this.state.search
+      'http://127.0.0.1:5000/search',
+      this.state.search,
     );
     this.setState({ nodes: data.data, loading: false });
   };
 
   vote = async (id, isUpvote) => {
-    const token = Cookies.get("token");
+    const token = Cookies.get('token');
     const data = {
       token,
       arcId: id,
@@ -287,15 +287,15 @@ class Search extends React.Component {
     };
 
     const res = await sendRequest(
-      "POST",
-      "http://127.0.0.1:5000/votes/create",
-      data
+      'POST',
+      'http://127.0.0.1:5000/votes/create',
+      data,
     );
     this.hideTimeout = setTimeout(
       () => this.setState({ error: null, data2: null }),
-      3000
+      3000,
     );
-    if (res.data.data === "Created") {
+    if (res.data.data === 'Created') {
       this.setState({
         voted: { arcId: id, vote: isUpvote ? 1 : -1 },
         data2: res.data.data,
@@ -305,6 +305,7 @@ class Search extends React.Component {
       this.setState({ error: res.data.error });
     }
   };
+
   componentWillUnmount() {
     clearTimeout(this.hideTimeout);
   }
@@ -316,8 +317,8 @@ class Search extends React.Component {
 
   openForm = () => {
     swal({
-      width: "1800px",
-      height: "600px",
+      width: '1800px',
+      height: '600px',
       buttons: false,
       content: <HelpForm></HelpForm>,
     }).then;
@@ -325,7 +326,6 @@ class Search extends React.Component {
 
   render() {
     const { loading, nodes, data } = this.state;
-    console.log(this.state.nodesInfo);
     resetIdCounter();
     return (
       <>
@@ -333,7 +333,7 @@ class Search extends React.Component {
           <Downshift
             onChange={this.populate}
             itemToString={(item) =>
-              item === null ? "" : item.Record.description
+              item === null ? '' : item.Record.description
             }
           >
             {({
@@ -346,10 +346,10 @@ class Search extends React.Component {
               <div>
                 <input
                   {...getInputProps({
-                    type: "search",
-                    name: "search",
-                    placeholder: "Search",
-                    className: this.state.loading ? "loading" : "",
+                    type: 'search',
+                    name: 'search',
+                    placeholder: 'Search',
+                    className: this.state.loading ? 'loading' : '',
                     onChange: (e) => {
                       this.saveToState(e);
                     },
@@ -416,10 +416,10 @@ class Search extends React.Component {
                     <thead>
                       <tr>
                         <th>From:</th>
-                        <th>Description:</th>
+
+                        <th>Relation:</th>
                         <th>To:</th>
-                        <th>Description:</th>
-                        <th>Description:</th>
+
                         <th>Created At:</th>
                         <th>Total Votes:</th>
                         <th>Vote:</th>
@@ -427,6 +427,10 @@ class Search extends React.Component {
                     </thead>
                     <tbody>
                       {this.state.nodesInfo.map((item, index) => {
+                        const createdAt = new Date(
+                          item.arc.createdAt,
+                        ).toISOString();
+
                         return (
                           <tr key={item.arcId + index}>
                             <td>
@@ -435,47 +439,7 @@ class Search extends React.Component {
                                   className="tooltip fade"
                                   data-title={item.from}
                                 >
-                                  <p>{formatString(item.from || "", 20)}</p>
-                                </li>
-                              </ToolTip>
-                            </td>
-                            <td>
-                              <ToolTip>
-                                <li
-                                  className="tooltip fade"
-                                  data-title={item.from}
-                                >
-                                  <p>
-                                    {formatString(
-                                      item.arc.initialNodeDescription || "",
-                                      20
-                                    )}
-                                  </p>
-                                </li>
-                              </ToolTip>
-                            </td>
-                            <td>
-                              <ToolTip>
-                                <li
-                                  className="tooltip fade"
-                                  data-title={item.to}
-                                >
-                                  <p>{formatString(item.to || "", 20)}</p>
-                                </li>
-                              </ToolTip>
-                            </td>
-                            <td>
-                              <ToolTip>
-                                <li
-                                  className="tooltip fade"
-                                  data-title={item.from}
-                                >
-                                  <p>
-                                    {formatString(
-                                      item.arc.finalNodeDescription || "",
-                                      20
-                                    )}
-                                  </p>
+                                  <p>{formatString(item.from || '', 20)}</p>
                                 </li>
                               </ToolTip>
                             </td>
@@ -487,8 +451,8 @@ class Search extends React.Component {
                                 >
                                   <p>
                                     {formatString(
-                                      item.arc.description || "",
-                                      20
+                                      item.arc.description || '',
+                                      20,
                                     )}
                                   </p>
                                 </li>
@@ -498,14 +462,14 @@ class Search extends React.Component {
                               <ToolTip>
                                 <li
                                   className="tooltip fade"
-                                  data-title={item.arc.createdAt}
+                                  data-title={item.to}
                                 >
-                                  <p>
-                                    {formatString(item.arc.createdAt || "", 20)}
-                                  </p>
+                                  <p>{formatString(item.to || '', 20)}</p>
                                 </li>
                               </ToolTip>
                             </td>
+
+                            <td>{formatDate(createdAt)}</td>
                             {item.arcId === this.state.voted.arcId ? (
                               <td>
                                 {item.arc.totalVotes + this.state.voted.vote}

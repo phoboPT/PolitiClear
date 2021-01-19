@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import Form from "../styles/Form";
-import Error from "../ErrorMessage";
-import SuccessMessage from "../styles/SuccessMessage";
-import { sendRequest } from "../../lib/requests";
-import SickButton from "../styles/SickButton";
-import styled from "styled-components";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Form from '../styles/Form';
+import Error from '../ErrorMessage';
+import SuccessMessage from '../styles/SuccessMessage';
+import { sendRequest } from '../../lib/requests';
+import SickButton from '../styles/SickButton';
 const ButtonDiv = styled.div`
   button {
     margin: 0 auto;
@@ -17,22 +17,24 @@ class EditForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: "",
+      data: '',
       certify: false,
-      status: false,
-      error: "",
+      error: '',
     };
   }
 
   saveToState = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
+
   changeStatus = (e, status) => {
     this.setState({ status: !this.state.status });
   };
+
   changeCertify = (e) => {
     this.setState({ certify: !this.state.certify });
   };
+
   saveForm = async () => {
     this.setState({ loading: true });
     const data = {
@@ -40,21 +42,21 @@ class EditForm extends Component {
       message: this.state.message,
       response: this.state.response,
       key: this.props.data.Key,
-      status: this.state.status ? "Closed" : "Open",
+      status: 'Closed',
     };
     const res = await sendRequest(
-      "PUT",
-      "http://127.0.0.1:5000/forms/update",
-      data
+      'PUT',
+      'http://127.0.0.1:5000/forms/update',
+      data,
     );
-    this.setState({ data: res.data.data, error: "", loading: false });
+    this.setState({ data: res.data.data, error: '', loading: false });
     this.hideTimeout = setTimeout(
-      () => this.setState({ data: null, error: null, loading: false }),
-      3000
+      () => this.setState({ data: null, error: null }),
+      3000,
     );
 
     if (res.data.error) {
-      this.setState({ error: res.data.error || "", data: "", loading: false });
+      this.setState({ error: res.data.error || '', data: '' });
     }
     this.props.refetch();
   };
@@ -63,25 +65,29 @@ class EditForm extends Component {
     this.setState({ loading: true });
     const data = {
       key: this.props.data.Record.createdBy,
-      permission: this.state.certify ? "ACREDITED-USER" : "",
+      permission: this.state.certify ? 'ACREDITED-USER' : '',
     };
-    console.log(data);
     const res = await sendRequest(
-      "PUT",
-      "http://127.0.0.1:5000/users/update",
-      data
+      'PUT',
+      'http://127.0.0.1:5000/users/update',
+      data,
     );
-    this.setState({ data: res.data.data, error: "", loading: false });
+    this.setState({ data: res.data.data, error: '', loading: false });
     this.hideTimeout = setTimeout(
       () => this.setState({ data: null, error: null, loading: false }),
-      3000
+      3000,
     );
 
     if (res.data.error) {
-      this.setState({ error: res.data.error || "", data: "", loading: false });
+      this.setState({ error: res.data.error || '', data: '', loading: false });
     }
     this.props.refetch();
   };
+
+  componentWillUnmount() {
+    clearTimeout(this.hideTimeout);
+  }
+
   componentDidMount() {
     const { email, message, status, response } = this.props.data.Record;
     this.setState({
@@ -89,20 +95,20 @@ class EditForm extends Component {
       message,
       response,
       key: this.props.data.Key,
-      status: status === "Open" ? true : false,
+      status: status === 'Open',
     });
   }
 
   render() {
-    const { email, message, status } = this.props.data.Record;
-    const { loading } = this.state;
+    const { email, message } = this.props.data.Record;
+    const { loading, certify } = this.state;
     return (
       <Form>
         <fieldset disabled={loading} aria-busy={loading}>
           <h2>Respond to the form</h2>
           <Error error={this.state.error} />
           <SuccessMessage message={this.state.data} />
-          {this.props.data.Record.upgradeRequest && (
+          {this.props.data.Record.upgradeRequest === 'true' && (
             <>
               <label htmlFor="email">
                 Email
@@ -145,20 +151,10 @@ class EditForm extends Component {
                   onChange={this.changeCertify}
                 />
               </label>
-              <label htmlFor="status">
-                Status
-                <input
-                  type="checkbox"
-                  name={status}
-                  placeholder="status"
-                  defaultValue={status === "Open" ? true : false}
-                  onChange={(e) => this.changeStatus(e, status)}
-                />
-              </label>
             </>
           )}
 
-          {!this.props.data.Record.upgradeRequest && (
+          {this.props.data.Record.upgradeRequest === 'false' && (
             <>
               <label htmlFor="email">
                 Email
@@ -191,27 +187,16 @@ class EditForm extends Component {
                   onChange={this.saveToState}
                 />
               </label>
-              <label htmlFor="status">
-                Status
-                <input
-                  type="checkbox"
-                  name="status"
-                  placeholder="status"
-                  defaultValue={status === "Open" ? true : false}
-                  onChange={this.saveToState}
-                />
-              </label>
             </>
           )}
           <ButtonDiv>
             <SickButton
               type="button"
               onClick={() => {
-                this.updateUser();
-                this.saveForm();
+                certify ? this.updateUser() : this.saveForm();
               }}
             >
-              Sav{loading ? "ing" : "e"}
+              Sav{loading ? 'ing' : 'e'}
             </SickButton>
 
             <SickButton type="button" onClick={this.props.changeForm}>

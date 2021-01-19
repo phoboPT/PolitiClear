@@ -1,11 +1,12 @@
-import React, { Component } from "react";
-import Me from "../Me";
-import Error from "../ErrorMessage";
-import { getData, deleteByKey } from "../../lib/requests";
-import { permissions } from "../../lib/permissions";
-import EditForm from "./EditForm";
-import Table from "../styles/Table";
-import Inner from "../styles/InnerDiv";
+import React, { Component } from 'react';
+import Me from '../Me';
+import Error from '../ErrorMessage';
+import { getData, deleteByKey } from '../../lib/requests';
+import { permissions } from '../../lib/permissions';
+import EditForm from './EditForm';
+import Table from '../styles/Table';
+import Inner from '../styles/InnerDiv';
+import formatDate from '../../lib/formatDate';
 
 class Forms extends Component {
   constructor(props) {
@@ -17,15 +18,17 @@ class Forms extends Component {
       formData: [],
     };
   }
+
   saveToState = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   fetch = async () => {
-    const data = await getData("http://127.0.0.1:5000/forms/open");
+    const data = await getData('http://127.0.0.1:5000/forms/open');
     console.log(data);
     this.setState({ formData: data.data.data });
   };
+
   changeForm = () => {
     this.setState({ form: 0 });
   };
@@ -56,34 +59,41 @@ class Forms extends Component {
                         <th>Message</th>
                         <th>Response</th>
                         <th>created by</th>
-                        <th>Upgrade request</th>
                         <th>Created At:</th>
                         <th>Updated At:</th>
-                        <th>Status</th>
+                        <th>Upgrade request</th>
                         <th>Edit </th>
                         <th>Delete </th>
                       </tr>
                     </thead>
                     <tbody>
                       {this.state.formData.map((item) => {
+                        const createdAt = new Date(
+                          item.Record.createdAt,
+                        ).toISOString();
+                        let updatedAt = '';
+                        if (item.Record.updatedAt) {
+                          updatedAt = new Date(
+                            item.Record.updatedAt,
+                          ).toISOString();
+                        }
                         return (
                           <tr key={item.Key}>
                             <td>{item.Record.email}</td>
                             <td>{item.Record.message}</td>
                             <td>{item.Record.response}</td>
                             <td>{item.Record.createdByDescription}</td>
-                            <td>{item.Record.upgradeRequest}</td>
-                            <td>{item.Record.createdAt}</td>
-                            <td>{item.Record.updatedAt}</td>
+                            <td>{formatDate(createdAt)}</td>
+                            <td>{formatDate(updatedAt)}</td>
                             <td
                               style={{
                                 color:
-                                  item.Record.status === "Open"
-                                    ? "red"
-                                    : "black",
+                                  item.Record.upgradeRequest === 'true'
+                                    ? 'red'
+                                    : 'black',
                               }}
                             >
-                              {item.Record.status}
+                              {item.Record.upgradeRequest}
                             </td>
                             <td className="center">
                               <button
@@ -103,12 +113,12 @@ class Forms extends Component {
                                 type="button"
                                 onClick={async () => {
                                   const res = confirm(
-                                    "Do you really want to delete?"
+                                    'Do you really want to delete?',
                                   );
                                   if (res) {
                                     await deleteByKey(
-                                      "http://127.0.0.1:5000/forms/delete",
-                                      item.Key
+                                      'http://127.0.0.1:5000/forms/delete',
+                                      item.Key,
                                     );
                                     this.fetch();
                                   }
@@ -139,7 +149,7 @@ class Forms extends Component {
               );
             }
           }
-          return "You don´t have permissions to acces this page";
+          return 'You don´t have permissions to acces this page';
         }}
       </Me>
     );

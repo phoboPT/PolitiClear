@@ -16,7 +16,6 @@ const votesRoute = require("./endpoints/votesRoute");
 
 const addData = require("./endpoints/functions/addData");
 
-
 const connectToFabric = async () => {
   const walletPath = path.join(process.cwd(), "wallet/Org1");
   const wallet = await Wallets.newFileSystemWallet(walletPath);
@@ -60,8 +59,6 @@ app.use(
     optionsSuccessStatus: 200,
   })
 );
-
-
 
 app.listen(5000, () => {
   console.log("App is listening on port 5000, http://127.0.0.1:5000");
@@ -158,14 +155,13 @@ app.get("/nodes/getRelations/", async (req, res) => {
   res.status(200).send(response);
 });
 
-
 // nodesTypes
 app.get("/nodesTypes/key/:key", async (req, res) => {
   const response = await nodesTypesRoute.getByKey(req, res, contract);
   res.status(200).send(response);
 });
 app.post("/nodesTypes/create", async (req, res) => {
-  const response= await nodesTypesRoute.createNodesTypes(req, res, contract);
+  const response = await nodesTypesRoute.createNodesTypes(req, res, contract);
   res.status(200).send(response);
 });
 
@@ -206,7 +202,7 @@ app.get("/votes/key", async (req, res) => {
 
 app.post("/votes/create", async (req, res) => {
   const response = await votesRoute.createVotes(req, res, contract);
-  console.log(response)
+  console.log(response);
   res.status(200).send(response);
 });
 
@@ -214,7 +210,6 @@ app.delete("/votes/delete", async (req, res) => {
   const response = await votesRoute.deleteVotes(req, res, contract);
   res.status(200).send(response);
 });
-
 
 app.post("/me", async (req, res) => {
   const response = await usersRoute.me(req, res, contract);
@@ -226,7 +221,6 @@ app.post("/login", async (req, res) => {
   res.status(200).send(response);
 });
 
-
 // rota para buscar por tipo e id
 app.get("/readByType/:type", async (req, res) => {
   try {
@@ -236,9 +230,7 @@ app.get("/readByType/:type", async (req, res) => {
     );
     const parsedData = JSON.parse(data);
     if (req.params.type === "Users") {
-      
       parsedData.map((item) => {
-        
         delete item.Record["password"];
         return item;
       });

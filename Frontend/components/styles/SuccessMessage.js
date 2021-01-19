@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import React from "react";
+import styled from 'styled-components';
+import React from 'react';
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 const ErrorStyles = styled.div`
   padding: 2rem;
@@ -20,7 +20,6 @@ const ErrorStyles = styled.div`
 
 const DisplayError = ({ message }) => {
   if (!message) return null;
-  console.log(message);
   return (
     <ErrorStyles>
       <p data-test="graphql-error">

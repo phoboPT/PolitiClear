@@ -1,13 +1,14 @@
-import React, { Component } from "react";
-import Me from "../Me";
-import Error from "../ErrorMessage";
-import { getData, deleteByKey } from "../../lib/requests";
-import styled from "styled-components";
-import { permissions } from "../../lib/permissions";
-import EditNodeType from "./EditNodeType";
-import Table from "../styles/Table";
-import Inner from "../styles/InnerDiv";
-import SuccessMessage from "../styles/SuccessMessage";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Me from '../Me';
+import Error from '../ErrorMessage';
+import { getData, deleteByKey } from '../../lib/requests';
+import { permissions } from '../../lib/permissions';
+import EditNodeType from './EditNodeType';
+import Table from '../styles/Table';
+import Inner from '../styles/InnerDiv';
+import SuccessMessage from '../styles/SuccessMessage';
+import formatDate from '../../lib/formatDate';
 
 const ButtonDiv = styled.div`
   button {
@@ -28,16 +29,18 @@ class NodesTypes extends Component {
       nodesTypes: [],
     };
   }
+
   saveToState = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   fetch = async () => {
     const nodesTypes = await getData(
-      "http://127.0.0.1:5000/readByType/NodesTypes"
+      'http://127.0.0.1:5000/readByType/NodesTypes',
     );
     this.setState({ nodesTypes: nodesTypes.data });
   };
+
   changeForm = () => {
     this.setState({ form: 0 });
   };
@@ -73,27 +76,36 @@ class NodesTypes extends Component {
                     </thead>
                     <tbody>
                       {this.state.nodesTypes.map((nodeType) => {
+                        const createdAt = new Date(
+                          nodeType.Record.createdAt,
+                        ).toISOString();
+                        let updatedAt = '';
+                        if (nodeType.Record.updatedAt) {
+                          updatedAt = new Date(
+                            nodeType.Record.updatedAt,
+                          ).toISOString();
+                        }
                         return (
                           <tr key={nodeType.Key}>
                             <td>{nodeType.Record.name}</td>
-                            <td>{nodeType.Record.createdAt}</td>
-                            <td>{nodeType.Record.updatedAt}</td>
+                            <td>{formatDate(createdAt)}</td>
+                            <td>{formatDate(updatedAt)}</td>
 
                             <td className="center">
                               <button
                                 type="button"
                                 onClick={async () => {
                                   const res = confirm(
-                                    "Do you really want to delete?"
+                                    'Do you really want to delete?',
                                   );
                                   if (res) {
                                     const data = await deleteByKey(
-                                      "http://127.0.0.1:5000/nodesTypes/delete",
-                                      nodeType.Key
+                                      'http://127.0.0.1:5000/nodesTypes/delete',
+                                      nodeType.Key,
                                     );
                                     this.setState({
                                       data: data.data.data,
-                                      error: "",
+                                      error: '',
                                     });
                                     this.hideTimeout = setTimeout(
                                       () =>
@@ -101,12 +113,12 @@ class NodesTypes extends Component {
                                           data: null,
                                           error: null,
                                         }),
-                                      3000
+                                      3000,
                                     );
                                     if (data.data.error) {
                                       this.setState({
-                                        error: data.data.error || "",
-                                        data: "",
+                                        error: data.data.error || '',
+                                        data: '',
                                       });
                                     }
                                     console.log(data);
@@ -139,7 +151,7 @@ class NodesTypes extends Component {
                   <EditNodeType
                     edit={false}
                     changeForm={this.changeForm}
-                    data={{ Record: { name: "" } }}
+                    data={{ Record: { name: '' } }}
                     refetch={this.fetch}
                   ></EditNodeType>
                 </Inner>
