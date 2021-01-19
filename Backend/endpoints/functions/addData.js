@@ -129,19 +129,7 @@ exports.addData = async function (req, res, contract) {
         nodeType[1],
         createdAt
       );
-      await contract.submitTransaction(
-        "createArcs",
-        uuidv4(),
-        "Representante",
-        representantesPartidosKey[i],
-        representantesPartidos[i],
-        partidosKey[i],
-        partidos[i],
-        creatorId,
-        creatorIdDescription,
-        createdAt,
-        0
-      );
+      // await contract.submitTransaction('createArcs', uuidv4(), 'Representante', representantesPartidosKey[i], representantesPartidos[i], partidosKey[i], partidos[i], creatorId, creatorIdDescription, createdAt, 0);
     }
 
     //Candidatos presidenciais
@@ -158,117 +146,21 @@ exports.addData = async function (req, res, contract) {
         nodeType[2],
         createdAt
       );
-      await contract.submitTransaction(
-        "createArcs",
-        uuidv4(),
-        "Candidato",
-        candidatosPresidenciaKey[i],
-        candidatosPresidencia[i],
-        cargosPoliticosKey[0],
-        cargosPoliticos[0],
-        creatorId,
-        creatorIdDescription,
-        createdAt,
-        0
-      );
+      // await contract.submitTransaction('createArcs', uuidv4(), 'Candidato', candidatosPresidenciaKey[i], candidatosPresidencia[i], cargosPoliticosKey[0], cargosPoliticos[0], creatorId, creatorIdDescription, createdAt, 0);
     }
 
     //Presidenciais - Andre ventura
-    await contract.submitTransaction(
-      "createArcs",
-      uuidv4(),
-      "Candidato",
-      representantesPartidosKey[5],
-      representantesPartidos[5],
-      cargosPoliticosKey[0],
-      cargosPoliticos[0],
-      creatorId,
-      creatorIdDescription,
-      createdAt,
-      0
-    );
-    //presidente Marcelo
-    await contract.submitTransaction(
-      "createArcs",
-      uuidv4(),
-      "Eleito 2016-2021",
-      candidatosPresidenciaKey[0],
-      candidatosPresidencia[0],
-      cargosPoliticosKey[2],
-      cargosPoliticos[2],
-      creatorId,
-      creatorIdDescription,
-      createdAt,
-      0
-    );
-    //Primeiro Ministro
-    await contract.submitTransaction(
-      "createArcs",
-      uuidv4(),
-      "Eleito 2015-2019",
-      representantesPartidosKey[3],
-      representantesPartidos[3],
-      cargosPoliticosKey[1],
-      cargosPoliticos[1],
-      creatorId,
-      creatorIdDescription,
-      createdAt,
-      0
-    );
-    //polemica avante
-    await contract.submitTransaction(
-      "createArcs",
-      uuidv4(),
-      "Realizou",
-      partidosKey[0],
-      partidos[0],
-      eventosKey[0],
-      eventos[0],
-      creatorId,
-      creatorIdDescription,
-      createdAt,
-      0
-    );
-    await contract.submitTransaction(
-      "createArcs",
-      uuidv4(),
-      "Critica",
-      representantesPartidosKey[5],
-      representantesPartidos[5],
-      eventosKey[0],
-      eventos[0],
-      creatorId,
-      creatorIdDescription,
-      createdAt,
-      0
-    );
-    //Andre ventura
-    await contract.submitTransaction(
-      "createArcs",
-      uuidv4(),
-      "Acusa",
-      representantesPartidosKey[5],
-      representantesPartidos[5],
-      representantesPartidosKey[3],
-      representantesPartidos[3],
-      creatorId,
-      creatorIdDescription,
-      createdAt,
-      0
-    );
-    await contract.submitTransaction(
-      "createArcs",
-      uuidv4(),
-      "Indica incompetência",
-      representantesPartidosKey[5],
-      representantesPartidos[5],
-      candidatosPresidenciaKey[0],
-      candidatosPresidencia[0],
-      creatorId,
-      creatorIdDescription,
-      createdAt,
-      0
-    );
+    // await contract.submitTransaction('createArcs', uuidv4(), 'Candidato', representantesPartidosKey[5], representantesPartidos[5], cargosPoliticosKey[0], cargosPoliticos[0], creatorId, creatorIdDescription, createdAt, 0);
+    // //presidente Marcelo
+    // await contract.submitTransaction('createArcs', uuidv4(), 'Eleito 2016-2021', candidatosPresidenciaKey[0], candidatosPresidencia[0], cargosPoliticosKey[2], cargosPoliticos[2], creatorId, creatorIdDescription, createdAt, 0);
+    // //Primeiro Ministro
+    // await contract.submitTransaction('createArcs', uuidv4(), 'Eleito 2015-2019', representantesPartidosKey[3], representantesPartidos[3], cargosPoliticosKey[1], cargosPoliticos[1], creatorId, creatorIdDescription, createdAt, 0);
+    // //polemica avante
+    // await contract.submitTransaction('createArcs', uuidv4(), 'Realizou', partidosKey[0], partidos[0], eventosKey[0], eventos[0], creatorId, creatorIdDescription, createdAt, 0);
+    // await contract.submitTransaction('createArcs', uuidv4(), 'Critica', representantesPartidosKey[5], representantesPartidos[5], eventosKey[0], eventos[0], creatorId, creatorIdDescription, createdAt, 0);
+    // //Andre ventura
+    // await contract.submitTransaction('createArcs', uuidv4(), 'Acusa', representantesPartidosKey[5], representantesPartidos[5], representantesPartidosKey[3], representantesPartidos[3], creatorId, creatorIdDescription, createdAt, 0);
+    // await contract.submitTransaction('createArcs', uuidv4(), 'Indica incompetência', representantesPartidosKey[5], representantesPartidos[5], candidatosPresidenciaKey[0], candidatosPresidencia[0], creatorId, creatorIdDescription, createdAt, 0);
 
     return { data: "Created" };
   } catch (e) {

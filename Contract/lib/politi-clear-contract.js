@@ -215,31 +215,15 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async createNodes(
-    ctx,
-    key,
-    description,
-    creatorId,
-    creatorIdDescription,
-    nodeType,
-    nodeTypeDescription,
-    createdAt
-  ) {
-    const asset = new Nodes(
-      description,
-      creatorId,
-      creatorIdDescription,
-      nodeType,
-      nodeTypeDescription,
-      createdAt
-    );
+  async createNodes(ctx, key, description, creatorId, creatorIdDescription, nodeType, nodeTypeDescription) {
+    const asset = new Nodes(description, creatorId, creatorIdDescription, nodeType, nodeTypeDescription, '');
 
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
     return JSON.parse(buffer.toString());
   }
 
-  async updateNodes(ctx, key, description, nodeType, nodeTypeDescription) {
+  async updateNodes(ctx, key, description, nodeType, nodeTypeDescription, updatedBy, updatedByDescription) {
     if (description === "" && nodeType === "") {
       throw new Error(`Error! Any data was filled to node ${key}`);
     }
@@ -249,15 +233,8 @@ class PolitiClearContract extends Contract {
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
 
-    const nodesUpdated = new Nodes(
-      asset.description,
-      asset.creatorId,
-      asset.creatorIdDescription,
-      asset.nodeType,
-      asset.nodeTypeDescription,
-      asset.createdAt
-    );
-    nodesUpdated.updateNodes(description, nodeType, nodeTypeDescription);
+    const nodesUpdated = new Nodes(asset.description, asset.creatorId, asset.creatorIdDescription, asset.nodeType, asset.nodeTypeDescription, asset.createdAt);
+    nodesUpdated.updateNodes(description, nodeType, nodeTypeDescription, updatedBy, updatedByDescription);
 
     const buffer = Buffer.from(JSON.stringify(nodesUpdated));
     await ctx.stub.putState(key, buffer);

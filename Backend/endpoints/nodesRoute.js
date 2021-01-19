@@ -14,24 +14,15 @@ exports.getByKey = async function (req, res, contract) {
     return { error: e.message };
   }
 };
-const verify = async (contract, nodeType, creatorId) => {
-  const a = dataVerifications.verifyKeyExists(nodeType, "NodesTypes", contract);
-  const b = dataVerifications.verifyKeyExists(creatorId, "Users", contract);
-  const res = Promise.all([a, b]);
-  return Promise.resolve(res);
-};
+
 // cria novo tipo
 exports.createNodes = async function (req, res, contract) {
   try {
-    let creatorId;
-    if (req.body.token) {
-      const userID = jwt.verify(req.body.token, "MySecret");
-      creatorId = userID.userId;
-    }
-    const { description, nodeType } = req.body;
-    await verify(contract, nodeType, creatorId);
+    const { description, nodeType, token } = req.body;
+    const creatorId = await dataVerifications.verifyToken(contract, token);
+    await dataVerifications.verifyKeyExists(nodeType, "NodesTypes", contract);
+
     const key = uuidv4();
-    const createdAt = new Date();
 
     let creatorIdDescription = await contract.submitTransaction(
       "readUsers",
@@ -51,8 +42,7 @@ exports.createNodes = async function (req, res, contract) {
       creatorId,
       creatorIdDescription,
       nodeType,
-      nodeTypeDescription,
-      createdAt
+      nodeTypeDescription
     );
     return { data: "Created" };
   } catch (e) {
@@ -63,15 +53,17 @@ exports.createNodes = async function (req, res, contract) {
 // Update User
 exports.updateNodes = async function (req, res, contract) {
   try {
-    const { key, description, nodeType } = req.body;
+    const { key, description, nodeType, token } = req.body;
+    const creatorId = await dataVerifications.verifyToken(contract, token);
+    const creatorIdDescription = JSON.parse(
+      await contract.submitTransaction("readUsers", creatorId)
+    ).name;
     let nodeTypeDescription;
     if (nodeType !== "" && nodeType !== undefined) {
       await dataVerifications.verifyKeyExists(nodeType, "NodesTypes", contract);
-      nodeTypeDescription = await contract.submitTransaction(
-        "readNodesTypes",
-        nodeType
-      );
-      nodeTypeDescription = JSON.parse(nodeTypeDescription).name;
+      nodeTypeDescription = JSON.parse(
+        await contract.submitTransaction("readNodesTypes", nodeType)
+      ).name;
     }
 
     await contract.submitTransaction(
@@ -79,7 +71,9 @@ exports.updateNodes = async function (req, res, contract) {
       key,
       description || "",
       nodeType || "",
-      nodeTypeDescription || ""
+      nodeTypeDescription || "",
+      creatorId,
+      creatorIdDescription
     );
     return { data: "Updated" };
   } catch (e) {
@@ -87,18 +81,10 @@ exports.updateNodes = async function (req, res, contract) {
   }
 };
 
-// const deleteNodesAux = async (contract, key) => {
-// 	const delNode = contract.submitTransaction('deleteNodes', key);
-// 	const data = contract.submitTransaction("queryByObjectType", "Arcs");
-// 	const res = await Promise.all(
-// 		[delNode, data]
-// 	);
-// 	return Promise.resolve(res)
-// }
-
-// delete user
 exports.deleteNodes = async function (req, res, contract) {
   try {
+    const { token, key } = req.body;
+    await dataVerifications.verifyToken(contract, token, "ADMIN");
     const response = await contract.submitTransaction(
       "queryByObjectType",
       "Arcs"
@@ -106,8 +92,8 @@ exports.deleteNodes = async function (req, res, contract) {
     //verifica se existem arcos com votos positivos
     for (let i = 0; i < JSON.parse(response).length; i++) {
       if (
-        JSON.parse(response)[i].Record.finalNode === req.headers.key ||
-        JSON.parse(response)[i].Record.initialNode === req.headers.key
+        JSON.parse(response)[i].Record.finalNode === key ||
+        JSON.parse(response)[i].Record.initialNode === key
       ) {
         if (JSON.parse(response)[i].Record.totalVotes > 0) {
           return { error: "Delete denied! Arcs already have votes" };
@@ -117,8 +103,8 @@ exports.deleteNodes = async function (req, res, contract) {
     //remove nodo e arcos caso não haja votos em nenhum deles
     for (let i = 0; i < JSON.parse(response).length; i++) {
       if (
-        JSON.parse(response)[i].Record.finalNode === req.headers.key ||
-        JSON.parse(response)[i].Record.initialNode === req.headers.key
+        JSON.parse(response)[i].Record.finalNode === key ||
+        JSON.parse(response)[i].Record.initialNode === key
       ) {
         await contract.submitTransaction(
           "deleteArcs",
@@ -126,7 +112,7 @@ exports.deleteNodes = async function (req, res, contract) {
         );
       }
     }
-    await contract.submitTransaction("deleteNodes", req.headers.key);
+    await contract.submitTransaction("deleteNodes", key);
 
     return { data: "Deleted" };
   } catch (e) {

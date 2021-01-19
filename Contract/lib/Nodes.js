@@ -8,12 +8,13 @@ class Nodes {
         this.creatorIdDescription = creatorIdDescription;
         this.nodeType = nodeType;
         this.nodeTypeDescription = nodeTypeDescription;
-        this.createdAt = createdAt;
+        this.createdAt = createdAt === '' ? new Date() : createdAt;
         this.updatedAt = '';
+        this.updatedBy = ''
         this.type = 'Nodes';
     }
 
-    updateNodes(description, nodeType, nodeTypeDescription) {
+    updateNodes(description, nodeType, nodeTypeDescription, updatedBy, updatedByDescription) {
         if (description !== '' && description !== undefined) {
             this.description = description;
         }
@@ -21,6 +22,8 @@ class Nodes {
             this.nodeType = nodeType;
             this.nodeTypeDescription = nodeTypeDescription;
         }
+        this.updatedBy = updatedBy;
+        this.updatedByDescription = updatedByDescription;
         this.updatedAt = new Date();
     }
 }
