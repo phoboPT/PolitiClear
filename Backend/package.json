@@ -8,7 +8,7 @@
         "dev": "nodemon --exec babel-node index.js"
     },
     "keywords": [],
-    "author": "", 
+    "author": "Hugo & Ricardo",
     "license": "ISC",
     "dependencies": {
         "@babel/cli": "^7.12.7",
@@ -30,6 +30,18 @@
         "@babel/core": "^7.12.7",
         "@babel/node": "^7.12.6",
         "@babel/preset-env": "^7.12.1",
-        "fabric-wallet-migration": "^0.2.0"
+        "fabric-wallet-migration": "^0.2.0",
+        "@imaginary-cloud/eslint-config-react": "^1.0.1",
+        "@imaginary-cloud/prettier-config": "^1.0.0",
+        "eslint-config-airbnb": "^18.2.1",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-config-prettier": "^6.15.0",
+        "eslint-plugin-html": "^6.1.1",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-jsx-a11y": "^6.4.1",
+        "eslint-plugin-prettier": "^3.3.0",
+        "eslint-plugin-react": "^7.21.5",
+        "eslint-plugin-react-hooks": "^2.5.1",
+        "prettier": "^2.2.1"
     }
 }

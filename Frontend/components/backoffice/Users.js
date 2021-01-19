@@ -1,11 +1,12 @@
-import React, { Component } from "react";
-import Me from "../Me";
-import Error from "../ErrorMessage";
-import { getData, deleteByKey } from "../../lib/requests";
-import { permissions } from "../../lib/permissions";
-import Table from "../styles/Table";
-import Inner from "../styles/InnerDiv";
-import EditUser from "./EditUser";
+import React, { Component } from 'react';
+import Me from '../Me';
+import Error from '../ErrorMessage';
+import { getData, deleteByKey } from '../../lib/requests';
+import { permissions } from '../../lib/permissions';
+import Table from '../styles/Table';
+import Inner from '../styles/InnerDiv';
+import EditUser from './EditUser';
+import formatDate from '../../lib/formatDate';
 
 class Users extends Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class Users extends Component {
       formData: [],
     };
   }
+
   saveToState = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
@@ -24,10 +26,12 @@ class Users extends Component {
   async componentDidMount() {
     await this.fetch();
   }
+
   fetch = async () => {
-    const data = await getData("http://127.0.0.1:5000/readByType/Users");
+    const data = await getData('http://127.0.0.1:5000/readByType/Users');
     this.setState({ formData: data.data });
   };
+
   changeForm = () => {
     this.setState({ form: 0 });
   };
@@ -61,17 +65,23 @@ class Users extends Component {
                     </thead>
                     <tbody>
                       {this.state.formData.map((item) => {
-                        const token = jwt.sign(
-                          { userId: item.Key },
-                          "MySecret"
-                        );
+                        const createdAt = new Date(
+                          item.Record.createdAt,
+                        ).toISOString();
+                        let updatedAt = '';
+                        if (item.Record.updatedAt) {
+                          updatedAt = new Date(
+                            item.Record.updatedAt,
+                          ).toISOString();
+                        }
+
                         return (
                           <tr key={item.Key}>
                             <td>{item.Record.email}</td>
                             <td>{item.Record.name}</td>
                             <td>{item.Record.permission}</td>
-                            <td>{item.Record.createdAt}</td>
-                            <td>{item.Record.updatedAt}</td>
+                            <td>{formatDate(createdAt)}</td>
+                            <td>{formatDate(updatedAt)}</td>
                             <td className="center">
                               <button
                                 type="button"
@@ -79,7 +89,6 @@ class Users extends Component {
                                   this.setState({
                                     form: 2,
                                     data: { item },
-                                    token: token,
                                   });
                                 }}
                               >
@@ -91,13 +100,13 @@ class Users extends Component {
                                 type="button"
                                 onClick={() => {
                                   const res = confirm(
-                                    "Do you really want to delete?"
+                                    'Do you really want to delete?',
                                   );
                                   console.log(item.Key);
                                   if (res) {
                                     deleteByKey(
-                                      "http://127.0.0.1:5000/users/delete",
-                                      item.Key
+                                      'http://127.0.0.1:5000/users/delete',
+                                      item.Key,
                                     );
                                     this.fetch();
                                   }

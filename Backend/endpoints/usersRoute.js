@@ -4,10 +4,13 @@ const { v4: uuidv4 } = require("uuid");
 // search by key
 exports.getByKey = async (req, res, contract) => {
   try {
-    const response = await contract.submitTransaction("readUsers", req.params.key);
+    const response = await contract.submitTransaction(
+      "readUsers",
+      req.params.key
+    );
     const parsedData = JSON.parse(response);
     delete parsedData["password"];
-    return { data: parsedData }
+    return { data: parsedData };
   } catch (e) {
     return { error: e.message };
   }
@@ -43,19 +46,27 @@ exports.createUsers = async (req, res, contract) => {
     JSON.parse(user).forEach((userData) => {
       if (userData.Record.email === email) {
         users = {
-          ...users, users: userData.Record,
+          ...users,
+          users: userData.Record,
         };
       }
     });
     // if exists throw error
     if (users) {
-      return { error:  `The email: ${email} already exist` };
+      return { error: `The email: ${email} already exist` };
     }
     const key = uuidv4();
     const createdAt = new Date();
     const hashedPassword = await bcrypt.hash(password, 10);
-    await contract.submitTransaction("createUsers", key, name, email, hashedPassword, createdAt);
-    const token = jwt.sign({ userId: key, }, "MySecret");
+    await contract.submitTransaction(
+      "createUsers",
+      key,
+      name,
+      email,
+      hashedPassword,
+      createdAt
+    );
+    const token = jwt.sign({ userId: key }, "MySecret");
     res.token = token;
     return { token };
   } catch (e) {
@@ -68,33 +79,45 @@ exports.updateUsers = async (req, res, contract) => {
   try {
     let id = "";
     if (req.body.token) {
-
       id = jwt.verify(req.body.token, "MySecret");
-      id = id.userId
+      id = id.userId;
     } else {
-      id = req.body.key
+      id = req.body.key;
     }
-    const { name = "", oldPassword = "", newPassword = "", permission = "", } = req.body;
+    const {
+      name = "",
+      oldPassword = "",
+      newPassword = "",
+      permission = "",
+    } = req.body;
     if (oldPassword !== "" && newPassword !== "") {
       const user = await contract.submitTransaction("readUsers", id);
       if (!user) {
         return { error: "No email found" };
       }
-      const valid = await bcrypt.compare(oldPassword, JSON.parse(user).password);
+      const valid = await bcrypt.compare(
+        oldPassword,
+        JSON.parse(user).password
+      );
       if (!valid) {
         return { error: "password invalid" };
       }
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await contract.submitTransaction("updateUsers", id, name, hashedPassword, permission);
+      await contract.submitTransaction(
+        "updateUsers",
+        id,
+        name,
+        hashedPassword,
+        permission
+      );
       return { data: "Updated" };
     } else {
-
-       await contract.submitTransaction("updateUsers", id, name, "", permission);
-      return ({ data: "Updated" });
+      await contract.submitTransaction("updateUsers", id, name, "", permission);
+      return { data: "Updated" };
     }
   } catch (e) {
-    return ({ error: e.message });
+    return { error: e.message };
   }
 };
 
@@ -113,8 +136,8 @@ exports.me = async (req, res, contract) => {
     const key = jwt.verify(req.body.token, "MySecret");
     const response = await contract.submitTransaction("readUsers", key.userId);
     const parsedData = JSON.parse(response);
-    delete parsedData["password"]
-    return (parsedData);
+    delete parsedData["password"];
+    return parsedData;
   } catch (e) {
     return { error: e.message };
   }
@@ -123,7 +146,7 @@ exports.me = async (req, res, contract) => {
 exports.login = async (req, res, contract) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body)
+    console.log(req.body);
 
     const data = await contract.submitTransaction("queryByObjectType", "Users");
     let user;

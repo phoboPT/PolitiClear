@@ -1,11 +1,12 @@
-import React, { Component } from "react";
-import Me from "../Me";
-import Error from "../ErrorMessage";
-import { getData, deleteByKey } from "../../lib/requests";
-import { permissions } from "../../lib/permissions";
-import Table from "../styles/Table";
-import Inner from "../styles/InnerDiv";
-import EditArcs from "./EditArcs";
+import React, { Component } from 'react';
+import Me from '../Me';
+import Error from '../ErrorMessage';
+import { getData, deleteByKey } from '../../lib/requests';
+import { permissions } from '../../lib/permissions';
+import Table from '../styles/Table';
+import Inner from '../styles/InnerDiv';
+import EditArcs from './EditArcs';
+import formatDate from '../../lib/formatDate';
 
 class Arcs extends Component {
   constructor(props) {
@@ -17,14 +18,16 @@ class Arcs extends Component {
       formData: [],
     };
   }
+
   saveToState = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   fetch = async () => {
-    const data = await getData("http://127.0.0.1:5000/readByType/Arcs");
+    const data = await getData('http://127.0.0.1:5000/readByType/Arcs');
     this.setState({ formData: data.data });
   };
+
   changeForm = () => {
     this.setState({ form: 0 });
   };
@@ -64,6 +67,15 @@ class Arcs extends Component {
                     </thead>
                     <tbody>
                       {this.state.formData.map((item) => {
+                        const createdAt = new Date(
+                          item.Record.createdAt,
+                        ).toISOString();
+                        let updatedAt = '';
+                        if (item.Record.updatedAt) {
+                          updatedAt = new Date(
+                            item.Record.updatedAt,
+                          ).toISOString();
+                        }
                         return (
                           <tr key={item.Key}>
                             <td>{item.Record.description}</td>
@@ -71,8 +83,8 @@ class Arcs extends Component {
                             <td>{item.Record.initialNodeDescription}</td>
                             <td>{item.Record.finalNodeDescription}</td>
                             <td>{item.Record.totalVotes}</td>
-                            <td>{item.Record.createdAt}</td>
-                            <td>{item.Record.updatedAt}</td>
+                            <td>{formatDate(createdAt)}</td>
+                            <td>{formatDate(updatedAt)}</td>
 
                             <td className="center">
                               <button
@@ -92,12 +104,12 @@ class Arcs extends Component {
                                 type="button"
                                 onClick={async () => {
                                   const res = confirm(
-                                    "Do you really want to delete?"
+                                    'Do you really want to delete?',
                                   );
                                   if (res) {
                                     await deleteByKey(
-                                      "http://127.0.0.1:5000/arcs/delete",
-                                      item.Key
+                                      'http://127.0.0.1:5000/arcs/delete',
+                                      item.Key,
                                     );
                                     this.fetch();
                                   }

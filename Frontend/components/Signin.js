@@ -1,15 +1,15 @@
-import React, { Component } from "react";
-import Form from "./styles/Form";
-import Error from "./ErrorMessage";
-import { login } from "../lib/requests";
+import React, { Component } from 'react';
+import Form from './styles/Form';
+import Error from './ErrorMessage';
+import { login } from '../lib/requests';
 
 class Signin extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      password: "",
-      email: "",
+      password: '',
+      email: '',
     };
   }
 
@@ -17,10 +17,9 @@ class Signin extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  signup = async (e) => {
-    e.preventDefault();
+  signin = async () => {
     const { email, password } = this.state;
-    const res = await login("http://127.0.0.1:5000/login", email, password);
+    const res = await login('http://127.0.0.1:5000/login', email, password);
     if (res.data.error) {
       this.setState({ error: res.data.error });
     }
@@ -34,7 +33,13 @@ class Signin extends Component {
   render() {
     console.log(this.state.error);
     return (
-      <Form>
+      <Form
+        method="post"
+        onSubmit={(e) => {
+          e.preventDefault();
+          this.signin();
+        }}
+      >
         <fieldset>
           <h2>Sign into your account</h2>
           <Error error={this.state.error} />
@@ -59,9 +64,7 @@ class Signin extends Component {
             />
           </label>
 
-          <button type="submit" onClick={this.signup}>
-            Sign In!
-          </button>
+          <button type="submit">Sign In!</button>
         </fieldset>
       </Form>
     );
