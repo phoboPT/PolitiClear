@@ -4,7 +4,6 @@ import Error from "../ErrorMessage";
 import { getData, deleteByKey } from "../../lib/requests";
 import { permissions } from "../../lib/permissions";
 import Table from "../styles/Table";
-import jwt from "jsonwebtoken";
 import Inner from "../styles/InnerDiv";
 import EditUser from "./EditUser";
 

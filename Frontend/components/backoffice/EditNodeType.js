@@ -19,6 +19,7 @@ class EditNodeType extends Component {
     this.state = {
       data: "",
       error: "",
+      loading: false,
     };
   }
 
@@ -34,7 +35,7 @@ class EditNodeType extends Component {
         "http://127.0.0.1:5000/nodesTypes/create",
         data
       );
-      this.setState({ data: res.data.data, error: "" });
+      this.setState({ data: res.data.data, error: "", loading: false });
       if (res.data.error) {
         this.setState({ error: res.data.error || "", data: "" });
       }
@@ -55,7 +56,6 @@ class EditNodeType extends Component {
         this.setState({
           error: res.data.error || "",
           data: "",
-          loading: false,
         });
       }
       this.props.refetch();
@@ -64,6 +64,7 @@ class EditNodeType extends Component {
 
   render() {
     const { name } = this.props.data.Record;
+    const { loading } = this.state;
     return (
       <Form>
         <fieldset disabled={loading} aria-busy={loading}>

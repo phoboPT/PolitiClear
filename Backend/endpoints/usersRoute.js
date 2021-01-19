@@ -27,7 +27,7 @@ exports.getByName = async (req, res, contract) => {
       }
     });
     delete user["password"];
-    return { data: JSON.parse(user) }
+    return { data: JSON.parse(user) };
   } catch (e) {
     return { error: e.message };
   }

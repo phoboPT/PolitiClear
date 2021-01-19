@@ -8,7 +8,6 @@ const NodesTypes = require("./NodesTypes");
 const Users = require("./Users");
 const Votes = require("./Votes");
 const dataVerifications = require("./functions/dataVerifications");
-
 class PolitiClearContract extends Contract {
   async dataExists(ctx, key, type) {
     const buffer = await ctx.stub.getState(key);
@@ -64,7 +63,7 @@ class PolitiClearContract extends Contract {
 
   //FORMS
   async createForms(ctx, key, email, message, createdAt, status, response, createdBy, creatorByDescription, upgradeRequest) {
-    
+
     const asset = new Forms(email, message, createdAt, status, response, createdBy, creatorByDescription, upgradeRequest);
 
 
@@ -154,10 +153,15 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async createNodesTypes(ctx, payload) {
-    const { key, name, createdAt } = payload;
+  async createNodesTypes(ctx, key, name, createdAt) {
 
-    await dataVerifications.verifyNameAlreadyExists(name, 'NodesTypes', ctx);
+    
+    const query = await this.verifyNameAlreadyExists(ctx,name, "NodesTypes");
+    
+    if (query) {
+      return{error:`Error! The NodesTypes ${name} already exists`}
+    }
+    // const data=await dataVerifications.verifyNameAlreadyExists(name, query);0
 
     const asset = new NodesTypes(name, createdAt);
     const buffer = Buffer.from(JSON.stringify(asset));
@@ -255,6 +259,7 @@ class PolitiClearContract extends Contract {
   };
 
   async searchNodes(ctx, query) {
+    console.log("querySearch", query);
     return this.searchNodesAux(ctx, query);
 
   }
@@ -265,6 +270,8 @@ class PolitiClearContract extends Contract {
         type: objectType,
       },
     };
+
+    console.log("query", queryString);
     const queryResults = await this.queryWithQueryString(
       ctx,
       JSON.stringify(queryString)
@@ -303,6 +310,27 @@ class PolitiClearContract extends Contract {
       }
     }
   }
-}
+  async verifyNameAlreadyExists(ctx, name, dataType) {
+    const queryString = {
+      selector: {
+        type: dataType,
+      },
+    };
 
+    const query = await this.queryWithQueryString(
+      ctx,
+      JSON.stringify(queryString)
+    );
+
+    const newData = JSON.parse(query);
+    let data=false;
+    for (let i = 0; i < newData.length; i++){      
+      if (newData[i].Record.name === name) {
+        data = true;
+      }
+    }   
+ 
+    return data;
+  }
+}
 module.exports = PolitiClearContract;
