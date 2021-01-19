@@ -1,0 +1,127 @@
+{
+  "name": "politi-clear-frontend",
+  "version": "1.0.0",
+  "description": "PolitiClear",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write \"{,!(node_modules,.next)/**/}*.js\"",
+    "lint": "eslint . --fix",
+    "dev": "next -p 7777",
+    "build": "next build",
+    "start": "next start",
+    "test": "NODE_ENV=test jest --watch",
+    "test-win": "SET NODE_ENV=test&& jest --watch"
+  },
+  "author": "ESTG",
+  "license": "ISC",
+  "dependencies": {
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.1.0",
+    "babel-plugin-styled-components": "^1.7.1",
+    "d3-force": "^2.1.1",
+    "downshift": "^2.2.3",
+    "enzyme": "^3.6.0",
+    "enzyme-adapter-react-16": "^1.5.0",
+    "js-cookie": "^2.2.1",
+    "lodash.debounce": "^4.0.8",
+    "next": "^10.0.3",
+    "nprogress": "^0.2.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.14.0",
+    "react-adopt": "^0.6.0",
+    "react-cookie": "^4.0.3",
+    "react-d3": "^0.4.0",
+    "react-d3-graph": "^2.6.0",
+    "react-dom": "^16.14.0",
+    "react-native-cookie": "^0.2.0",
+    "react-router": "^5.2.0",
+    "react-transition-group": "^2.5.0",
+    "styled-components": "^5.2.1",
+    "sweetalert": "^2.1.2"
+  },
+  "devDependencies": {
+    "@imaginary-cloud/eslint-config-react": "^1.0.1",
+    "@imaginary-cloud/prettier-config": "^1.0.0",
+    "babel-jest": "^26.6.3",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "casual": "^1.5.19",
+    "enzyme-to-json": "^3.3.4",
+    "eslint": "^7.15.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-html": "^6.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.0",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^2.5.1",
+    "prettier": "^2.2.1"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "<rootDir>/jest.setup.js",
+    "testPathIgnorePatterns": [
+      "<rootDir>/.next/",
+      "<rootDir>/node_modules/"
+    ],
+    "transform": {
+      "\\.(gql|graphql)$": "jest-transform-graphql",
+      ".*": "babel-jest",
+      "^.+\\.js?$": "babel-jest"
+    }
+  },
+  "//": "This is our babel config, I prefer this over a .babelrc file",
+  "babel": {
+    "env": {
+      "development": {
+        "presets": [
+          "next/babel"
+        ],
+        "plugins": [
+          [
+            "styled-components",
+            {
+              "ssr": true,
+              "displayName": true
+            }
+          ]
+        ]
+      },
+      "production": {
+        "presets": [
+          "next/babel"
+        ],
+        "plugins": [
+          [
+            "styled-components",
+            {
+              "ssr": true,
+              "displayName": true
+            }
+          ]
+        ]
+      },
+      "test": {
+        "presets": [
+          [
+            "next/babel",
+            {
+              "preset-env": {
+                "modules": "commonjs"
+              }
+            }
+          ]
+        ],
+        "plugins": [
+          [
+            "styled-components",
+            {
+              "ssr": true,
+              "displayName": true
+            }
+          ]
+        ]
+      }
+    }
+  }
+}
