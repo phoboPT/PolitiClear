@@ -17,8 +17,7 @@ const verify = async (contract, data, creatorId) => {
     const { initialNode, finalNode } = data;
     const a = dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
     const b = dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
-    const c = dataVerifications.verifyKeyExists(creatorId, 'Users', contract);
-    await Promise.all([a, b, c]);
+    await Promise.all([a, b]);
     return Promise.resolve();
 }
 const getNodesDescription = async (contract, initialNode, finalNode, creatorId) => {
@@ -33,25 +32,23 @@ const getNodesDescription = async (contract, initialNode, finalNode, creatorId) 
 // create new form
 exports.createArcs = async function (req, res, contract) {
     try {
-        const { description, initialNode, finalNode } = req.body;
-        let creatorId, initialNodeDescription, finalNodeDescription, creatorIdDescription;
-        if (req.body.token) {
-            const userID = jwt.verify(req.body.token, "MySecret");
-            creatorId = userID.userId;
-        }
-
+        const { description, initialNode, finalNode,token="" } = req.body;
+        const creatorId = await dataVerifications.verifyToken(token);
+        await verify(contract, req.body);
         const key = uuidv4();
-        const createdAt = new Date();
-
-        await verify(contract, req.body, creatorId);
 
         //buscar as descricoes dos nodos
-        const nodesDescriptions = await getNodesDescription(contract, initialNode, finalNode, creatorId);
-        initialNodeDescription = JSON.parse(nodesDescriptions[0]).description;
-        finalNodeDescription = JSON.parse(nodesDescriptions[1]).description;
-        creatorIdDescription = JSON.parse(nodesDescriptions[2]).name;
+        const nodesData = await getNodesDescription(contract, initialNode, finalNode, creatorId);
+        const initialNodeInfo = JSON.parse(nodesData[0]);
+        const finalNodeInfo = JSON.parse(nodesData[1]);
+        const creatorIdInfo = JSON.parse(nodesData[2]);
 
-        await contract.submitTransaction('createArcs', key, description, initialNode, initialNodeDescription, finalNode, finalNodeDescription, creatorId, creatorIdDescription, createdAt, 0);
+        await contract.submitTransaction('createArcs', key, description,
+            initialNode, initialNodeInfo.description, initialNodeInfo.creatorId, initialNodeInfo.creatorIdDescription, 
+            initialNodeInfo.nodeType, initialNodeInfo.nodeTypeDescription, initialNodeInfo.createdAt, initialNodeInfo.updatedAt,
+            finalNode, finalNodeInfo.description, finalNodeInfo.creatorId, finalNodeInfo.creatorIdDescription, 
+            finalNodeInfo.nodeType, finalNodeInfo.nodeTypeDescription, finalNodeInfo.createdAt, finalNodeInfo.updatedAt,
+            creatorId, creatorIdInfo.name, 0);
         return { data: "Created" }
     } catch (e) {
         return { error: e.message }
@@ -60,24 +57,26 @@ exports.createArcs = async function (req, res, contract) {
 
 exports.updateArcs = async function (req, res, contract) {
     try {
-        if (req.body.key === "" || req.body.key === undefined) {
+        const { key, description, token} = req.body;
+        if (key === "" || key === undefined) {
             return { error: "Key must be provided!" }
         }
-        const { key, description } = req.body;
-
+        const creatorId = await dataVerifications.verifyToken(token);
+        const creatorIdDescription = JSON.parse(await contract.submitTransaction('readUsers', creatorId)).name;
+        console.log(creatorIdDescription);
         const res = await contract.submitTransaction("queryByObjectType", "Votes");
         let aux = 0;
         JSON.parse(res).forEach((votesData) => {
             if (votesData.Record.arcId === key) {
                 aux = 1;
-                
+
             }
         });
-        if(aux ===1) {
+        if (aux === 1) {
             return { error: 'Arc already have votes!' };
         }
 
-        await contract.submitTransaction('updateArcs', key, description || '', '');
+        await contract.submitTransaction('updateArcs', key, description || '', '', creatorId, creatorIdDescription);
         return { data: "Updated" }
     } catch (e) {
         return { error: e.message }
