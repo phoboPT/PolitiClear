@@ -136,6 +136,7 @@ const searchNodes = async (url, searchTerm) => {
     method: 'GET',
     credentials: 'same-origin',
     headers: {
+      'Bypass-Tunnel-Reminder': '1',
       Accept: 'application/json',
       'Content-Type': 'application/json',
       key: searchTerm,

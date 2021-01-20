@@ -65,6 +65,7 @@ class Users extends Component {
                     </thead>
                     <tbody>
                       {this.state.formData.map((item) => {
+                        console.log(item.Record.createdAt);
                         const createdAt = new Date(
                           item.Record.createdAt,
                         ).toISOString();

@@ -63,6 +63,7 @@ class EditForm extends Component {
 
   updateUser = async () => {
     this.setState({ loading: true });
+    console.log(this.props.data.Record);
     const data = {
       key: this.props.data.Record.createdBy,
       permission: this.state.certify ? 'ACREDITED-USER' : '',

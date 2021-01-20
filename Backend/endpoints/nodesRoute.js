@@ -143,6 +143,7 @@ exports.search = async function (req, res, contract) {
 
 exports.searchNodes = async function (req, res, contract) {
   try {
+    console.log("hey");
     const { key } = req.headers;
     const allArcs = await contract.submitTransaction(
       "queryByObjectType",
@@ -215,6 +216,7 @@ exports.userNodes = async function (req, res, contract) {
 
 exports.getRelations = async function (req, res, contract) {
   try {
+    console.log("hey");
     const { key } = req.headers;
     const arcos = await contract.submitTransaction("queryByObjectType", "Arcs");
     const nodes = await contract.submitTransaction(

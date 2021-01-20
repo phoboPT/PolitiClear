@@ -17,9 +17,15 @@ exports.getByKey = async function (req, res, contract) {
 // create new form
 exports.createForms = async function (req, res, contract) {
   try {
-    const { token, message, email = "", upgradeRequest = false } = req.body;
-
-    let createdBy = "";
+    const {
+      token,
+      userKey,
+      message,
+      email = "",
+      upgradeRequest = false,
+    } = req.body;
+    console.log(req.body);
+    let createdBy = userKey;
     let creatorByDescription = "";
     if (token) {
       createdBy = jwt.verify(token, "MySecret");
@@ -30,6 +36,7 @@ exports.createForms = async function (req, res, contract) {
       );
       creatorByDescription = JSON.parse(creatorByDescription).name;
     }
+    console.log(key, message, email, upgradeRequest, createdBy);
     const key = uuidv4();
     const createdAt = new Date();
     await contract.submitTransaction(
