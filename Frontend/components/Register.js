@@ -1,16 +1,16 @@
-import React, { Component } from "react";
-import Form from "./styles/Form";
-import Error from "./ErrorMessage";
-import { signup } from "../lib/requests";
-import SuccessMessage from "./styles/SuccessMessage";
+import React, { Component } from 'react';
+import Form from './styles/Form';
+import Error from './ErrorMessage';
+import { signup } from '../lib/requests';
+import SuccessMessage from './styles/SuccessMessage';
 
 class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
-      email: "",
-      password: "",
+      name: '',
+      email: '',
+      password: '',
     };
   }
 
@@ -22,10 +22,10 @@ class Register extends Component {
     e.preventDefault();
     const res = await signup(this.state);
 
-    this.setState({ data: res.data.data, error: "" });
+    this.setState({ data: res.data.data, error: '' });
     this.hideTimeout = setTimeout(
       () => this.setState({ data: null, error: null }),
-      3000
+      3000,
     );
 
     if (res.data.error) {

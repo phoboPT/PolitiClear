@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { getUser } from "../lib/requests";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { getUser } from '../lib/requests';
 
 class Me extends React.Component {
   constructor(props) {
@@ -11,12 +11,14 @@ class Me extends React.Component {
       items: [],
     };
   }
+
   fetch = async () => {
-    const user = await getUser("http://localhost:5000/me");
+    const user = await getUser('http://localhost:5000/me');
     this.setState({ ...user });
   };
+
   async componentDidMount() {
-    const user = await getUser("http://localhost:5000/me");
+    const user = await getUser('http://localhost:5000/me');
     this.setState({ ...user });
   }
 

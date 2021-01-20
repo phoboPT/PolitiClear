@@ -1,10 +1,10 @@
-import Link from "next/link";
-import swal from "@sweetalert/with-react";
-import NavStyles from "./styles/NavStyles";
-import Me from "./Me";
-import Signout from "./Signout";
-import Login from "./Login";
-import { permissions } from "../lib/permissions";
+import Link from 'next/link';
+import swal from '@sweetalert/with-react';
+import NavStyles from './styles/NavStyles';
+import Me from './Me';
+import Signout from './Signout';
+import Login from './Login';
+import { permissions } from '../lib/permissions';
 
 const close = () => {
   swal.close();
@@ -38,8 +38,8 @@ const Nav = () => (
             type="button"
             onClick={async () => {
               swal({
-                width: "1800px",
-                height: "600px",
+                width: '1800px',
+                height: '600px',
                 buttons: false,
                 content: <Login refetch={fetch} closeSwal={close} />,
               }).then;

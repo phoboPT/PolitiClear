@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import Me from "../Me";
-import Error from "../ErrorMessage";
-import { getData, searchNodes } from "../../lib/requests";
-import { permissions } from "../../lib/permissions";
-import Table from "../styles/Table";
-import Inner from "../styles/InnerDiv";
-import AddEvents from "./AddEvents";
-import Cookies from "js-cookie";
+import React, { Component } from 'react';
+import Cookies from 'js-cookie';
+import Me from '../Me';
+import Error from '../ErrorMessage';
+import { getData, searchNodes } from '../../lib/requests';
+import { permissions } from '../../lib/permissions';
+import Table from '../styles/Table';
+import Inner from '../styles/InnerDiv';
+import AddEvents from './AddEvents';
 
 class Relations extends Component {
   constructor(props) {
@@ -20,9 +20,11 @@ class Relations extends Component {
       formData: [],
     };
   }
+
   async componentDidMount() {
     this.fetch();
   }
+
   fetch = async () => {
     const data = await this.reqData();
     data[0].data.map((item) => {
@@ -36,6 +38,7 @@ class Relations extends Component {
     });
     this.setState({ formData: data[0].data });
   };
+
   changeForm = () => {
     this.setState({ form: 0 });
   };
@@ -45,10 +48,10 @@ class Relations extends Component {
   };
 
   reqData = async () => {
-    const token = Cookies.get("token");
+    const token = Cookies.get('token');
 
-    const nodes = searchNodes("http://127.0.0.1:5000/nodes/userNodes", token);
-    const nodesTypes = getData("http://127.0.0.1:5000/readByType/NodesTypes");
+    const nodes = searchNodes('http://127.0.0.1:5000/nodes/userNodes', token);
+    const nodesTypes = getData('http://127.0.0.1:5000/readByType/NodesTypes');
     const res = await Promise.all([nodes, nodesTypes]);
     return Promise.resolve(res);
   };
@@ -80,31 +83,29 @@ class Relations extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.formData.map((item) => {
-                        return (
-                          <tr key={item.Key}>
-                            <td>{item.Record.description}</td>
-                            <td>{item.Record.creatorId}</td>
-                            <td>{item.Record.nodeType}</td>
-                            <td>{item.Record.createdAt}</td>
-                            <td>{item.Record.updatedAt}</td>
+                      {this.state.formData.map((item) => (
+                        <tr key={item.Key}>
+                          <td>{item.Record.description}</td>
+                          <td>{item.Record.creatorId}</td>
+                          <td>{item.Record.nodeType}</td>
+                          <td>{item.Record.createdAt}</td>
+                          <td>{item.Record.updatedAt}</td>
 
-                            <td className="center">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  this.setState({
-                                    form: 2,
-                                    data: { item },
-                                  });
-                                }}
-                              >
-                                ✏
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                          <td className="center">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                this.setState({
+                                  form: 2,
+                                  data: { item },
+                                });
+                              }}
+                            >
+                              ✏
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </Table>
                   <button

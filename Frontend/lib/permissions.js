@@ -1,1 +1,1 @@
-export const permissions = ['ADMIN', 'POLITIC','ACREDITED-USER','USER'];
+export const permissions = ['ADMIN', 'POLITIC', 'ACREDITED-USER', 'USER'];

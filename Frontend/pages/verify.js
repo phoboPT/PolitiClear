@@ -1,11 +1,9 @@
-import VerifyAccount from "../components/VerifyAccount";
+import VerifyAccount from '../components/VerifyAccount';
 
-const Verify = () => {
-  return (
-    <div>
-      <VerifyAccount></VerifyAccount>
-    </div>
-  );
-};
+const Verify = () => (
+  <div>
+    <VerifyAccount></VerifyAccount>
+  </div>
+);
 
 export default Verify;

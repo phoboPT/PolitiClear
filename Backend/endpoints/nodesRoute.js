@@ -152,6 +152,7 @@ exports.searchNodes = async function (req, res, contract) {
       "queryByObjectType",
       "Nodes"
     );
+
     const arcos = JSON.parse(allArcs);
     const nodes = JSON.parse(allNodes);
     const filteredArcs = [];
@@ -212,60 +213,60 @@ exports.userNodes = async function (req, res, contract) {
   }
 };
 
-// exports.getRelations = async function (req, res, contract) {
-//   try {
-//     const { key } = req.headers;
-//     const arcos = await contract.submitTransaction("queryByObjectType", "Arcs");
-//     const nodes = await contract.submitTransaction(
-//       "queryByObjectType",
-//       "Nodes"
-//     );
-//     let neededNodes = [];
-//     let nodesDetails = [];
+exports.getRelations = async function (req, res, contract) {
+  try {
+    const { key } = req.headers;
+    const arcos = await contract.submitTransaction("queryByObjectType", "Arcs");
+    const nodes = await contract.submitTransaction(
+      "queryByObjectType",
+      "Nodes"
+    );
+    let neededNodes = [];
+    let nodesDetails = [];
 
-//     // lista de nodos que tem ligações
-//     JSON.parse(arcos).forEach((arco) => {
-//       let aux = 0;
+    // lista de nodos que tem ligações
+    JSON.parse(arcos).forEach((arco) => {
+      let aux = 0;
 
-//       neededNodes.forEach((item) => {
-//         if (arco.Record.initialNode === item) {
-//           aux = 1;
-//         }
-//       });
+      neededNodes.forEach((item) => {
+        if (arco.Record.initialNode === item) {
+          aux = 1;
+        }
+      });
 
-//       if (aux === 0) {
-//         neededNodes.push(arco.Record.initialNode);
-//       }
-//       aux = 0;
+      if (aux === 0) {
+        neededNodes.push(arco.Record.initialNode);
+      }
+      aux = 0;
 
-//       neededNodes.forEach((item) => {
-//         if (arco.Record.finalNode === item) {
-//           aux = 1;
-//         }
-//       });
-//       if (aux === 0) {
-//         neededNodes.push(arco.Record.finalNode);
-//       }
-//     });
-//     //adiciona os nodos em detalhe
-//     JSON.parse(nodes).forEach((nodo) => {
-//       neededNodes.forEach((item) => {
-//         if (nodo.Key === item) {
-//           nodesDetails.push(nodo);
-//         }
-//       });
-//     });
+      neededNodes.forEach((item) => {
+        if (arco.Record.finalNode === item) {
+          aux = 1;
+        }
+      });
+      if (aux === 0) {
+        neededNodes.push(arco.Record.finalNode);
+      }
+    });
+    //adiciona os nodos em detalhe
+    JSON.parse(nodes).forEach((nodo) => {
+      neededNodes.forEach((item) => {
+        if (nodo.Key === item) {
+          nodesDetails.push(nodo);
+        }
+      });
+    });
 
-//     let arcsByKey = [];
-//     JSON.parse(arcos).forEach((arco) => {
-//       if (arco.Record.initialNode === key) {
-//         arcsByKey.push(arco.Key);
-//       }
-//     });
-//     arcsByKey.forEach((arc) => {});
+    let arcsByKey = [];
+    JSON.parse(arcos).forEach((arco) => {
+      if (arco.Record.initialNode === key) {
+        arcsByKey.push(arco.Key);
+      }
+    });
+    arcsByKey.forEach((arc) => {});
 
-//     return { nodes: nodesDetails, arcs: JSON.parse(arcos) };
-//   } catch (e) {
-//     return { error: e.error };
-//   }
-// };
+    return { nodes: nodesDetails, arcs: JSON.parse(arcos) };
+  } catch (e) {
+    return { error: e.error };
+  }
+};

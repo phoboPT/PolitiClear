@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import Form from "./styles/Form";
-import Error from "./ErrorMessage";
-import SuccessMessage from "./styles/SuccessMessage";
-import { sendRequest } from "../lib/requests";
-import SickButton from "./styles/SickButton";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import Form from './styles/Form';
+import Error from './ErrorMessage';
+import SuccessMessage from './styles/SuccessMessage';
+import { sendRequest } from '../lib/requests';
+import SickButton from './styles/SickButton';
 
 const ButtonDiv = styled.div`
   button {
@@ -19,15 +19,18 @@ export default class HelpForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: "",
-      error: "",
+      data: '',
+      error: '',
       loading: false,
+      message: '',
+      email: '',
     };
   }
 
   saveToState = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
+
   saveForm = async () => {
     this.setState({ loading: true });
     const data = {
@@ -36,21 +39,28 @@ export default class HelpForm extends Component {
       upgradeRequest: false,
     };
     const res = await sendRequest(
-      "POST",
-      "http://127.0.0.1:5000/forms/create",
-      data
+      'POST',
+      'http://127.0.0.1:5000/forms/create',
+      data,
     );
-    this.setState({ data: res.data.data, error: "", loading: false });
+    this.setState({
+      data: res.data.data,
+      error: '',
+      loading: false,
+      message: '',
+      email: '',
+    });
     this.hideTimeout = setTimeout(
       () => this.setState({ data: null, error: null }),
-      3000
+      3000,
     );
     if (res.data.error) {
-      this.setState({ error: res.data.error || "", data: "", loading: false });
+      this.setState({ error: res.data.error || '', data: '', loading: false });
     }
   };
+
   render() {
-    const { loading } = this.state;
+    const { loading, message, email } = this.state;
     return (
       <div>
         <h2>Help me</h2>
@@ -66,6 +76,7 @@ export default class HelpForm extends Component {
                 type="text"
                 name="message"
                 placeholder="message"
+                value={message}
                 onChange={this.saveToState}
               />
             </label>
@@ -75,6 +86,7 @@ export default class HelpForm extends Component {
                 type="text"
                 name="email"
                 placeholder="email"
+                value={email}
                 onChange={this.saveToState}
               />
             </label>
@@ -86,7 +98,7 @@ export default class HelpForm extends Component {
                   this.saveForm();
                 }}
               >
-                Sav{loading ? "ing" : "e"}
+                Sav{loading ? 'ing' : 'e'}
               </SickButton>
             </ButtonDiv>
           </fieldset>

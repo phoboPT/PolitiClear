@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import Search from "../components/Search";
+import styled from 'styled-components';
+import Search from '../components/Search';
 
 const Div = styled.div`
   text-align: center;

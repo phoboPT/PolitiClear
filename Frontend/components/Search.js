@@ -22,7 +22,7 @@ const TreeWrapper = styled.div`
   }
   margin-top: 50px;
   .left {
-    width: 70%;
+    width: 100%;
     margin: auto;
   }
   .right {
@@ -69,7 +69,7 @@ const myConfig = {
   panAndZoom: false,
   staticGraph: false,
   staticGraphWithDragAndDrop: false,
-  width: 1160,
+  width: 1700,
   d3: {
     alphaTarget: 0.05,
     gravity: -400,
@@ -134,6 +134,7 @@ class Search extends React.Component {
       'http://localhost:5000/searchNodes',
       item.Key,
     );
+    console.log(relations);
     if (relations.data.data.length > 0) {
       let graph = {
         nodes: [],
@@ -178,55 +179,54 @@ class Search extends React.Component {
     }
   };
 
-  // populate = async (item) => {
-  //   this.setState({ loading: true, key: item.Key, data: null });
-  //   const user = await searchNodes(
-  //     'http://localhost:5000/nodes/getRelations',
-  //     item.Key,
-  //   );
-  //   console.log(user);
+  async componentDidMount() {
+    await this.getAll();
+  }
 
-  //   if (user.data.nodes.length > 0) {
-  //     let graph = {
-  //       nodes: [],
+  getAll = async () => {
+    this.setState({ loading: true, data: null });
+    const user = await searchNodes('http://localhost:5000/nodes/getRelations');
 
-  //       links: [],
-  //     };
-  //     for (let i = 0; i < user.data.nodes.length; i++) {
-  //       console.log(user.data.nodes[i]);
-  //       graph.nodes.push({
-  //         id: user.data.nodes[i].Record.description,
-  //         keyNode: user.data.nodes[i].Key,
-  //         // arc: user.data[i],
-  //         // arcId: user.data[i].arcId,
-  //       });
-  //     }
+    if (user.data.nodes.length > 0) {
+      let graph = {
+        nodes: [],
 
-  //     for (let i = 0; i < user.data.arcs.length; i++) {
-  //       graph.links.push({
-  //         source: user.data.arcs[i].Record.initialNodeDescription,
-  //         target: user.data.arcs[i].Record.finalNodeDescription,
-  //       });
-  //     }
+        links: [],
+      };
+      for (let i = 0; i < user.data.nodes.length; i++) {
+        graph.nodes.push({
+          id: user.data.nodes[i].Record.description,
+          keyNode: user.data.nodes[i].Key,
+          // arc: user.data[i],
+          // arcId: user.data[i].arcId,
+        });
+      }
 
-  //     graph = {
-  //       ...graph,
-  //     };
-  //     // console.log(graph);
-  //     this.setState({
-  //       show: true,
-  //       loading: false,
-  //       message: null,
-  //       data: { ...graph },
-  //     });
-  //   } else {
-  //     this.setState({
-  //       show: false,
-  //       loading: false,
-  //       message: 'The politician don´t exist or don´t have any relation',
-  //     });
-  //   }
-  // };
+      for (let i = 0; i < user.data.arcs.length; i++) {
+        graph.links.push({
+          source: user.data.arcs[i].Record.initialNodeDescription,
+          target: user.data.arcs[i].Record.finalNodeDescription,
+        });
+      }
+
+      graph = {
+        ...graph,
+      };
+      // console.log(graph);
+      this.setState({
+        show: true,
+        loading: false,
+        message: null,
+        data: { ...graph },
+      });
+    } else {
+      this.setState({
+        show: false,
+        loading: false,
+        message: 'The politician don´t exist or don´t have any relation',
+      });
+    }
+  };
 
   onChange = debounce(async () => {
     // turn loading on
@@ -416,10 +416,8 @@ class Search extends React.Component {
                     <thead>
                       <tr>
                         <th>From:</th>
-
                         <th>Relation:</th>
                         <th>To:</th>
-
                         <th>Created At:</th>
                         <th>Total Votes:</th>
                         <th>Vote:</th>

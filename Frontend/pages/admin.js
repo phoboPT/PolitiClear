@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import NodesTypes from "../components/backoffice/NodesTypes";
-import Forms from "../components/backoffice/Forms";
-import Users from "../components/backoffice/Users";
-import Nodes from "../components/backoffice/Nodes";
-import Arcs from "../components/backoffice/Arcs";
-import Me from "../components/Me";
-import { permissions } from "../lib/permissions";
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import NodesTypes from '../components/backoffice/NodesTypes';
+import Forms from '../components/backoffice/Forms';
+import Users from '../components/backoffice/Users';
+import Nodes from '../components/backoffice/Nodes';
+import Arcs from '../components/backoffice/Arcs';
+import Me from '../components/Me';
+import { permissions } from '../lib/permissions';
 const Div = styled.div`
   padding: 0;
   margin: 10px 0px;
@@ -31,12 +31,12 @@ class admin extends Component {
     super(props);
     this.state = { show: 0 };
   }
+
   render() {
     return (
       <Me>
         {(items, isLoaded, fetch) => (
           <>
-            {console.log(items)}
             {!items.error && isLoaded && (
               <>
                 {items.permission === permissions[0] && (

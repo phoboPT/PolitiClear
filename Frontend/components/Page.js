@@ -1,21 +1,21 @@
-import React from "react";
-import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
-import Header from "./Header";
-import Meta from "./Meta";
+import React from 'react';
+import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
+import Header from './Header';
+import Meta from './Meta';
 
 const theme = {
-  black: "#2c2f33",
-  blue: "#5bc0de",
-  borderRadius: "10px",
-  bs: "0 12px 24px 0 rgba(0,0,0,0.09)",
-  darkblue: "#428bca",
-  green: "#5cb85c",
-  lightGrey: "#99aab5",
-  maxWidth: "1700px",
-  red: "#d9534f",
-  white: "#ffffff",
-  adminBarSizeSmall: "50px",
-  adminBarSizeLarge: "150px",
+  black: '#2c2f33',
+  blue: '#5bc0de',
+  borderRadius: '10px',
+  bs: '0 12px 24px 0 rgba(0,0,0,0.09)',
+  darkblue: '#428bca',
+  green: '#5cb85c',
+  lightGrey: '#99aab5',
+  maxWidth: '1700px',
+  red: '#d9534f',
+  white: '#ffffff',
+  adminBarSizeSmall: '50px',
+  adminBarSizeLarge: '150px',
 };
 
 const StyledPage = styled.div`
@@ -24,19 +24,19 @@ const StyledPage = styled.div`
 `;
 const Inner = styled.div`
   padding: 0 2rem 2rem 2rem;
-  margin-left: ${(props) => props.sidebarState === 1 && "130px!important"};
-  margin-left: ${(props) => props.sidebarState === 2 && "200px!important"};
+  margin-left: ${(props) => props.sidebarState === 1 && '130px!important'};
+  margin-left: ${(props) => props.sidebarState === 2 && '200px!important'};
 
   max-width: ${(props) => props.theme.maxWidth};
   margin: 100px auto auto auto;
   min-height: calc(100vh - 210px);
   @media (max-width: 1300px) {
-    margin-left: ${(props) => props.sidebarState === 1 && "80px!important"};
+    margin-left: ${(props) => props.sidebarState === 1 && '80px!important'};
 
     margin: 100px auto auto auto;
   }
   &::after {
-    content: "";
+    content: '';
   }
 `;
 

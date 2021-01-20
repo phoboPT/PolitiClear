@@ -1,24 +1,22 @@
-import Router from "next/router";
-import { logout } from "../lib/requests";
-import React from "react";
+import Router from 'next/router';
+import React from 'react';
+import { logout } from '../lib/requests';
 
 function routeToItem() {
   Router.push({
-    pathname: "/",
+    pathname: '/',
   });
 }
-const Signout = (props) => {
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        logout();
-        props.refetch();
-        routeToItem();
-      }}
-    >
-      Signout
-    </button>
-  );
-};
+const Signout = (props) => (
+  <button
+    type="button"
+    onClick={() => {
+      logout();
+      props.refetch();
+      routeToItem();
+    }}
+  >
+    Signout
+  </button>
+);
 export default Signout;

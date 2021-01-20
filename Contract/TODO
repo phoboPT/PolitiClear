@@ -2,7 +2,7 @@ FIX:
     Frontend:
         ADMIN:
             ARCS:
-                ☐ adicionar NodesTypes terá de ser noutro step, (permitir que os Acredited-User criem NodeTypes?) @high
+     
             Users:
                 ☐ consigo apagar o meu próprio utilizador. Temos de passar contas a inativo e não apagar.
                 
@@ -19,7 +19,7 @@ FIX:
 
     BACKEND:
         ☐ Apagar Nodos apenas se os arcos tiverem votos negativos
-        ☐ alterar o formato das datas
+       
         ☐ Pensar como fica os formularios para os visitantes
 
         ALTERAR o parametro createdAT, verificar se é undefined e nao passar nada

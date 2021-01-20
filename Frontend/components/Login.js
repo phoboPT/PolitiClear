@@ -1,7 +1,7 @@
-import { Component } from "react";
-import Register from "./Register";
-import Signin from "./Signin";
-import RequestReset from "./RequestReset";
+import { Component } from 'react';
+import Register from './Register';
+import Signin from './Signin';
+import RequestReset from './RequestReset';
 
 class Login extends Component {
   constructor(props) {
