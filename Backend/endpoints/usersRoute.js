@@ -77,47 +77,32 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
-    // const {key, token} = req.body;
-    // await dataVerifications.verifyToken(contract, token, 'ADMIN');
-    let id = "";
-    if (req.body.token) {
-      id = jwt.verify(req.body.token, "MySecret");
-      id = id.userId;
+    const { key, token, name = "", oldPassword = "", newPassword = "", permission = "" } = req.body;
+    let updaterId, id;
+    if (key) {
+      updaterId = await dataVerifications.verifyToken(contract, token, 'ADMIN');
+      id = key;
     } else {
-      id = req.body.key;
+      updaterId = jwt.verify(token, "MySecret").userId;
+      id = updaterId;
     }
-    const {
-      name = "",
-      oldPassword = "",
-      newPassword = "",
-      permission = "",
-    } = req.body;
-    console.log(req.body);
     if (oldPassword !== "" && newPassword !== "") {
       const user = await contract.submitTransaction("readUsers", id);
       if (!user) {
         return { error: "No email found" };
       }
-      const valid = await bcrypt.compare(
-        oldPassword,
-        JSON.parse(user).password
-      );
+      const valid = await bcrypt.compare(oldPassword, JSON.parse(user).password);
       if (!valid) {
         return { error: "password invalid" };
       }
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await contract.submitTransaction(
-        "updateUsers",
-        id,
-        name,
-        hashedPassword,
-        permission
-      );
+      await contract.submitTransaction("updateUsers", id, name, hashedPassword, permission, updaterId);
       return { data: "Updated" };
     } else {
-      await contract.submitTransaction("updateUsers", id, name, "", permission);
-      return { data: "Updated" };
+
+      await contract.submitTransaction("updateUsers", id, name, "", permission, updaterId);
+      return ({ data: "Updated" });
     }
   } catch (e) {
     return { error: e.message };

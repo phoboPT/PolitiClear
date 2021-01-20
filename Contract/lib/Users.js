@@ -10,9 +10,10 @@ class Users {
     this.permission = permission === '' ? "USER" : permission;
     this.createdAt = createdAt === '' ? new Date() : createdAt;
     this.updatedAt = "";
+    this.updatedBy = "";
   }
 
-  updateUsers(name, password, permission) {
+  updateUsers(name, password, permission, updatedBy) {
     if (name !== "") {
       this.name = name;
     }
@@ -23,7 +24,7 @@ class Users {
       this.permission = permission;
     }
 
-
+    this.updatedBy = updatedBy;
     this.updatedAt = new Date();
   }
 }

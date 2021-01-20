@@ -2,10 +2,10 @@
 
 class NodesTypes {
 
-    constructor(name, createdAt) {
+    constructor(name, createdAt, creatorId) {
         this.name = name;
-        this.createdAt = createdAt;
-        this.updatedAt = '';
+        this.createdAt = (createdAt === '' || createdAt === undefined) ? new Date() : createdAt;
+        this.creatorId = this.creatorId
         this.type = 'NodesTypes';
     }
 }
