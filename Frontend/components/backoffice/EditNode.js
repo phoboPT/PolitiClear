@@ -65,6 +65,7 @@ class EditNode extends Component {
 
   render() {
     const { description } = this.props.data.Record;
+    const { loading } = this.state;
     return (
       <Form>
         <fieldset disabled={loading} aria-busy={loading}>

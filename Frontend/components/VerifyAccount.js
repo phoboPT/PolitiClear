@@ -43,7 +43,7 @@ class VerifyAccount extends Component {
     const data = {
       email: items.email,
       message: this.state.message,
-      token,
+      // token,
 
       upgradeRequest: true,
     };

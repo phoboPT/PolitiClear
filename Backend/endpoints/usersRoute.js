@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-const dataVerifications = require('./functions/dataVerifications');
+const dataVerifications = require("./functions/dataVerifications");
 // search by key
 exports.getByKey = async (req, res, contract) => {
   try {
@@ -80,7 +80,6 @@ exports.updateUsers = async (req, res, contract) => {
       updaterId = await dataVerifications.verifyToken(contract, token,);
       id = updaterId;
     }
-
     if (oldPassword !== "" && newPassword !== "") {
       const user = await contract.submitTransaction("readUsers", id);
       if (!user) {

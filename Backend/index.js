@@ -241,3 +241,19 @@ app.get("/readByType/:type", async (req, res) => {
     res.status(500).json(e.message);
   }
 });
+
+// rota para buscar por tipo e id
+app.get("/wait", async (req, res) => {
+  try {
+    const user = {
+      name: "Antonio",
+      email: "antonio@antonio.pt",
+      mensagem: "Esta mensagem tem delay para demonstar o NestJS",
+    };
+    setTimeout(function () {
+      res.status(200).send(user);
+    }, 3000);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+});
