@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const dataVerifications = require('./functions/dataVerifications');
+const { permissions } = require('./functions/permissions');
 const jwt = require("jsonwebtoken");;
 
 // search by key
@@ -13,13 +14,14 @@ exports.getByKey = async function (req, res, contract) {
     }
 };
 
-const verify = async (contract, data, creatorId) => {
+const verify = async (contract, data) => {
     const { initialNode, finalNode } = data;
     const a = dataVerifications.verifyKeyExists(initialNode, 'Nodes', contract);
     const b = dataVerifications.verifyKeyExists(finalNode, 'Nodes', contract);
     await Promise.all([a, b]);
     return Promise.resolve();
 }
+
 const getNodesDescription = async (contract, initialNode, finalNode, creatorId) => {
     const initial = contract.submitTransaction('readNodes', initialNode);
     const final = contract.submitTransaction('readNodes', finalNode);
@@ -33,7 +35,7 @@ const getNodesDescription = async (contract, initialNode, finalNode, creatorId) 
 exports.createArcs = async function (req, res, contract) {
     try {
         const { description, initialNode, finalNode, token = "" } = req.body;
-        const creatorId = await dataVerifications.verifyToken(contract, token);
+        const creatorId = await dataVerifications.verifyToken(contract, token, permissions[1]);
 
         await verify(contract, req.body);
         const key = uuidv4();
@@ -62,7 +64,7 @@ exports.updateArcs = async function (req, res, contract) {
         if (key === "" || key === undefined) {
             return { error: "Key must be provided!" }
         }
-        const creatorId = await dataVerifications.verifyToken(contract, token);
+        const creatorId = await dataVerifications.verifyToken(contract, token, permissions[1]);
 
         const creatorIdDescription = JSON.parse(await contract.submitTransaction('readUsers', creatorId)).name;
         const res = await contract.submitTransaction("queryByObjectType", "Votes");
@@ -96,8 +98,8 @@ const deleteOneArc = async (contract, key) => {
 // delete user
 exports.deleteArcs = async function (req, res, contract) {
     try {
-        const {key, token} = req.body;
-        await dataVerifications.verifyToken(contract, token, 'ADMIN');
+        const { key, token } = req.body;
+        await dataVerifications.verifyToken(contract, token, permissions[0]);
 
         if (JSON.parse(await contract.submitTransaction('readArcs', key)).totalVotes < 1) {
             const res = await deleteOneArc(contract, key)

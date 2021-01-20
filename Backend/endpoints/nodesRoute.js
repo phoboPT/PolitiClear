@@ -19,7 +19,7 @@ exports.getByKey = async function (req, res, contract) {
 exports.createNodes = async function (req, res, contract) {
   try {
     const { description, nodeType, token } = req.body;
-    const creatorId = await dataVerifications.verifyToken(contract, token);
+    const creatorId = await dataVerifications.verifyToken(contract, token, permissions[1]);
     await dataVerifications.verifyKeyExists(nodeType, "NodesTypes", contract);
 
     const key = uuidv4();
@@ -54,7 +54,7 @@ exports.createNodes = async function (req, res, contract) {
 exports.updateNodes = async function (req, res, contract) {
   try {
     const { key, description, nodeType, token } = req.body;
-    const creatorId = await dataVerifications.verifyToken(contract, token);
+    const creatorId = await dataVerifications.verifyToken(contract, token, permissions[1]);
     const creatorIdDescription = JSON.parse(
       await contract.submitTransaction("readUsers", creatorId)
     ).name;
@@ -84,7 +84,7 @@ exports.updateNodes = async function (req, res, contract) {
 exports.deleteNodes = async function (req, res, contract) {
   try {
     const { token, key } = req.body;
-    await dataVerifications.verifyToken(contract, token, "ADMIN");
+    await dataVerifications.verifyToken(contract, token, permissions[0]);
     const response = await contract.submitTransaction(
       "queryByObjectType",
       "Arcs"
@@ -195,13 +195,9 @@ exports.userNodes = async function (req, res, contract) {
     if (!key) {
       throw new Error("Your token is invalid");
     }
-    const userID = jwt.verify(key, "MySecret");
-    const creatorId = userID.userId;
+    const creatorId = await dataVerifications.verifyToken(contract, key,);
 
-    const buffer1 = await contract.submitTransaction(
-      "queryByObjectType",
-      "Nodes"
-    );
+    const buffer1 = await contract.submitTransaction("queryByObjectType", "Nodes");
     const asset = JSON.parse(buffer1.toString());
     const result = asset.filter((item) => {
       return item.Record.creatorId === creatorId;
@@ -263,7 +259,7 @@ exports.getRelations = async function (req, res, contract) {
         arcsByKey.push(arco.Key);
       }
     });
-    arcsByKey.forEach((arc) => {});
+    arcsByKey.forEach((arc) => { });
 
     return { nodes: nodesDetails, arcs: JSON.parse(arcos) };
   } catch (e) {

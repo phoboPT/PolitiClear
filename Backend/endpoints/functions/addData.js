@@ -1,16 +1,15 @@
 const { v4: uuidv4 } = require("uuid");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const dataVerifications = require('./dataVerifications');
 
 exports.addData = async function (req, res, contract) {
   try {
-    await contract.submitTransaction('createUsers', 1, 'Administrator', 'admin@politiclear.pt', await bcrypt.hash('admin', 10), 'ADMIN');
-    await contract.submitTransaction('createUsers', 2, 'Acredited-User', 'acredited@politiclear.pt', await bcrypt.hash('acredited', 10), 'ACREDITED-USER');
+    await contract.submitTransaction('createUsers', 1, 'Administrator', 'admin@politiclear.pt', await bcrypt.hash('admin', 10), permissions[0]);
+    await contract.submitTransaction('createUsers', 2, 'Acredited-User', 'acredited@politiclear.pt', await bcrypt.hash('acredited', 10), permissions[1]);
     await contract.submitTransaction('createUsers', 3, 'User', 'user@politiclear.pt', await bcrypt.hash('user', 10), '');
 
     const createdAt = new Date();
-    const creatorId = await dataVerifications.verifyToken(contract, req.body.token, 'ADMIN');
+    const creatorId = await dataVerifications.verifyToken(contract, req.body.token, permissions[0]);
     const creatorIdDescription = JSON.parse(await contract.submitTransaction('readUsers', creatorId)).name;
 
     const nodeType = ['Partido Político', 'Representante Político', 'Politico', 'Função Politica', 'Eventos'];

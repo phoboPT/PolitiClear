@@ -12,35 +12,21 @@ exports.getByKey = async function (req, res, contract) {
     }
 };
 
-const verify = async (contract, userId, arcId) => {
-    const a = dataVerifications.verifyKeyExists(userId, 'Users', contract);
-    const b = dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
-    await Promise.all([a, b]);
-    return Promise.resolve();
-}
 // cria novo tipo
 exports.createVotes = async function (req, res, contract) {
     try {
+        const { token, arcId, vote } = req.body;
         if (vote === "") {
             throw new Error(`The vote must be provided!`);
         };
 
-        let voter, voterDescription;
-        if (req.body.token) {
-            voter = jwt.verify(req.body.token, "MySecret");
-        }
-        const { arcId, vote } = req.body;
+        const voter = await dataVerifications.verifyToken(contract, token,);
+        const voterDescription = JSON.parse(await contract.submitTransaction('readUsers', voter)).name;
 
-        //verifica em simultaneo os parametros
-        await verify(contract, voter.userId, arcId);
+        await dataVerifications.verifyKeyExists(arcId, 'Arcs', contract);
 
-        voterDescription = await contract.submitTransaction('readUsers', voter.userId);
-        voterDescription = JSON.parse(voterDescription).name
-
-        const arc = await contract.submitTransaction('getByKey', arcId);
-        const parsedData = JSON.parse(arc);
-        const voteData = await contract.submitTransaction('queryByObjectType', "Votes");
-        const parsedVote = JSON.parse(voteData);
+        const parsedData = JSON.parse(await contract.submitTransaction('getByKey', arcId));
+        const parsedVote = JSON.parse(await contract.submitTransaction('queryByObjectType', "Votes"));
 
         let alreadyVoted = false;
         for (let i = 0; i < parsedVote.length; i++) {
@@ -57,8 +43,8 @@ exports.createVotes = async function (req, res, contract) {
         const key = uuidv4();
         const createdAt = new Date();
         const total = (parseInt(parsedData.totalVotes) || 0) + parseInt(vote);
-        await contract.submitTransaction('createVotes', key, voter.userId, voterDescription, arcId, vote, createdAt);
-        await contract.submitTransaction('updateArcs', arcId, "",  parseInt(total));
+        await contract.submitTransaction('createVotes', key, voter, voterDescription, arcId, vote, createdAt);
+        await contract.submitTransaction('updateArcs', arcId, "", parseInt(total));
         return ({ data: "Created" });
     } catch (e) {
         return ({ error: e.message });

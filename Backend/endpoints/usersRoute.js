@@ -60,8 +60,9 @@ exports.createUsers = async (req, res, contract) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     await contract.submitTransaction("createUsers", key, name, email, hashedPassword, permission);
     const token = jwt.sign({ userId: key, }, "MySecret");
+
     res.token = token;
-    return { token };
+    return { data: token };
   } catch (e) {
     return { error: e.message };
   }
@@ -73,10 +74,10 @@ exports.updateUsers = async (req, res, contract) => {
     const { key, token, name = "", oldPassword = "", newPassword = "", permission = "" } = req.body;
     let updaterId, id;
     if (key) {
-      updaterId = await dataVerifications.verifyToken(contract, token, 'ADMIN');
+      updaterId = await dataVerifications.verifyToken(contract, token, permissions[0]);
       id = key;
     } else {
-      updaterId = jwt.verify(token, "MySecret").userId;
+      updaterId = await dataVerifications.verifyToken(contract, token,);
       id = updaterId;
     }
 
@@ -107,7 +108,7 @@ exports.updateUsers = async (req, res, contract) => {
 exports.deleteUsers = async (req, res, contract) => {
   try {
     const { key, token } = req.body;
-    await dataVerifications.verifyToken(contract, token, 'ADMIN');
+    await dataVerifications.verifyToken(contract, token, permissions[0]);
     await contract.submitTransaction("deleteUsers", key);
     return { data: "Deleted" };
   } catch (e) {
@@ -117,8 +118,8 @@ exports.deleteUsers = async (req, res, contract) => {
 
 exports.me = async (req, res, contract) => {
   try {
-    const key = jwt.verify(req.body.token, "MySecret");
-    const response = await contract.submitTransaction("readUsers", key.userId);
+    const key = await dataVerifications.verifyToken(contract, req.body.token, );
+    const response = await contract.submitTransaction("readUsers", key);
     const parsedData = JSON.parse(response);
     delete parsedData["password"];
     return parsedData;

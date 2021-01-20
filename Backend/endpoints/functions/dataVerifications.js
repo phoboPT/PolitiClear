@@ -24,23 +24,22 @@ exports.verifyNameAlreadyExists = async function (name, dataType, contract) {
             data = { ...data, data: dataRecord.Record, };
         }
     });
-    if (data) {
-        throw new Error(`Error! The ${dataType} ${name} already exists`);
-    }
+    if (data) { throw new Error(`Error! The ${dataType} ${name} already exists`); }
     return data;
 }
 
-exports.verifyToken = async function (contract, token, admin) {
+exports.verifyToken = async function (contract, token, permissionRequired) {
     if (token) {
         const userID = jwt.verify(token, "MySecret");
         const permission = JSON.parse(await contract.submitTransaction("readUsers", userID.userId)).permission;
 
-        if(admin==='ADMIN' && permission !== permissions[0]) {
+        if (permissionRequired === permissions[0] && permission !== permissions[0]) {
             throw new Error('Error! You do not have administrator permissions!');
-        }
-        if (permission !== permissions[0] && permission !== permissions[1]) {
+        }  
+        if (permissionRequired === permissions[1] && (permission !== permissions[1] && permission !== permissions[0])) {
             throw new Error('Error! You do not have permissions!');
         }
+        
         return userID.userId;
     }
     throw new Error('Error! Invalid or null Token');

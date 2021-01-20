@@ -6,7 +6,7 @@ class Arcs {
         initialNodeNodeType, initialNodeNodeTypeDescription, initialNodeCreatedAt, initialNodeUpdatedAt,
         finalNode, finalNodeDescription, finalNodeCreatorId, finalNodeCreatorIdDescription,
         finalNodeNodeType, finalNodeNodeTypeDescription, finalNodeCreatedAt, finalNodeUpdatedAt,
-        creatorId, creatorIdDescription, totalVotes, createdAt) {
+        creatorId, creatorIdDescription, totalVotes, isVoted, createdAt) {
         this.description = description;
         this.initialNode = initialNode;
         this.initialNodeDescription = initialNodeDescription;
@@ -30,12 +30,13 @@ class Arcs {
         this.creatorIdDescription = creatorIdDescription;
         this.createdAt = (createdAt === '' || createdAt === undefined) ? new Date() : createdAt;
         this.totalVotes = parseInt(totalVotes);
+        this.isVoted = isVoted;
         this.updatedAt = '';
         this.updatedBy = '';
         this.type = 'Arcs';
     }
 
-    updateArcs(description, totalVotes, updatedBy, updatedByDescription) {
+    updateArcs(description, totalVotes, updatedBy, updatedByDescription, isVoted) {
         if (description !== '' && description !== undefined) {
             this.description = description;
         }
@@ -44,6 +45,7 @@ class Arcs {
         }
         this.updatedBy = updatedBy;
         this.updatedByDescription = updatedByDescription;
+        isVoted === undefined ? null : this.isVoted = isVoted;
         this.updatedAt = new Date();
     }
 }

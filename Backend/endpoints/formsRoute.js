@@ -22,28 +22,12 @@ exports.createForms = async function (req, res, contract) {
     let createdBy = "";
     let creatorByDescription = "";
     if (token) {
-      createdBy = jwt.verify(token, "MySecret");
-      createdBy = createdBy.userId;
-      creatorByDescription = await contract.submitTransaction(
-        "readUsers",
-        createdBy.userId
-      );
-      creatorByDescription = JSON.parse(creatorByDescription).name;
+      createdBy = await dataVerifications.verifyToken(contract, token, permissions[0]);
+      creatorByDescription = JSON.parse(await contract.submitTransaction("readUsers", createdBy)).name;
     }
     const key = uuidv4();
     const createdAt = new Date();
-    await contract.submitTransaction(
-      "createForms",
-      key,
-      email,
-      message,
-      createdAt,
-      "Open",
-      "",
-      createdBy,
-      creatorByDescription,
-      upgradeRequest
-    );
+    await contract.submitTransaction("createForms", key, email, message, createdAt, "Open", "", createdBy, creatorByDescription, upgradeRequest);
     return { data: "Created" };
   } catch (e) {
     return { error: e.message };

@@ -56,7 +56,7 @@ class PolitiClearContract extends Contract {
     description,
     totalVotes,
     updatedBy,
-    updatedByDescription
+    updatedByDescription, isVoted
   ) {
     if (!(await this.dataExists(ctx, key, "Arcs"))) {
       throw new Error(`Error! The arc ${key} does not exist`);
@@ -70,9 +70,9 @@ class PolitiClearContract extends Contract {
       asset.initialNodeNodeType, asset.initialNodeNodeTypeDescription, asset.initialNodeCreatedAt, asset.initialNodeUpdatedAt,
       asset.finalNode, asset.finalNodeDescription, asset.finalNodeCreatorId, asset.finalNodeCreatorIdDescription,
       asset.finalNodeNodeType, asset.finalNodeNodeTypeDescription, asset.finalNodeCreatedAt, asset.finalNodeUpdatedAt,
-      asset.creatorId, asset.creatorIdDescription, asset.totalVotes, asset.createdAt);
+      asset.creatorId, asset.creatorIdDescription, asset.totalVotes, asset.isVoted, asset.createdAt);
 
-    arcUpdated.updateArcs(description, totalVotes, updatedBy, updatedByDescription);
+    arcUpdated.updateArcs(description, totalVotes, updatedBy, updatedByDescription, isVoted);
     const buffer = Buffer.from(JSON.stringify(arcUpdated));
     await ctx.stub.putState(key, buffer);
   }
@@ -203,11 +203,9 @@ class PolitiClearContract extends Contract {
 
   async createNodesTypes(ctx, key, name, createdAt) {
     const query = await this.verifyNameAlreadyExists(ctx, name, "NodesTypes");
-
     if (query) {
       return { error: `Error! The NodesTypes ${name} already exists` }
     }
-
     const asset = new NodesTypes(name, createdAt);
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
