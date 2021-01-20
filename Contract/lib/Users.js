@@ -7,8 +7,8 @@ class Users {
     this.email = email;
     this.password = password;
     this.type = "Users";
-    this.permission = permission === '' ? "USER" : permission;
-    this.createdAt = createdAt === '' ? new Date() : createdAt;
+    this.permission = (permission === ''|| permission === undefined) ? "USER" : permission;
+    this.createdAt = (createdAt === '' || createdAt === undefined) ? new Date() : createdAt;
     this.updatedAt = "";
     this.updatedBy = "";
   }

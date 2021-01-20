@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcryptjs");
 const dataVerifications = require('./dataVerifications');
+const {permissions} = require('./permissions');
 
 exports.addData = async function (req, res, contract) {
   try {
