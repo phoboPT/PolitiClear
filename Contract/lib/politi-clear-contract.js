@@ -29,7 +29,7 @@ class PolitiClearContract extends Contract {
       initialNodeNodeType, initialNodeNodeTypeDescription, initialNodeCreatedAt, initialNodeUpdatedAt,
       finalNode, finalNodeDescription, finalNodeCreatorId, finalNodeCreatorIdDescription,
       finalNodeNodeType, finalNodeNodeTypeDescription, finalNodeCreatedAt, finalNodeUpdatedAt,
-      creatorId, creatorIdDescription, totalVotes);
+      creatorId, creatorIdDescription, totalVotes, 0);
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
     return JSON.parse(buffer.toString());
@@ -50,14 +50,7 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async updateArcs(
-    ctx,
-    key,
-    description,
-    totalVotes,
-    updatedBy,
-    updatedByDescription, isVoted
-  ) {
+  async updateArcs(ctx, key, description, totalVotes, updatedBy, updatedByDescription, isVoted) {
     if (!(await this.dataExists(ctx, key, "Arcs"))) {
       throw new Error(`Error! The arc ${key} does not exist`);
     }

@@ -79,7 +79,7 @@ exports.updateArcs = async function (req, res, contract) {
             return { error: 'Arc already have votes!' };
         }
 
-        await contract.submitTransaction('updateArcs', key, description || '', '', creatorId, creatorIdDescription);
+        await contract.submitTransaction('updateArcs', key, description || '', '', creatorId, creatorIdDescription,'');
         return { data: "Updated" }
     } catch (e) {
         return { error: e.message }

@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const dataVerifications = require("./functions/dataVerifications");
+const { permissions } = require("./functions/permissions");
 // search by key
 exports.getByKey = async (req, res, contract) => {
   try {
@@ -73,12 +74,15 @@ exports.updateUsers = async (req, res, contract) => {
   try {
     const { key, token, name = "", oldPassword = "", newPassword = "", permission = "" } = req.body;
     let updaterId, id;
+    let permissionIfAdmin = permission;
+    
     if (key) {
       updaterId = await dataVerifications.verifyToken(contract, token, permissions[0]);
       id = key;
     } else {
       updaterId = await dataVerifications.verifyToken(contract, token,);
       id = updaterId;
+      permissionIfAdmin = '';
     }
     if (oldPassword !== "" && newPassword !== "") {
       const user = await contract.submitTransaction("readUsers", id);
@@ -89,13 +93,12 @@ exports.updateUsers = async (req, res, contract) => {
       if (!valid) {
         return { error: "password invalid" };
       }
-
       const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await contract.submitTransaction("updateUsers", id, name, hashedPassword, permission, updaterId);
+      await contract.submitTransaction("updateUsers", id, name, hashedPassword, permissionIfAdmin, updaterId);
       return { data: "Updated" };
     } else {
 
-      await contract.submitTransaction("updateUsers", id, name, "", permission, updaterId);
+      await contract.submitTransaction("updateUsers", id, name, "", permissionIfAdmin, updaterId);
       return ({ data: "Updated" });
     }
   } catch (e) {

@@ -43,9 +43,9 @@ class Arcs {
         if (totalVotes !== '' && totalVotes !== undefined) {
             this.totalVotes = totalVotes;
         }
-        this.updatedBy = updatedBy;
-        this.updatedByDescription = updatedByDescription;
-        isVoted === undefined ? null : this.isVoted = isVoted;
+        updatedBy === undefined ? null : this.updatedBy = updatedBy;
+        updatedByDescription === undefined ? null :this.updatedByDescription = updatedByDescription;
+        (isVoted === undefined || isVoted === '') ? null : this.isVoted = isVoted;
         this.updatedAt = new Date();
     }
 }
