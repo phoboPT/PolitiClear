@@ -238,7 +238,7 @@ class PolitiClearContract extends Contract {
     await ctx.stub.putState(key, buffer);
   }
 
-  async updateUsers(ctx, key, name, password, permission) {
+  async updateUsers(ctx, key, name, password, permission, updatedBy) {
     if (!(await this.dataExists(ctx, key, "Users"))) {
       throw new Error(`Error! The user ${key} does not exist`);
     }
@@ -246,7 +246,7 @@ class PolitiClearContract extends Contract {
     const asset = JSON.parse(buffer1.toString());
 
     const userUpdated = new Users(asset.name, asset.email, asset.password, asset.permission, asset.createdAt);
-    userUpdated.updateUsers(name, password, permission);
+    userUpdated.updateUsers(name, password, permission, updatedBy);
     const buffer = Buffer.from(JSON.stringify(userUpdated));
     await ctx.stub.putState(key, buffer);
   }
