@@ -90,6 +90,7 @@ const signup = async (userData) => {
   const recipeUrl = 'http://127.0.0.1:5000/users/create';
 
   const data = await sendRequest('POST', recipeUrl, userData);
+  console.log(data.data);
   Cookies.set('token', data.data.token, {
     path: '',
     expires: 1000 * 24 * 365 * 60 * 60, // 1 year cookie

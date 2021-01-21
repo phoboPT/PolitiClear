@@ -59,8 +59,15 @@ exports.createUsers = async (req, res, contract) => {
     }
     const key = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
-    await contract.submitTransaction("createUsers", key, name, email, hashedPassword, permission);
-    const token = jwt.sign({ userId: key, }, "MySecret");
+    await contract.submitTransaction(
+      "createUsers",
+      key,
+      name,
+      email,
+      hashedPassword,
+      permission
+    );
+    const token = jwt.sign({ userId: key }, "MySecret");
 
     res.token = token;
     return { data: token };
@@ -72,34 +79,64 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
-    const { key, token, name = "", oldPassword = "", newPassword = "", permission = "" } = req.body;
+    const {
+      key,
+      token,
+      name = "",
+      oldPassword = "",
+      newPassword = "",
+      permission = "",
+    } = req.body;
     let updaterId, id;
     let permissionIfAdmin = permission;
-    
+
     if (key) {
-      updaterId = await dataVerifications.verifyToken(contract, token, permissions[0]);
+      updaterId = await dataVerifications.verifyToken(
+        contract,
+        token,
+        permissions[0]
+      );
       id = key;
     } else {
-      updaterId = await dataVerifications.verifyToken(contract, token,);
+      updaterId = await dataVerifications.verifyToken(contract, token);
       id = updaterId;
-      permissionIfAdmin = '';
+      permissionIfAdmin = "";
     }
+
     if (oldPassword !== "" && newPassword !== "") {
       const user = await contract.submitTransaction("readUsers", id);
       if (!user) {
         return { error: "No email found" };
       }
-      const valid = await bcrypt.compare(oldPassword, JSON.parse(user).password);
+      const valid = await bcrypt.compare(
+        oldPassword,
+        JSON.parse(user).password
+      );
+
       if (!valid) {
         return { error: "password invalid" };
       }
       const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await contract.submitTransaction("updateUsers", id, name, hashedPassword, permissionIfAdmin, updaterId);
+      await contract.submitTransaction(
+        "updateUsers",
+        id,
+        name,
+        hashedPassword,
+        permissionIfAdmin,
+        updaterId
+      );
       return { data: "Updated" };
     } else {
+      await contract.submitTransaction(
+        "updateUsers",
+        id,
+        name,
+        "",
+        permissionIfAdmin,
+        updaterId
+      );
 
-      await contract.submitTransaction("updateUsers", id, name, "", permissionIfAdmin, updaterId);
-      return ({ data: "Updated" });
+      return { data: "Updated" };
     }
   } catch (e) {
     return { error: e.message };
@@ -110,7 +147,7 @@ exports.updateUsers = async (req, res, contract) => {
 exports.deleteUsers = async (req, res, contract) => {
   try {
     const { key, token } = req.body;
-    await dataVerifications.verifyToken(contract, token, permissions[0]);
+    //  await dataVerifications.verifyToken(contract, token, permissions[0]);
     await contract.submitTransaction("deleteUsers", key);
     return { data: "Deleted" };
   } catch (e) {
@@ -120,7 +157,7 @@ exports.deleteUsers = async (req, res, contract) => {
 
 exports.me = async (req, res, contract) => {
   try {
-    const key = await dataVerifications.verifyToken(contract, req.body.token, );
+    const key = await dataVerifications.verifyToken(contract, req.body.token);
     const response = await contract.submitTransaction("readUsers", key);
     const parsedData = JSON.parse(response);
     delete parsedData["password"];

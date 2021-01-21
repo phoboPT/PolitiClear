@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
-const jwt = require("jsonwebtoken");
-
+const dataVerifications = require("./functions/dataVerifications");
+const permissions = require("./functions/permissions");
 // search by key
 exports.getByKey = async function (req, res, contract) {
   try {
@@ -17,16 +17,39 @@ exports.getByKey = async function (req, res, contract) {
 // create new form
 exports.createForms = async function (req, res, contract) {
   try {
-    const { token, userKey, message, email = "", upgradeRequest = false, } = req.body;
+    const {
+      token,
+      userKey,
+      message,
+      email = "",
+      upgradeRequest = false,
+    } = req.body;
     let createdBy = userKey;
     let creatorByDescription = "";
     if (token) {
-      createdBy = await dataVerifications.verifyToken(contract, token, permissions[0]);
-      creatorByDescription = JSON.parse(await contract.submitTransaction("readUsers", createdBy)).name;
+      createdBy = await dataVerifications.verifyToken(
+        contract,
+        token,
+        permissions[0]
+      );
+      creatorByDescription = JSON.parse(
+        await contract.submitTransaction("readUsers", createdBy)
+      ).name;
     }
     const key = uuidv4();
     const createdAt = new Date();
-    await contract.submitTransaction("createForms", key, email, message, createdAt, "Open", "", createdBy, creatorByDescription, upgradeRequest);
+    await contract.submitTransaction(
+      "createForms",
+      key,
+      email,
+      message,
+      createdAt,
+      "Open",
+      "",
+      createdBy,
+      creatorByDescription,
+      upgradeRequest
+    );
     return { data: "Created" };
   } catch (e) {
     return { error: e.message };
@@ -36,7 +59,6 @@ exports.createForms = async function (req, res, contract) {
 exports.updateForms = async function (req, res, contract) {
   try {
     const { key, status = "", response = "" } = req.body;
-    console.log(key, status, response);
 
     await contract.submitTransaction("updateForms", key, status, response);
     return { data: "Updated" };

@@ -9,9 +9,7 @@ class Wait extends Component {
 
   async componentDidMount() {
     const response = await getData('http://127.0.0.1:5000/wait');
-    console.log(response);
     this.setState({ response: response.data, loading: false });
-    console.log(this.state);
   }
 
   render() {

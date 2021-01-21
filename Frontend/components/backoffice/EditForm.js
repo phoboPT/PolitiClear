@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import Cookies from 'js-cookie';
 import Form from '../styles/Form';
 import Error from '../ErrorMessage';
 import SuccessMessage from '../styles/SuccessMessage';
 import { sendRequest } from '../../lib/requests';
 import SickButton from '../styles/SickButton';
+
 const ButtonDiv = styled.div`
   button {
     margin: 0 auto;
@@ -62,11 +64,12 @@ class EditForm extends Component {
   };
 
   updateUser = async () => {
+    const token = Cookies.get('token');
     this.setState({ loading: true });
-    console.log(this.props.data.Record);
     const data = {
       key: this.props.data.Record.createdBy,
       permission: this.state.certify ? 'ACREDITED-USER' : '',
+      token,
     };
     const res = await sendRequest(
       'PUT',

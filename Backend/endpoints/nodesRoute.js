@@ -19,7 +19,11 @@ exports.getByKey = async function (req, res, contract) {
 exports.createNodes = async function (req, res, contract) {
   try {
     const { description, nodeType, token } = req.body;
-    const creatorId = await dataVerifications.verifyToken(contract, token, permissions[1]);
+    const creatorId = await dataVerifications.verifyToken(
+      contract,
+      token,
+      permissions[1]
+    );
     await dataVerifications.verifyKeyExists(nodeType, "NodesTypes", contract);
 
     const key = uuidv4();
@@ -54,7 +58,11 @@ exports.createNodes = async function (req, res, contract) {
 exports.updateNodes = async function (req, res, contract) {
   try {
     const { key, description, nodeType, token } = req.body;
-    const creatorId = await dataVerifications.verifyToken(contract, token, permissions[1]);
+    const creatorId = await dataVerifications.verifyToken(
+      contract,
+      token,
+      permissions[1]
+    );
     const creatorIdDescription = JSON.parse(
       await contract.submitTransaction("readUsers", creatorId)
     ).name;
@@ -196,9 +204,12 @@ exports.userNodes = async function (req, res, contract) {
     if (!key) {
       throw new Error("Your token is invalid");
     }
-    const creatorId = await dataVerifications.verifyToken(contract, key,);
+    const creatorId = await dataVerifications.verifyToken(contract, key);
 
-    const buffer1 = await contract.submitTransaction("queryByObjectType", "Nodes");
+    const buffer1 = await contract.submitTransaction(
+      "queryByObjectType",
+      "Nodes"
+    );
     const asset = JSON.parse(buffer1.toString());
     const result = asset.filter((item) => {
       return item.Record.creatorId === creatorId;
@@ -212,7 +223,6 @@ exports.userNodes = async function (req, res, contract) {
 
 exports.getRelations = async function (req, res, contract) {
   try {
-    console.log("hey");
     const { key } = req.headers;
     const arcos = await contract.submitTransaction("queryByObjectType", "Arcs");
     const nodes = await contract.submitTransaction(
@@ -261,7 +271,7 @@ exports.getRelations = async function (req, res, contract) {
         arcsByKey.push(arco.Key);
       }
     });
-    arcsByKey.forEach((arc) => { });
+    arcsByKey.forEach((arc) => {});
 
     return { nodes: nodesDetails, arcs: JSON.parse(arcos) };
   } catch (e) {
