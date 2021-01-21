@@ -78,29 +78,9 @@ class PolitiClearContract extends Contract {
   }
 
   //FORMS
-  async createForms(
-    ctx,
-    key,
-    email,
-    message,
-    createdAt,
-    status,
-    response,
-    createdBy,
-    creatorByDescription,
-    upgradeRequest
-  ) {
-    const asset = new Forms(
-      email,
-      message,
-      createdAt,
-      status,
-      response,
-      createdBy,
-      creatorByDescription,
-      upgradeRequest
-    );
+  async createForms(ctx, key, email, message, status, response, createdBy, creatorByDescription, upgradeRequest) {
 
+    const asset = new Forms(email, message, status, response, createdBy, creatorByDescription, upgradeRequest);
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
     return JSON.parse(buffer.toString());
@@ -124,11 +104,11 @@ class PolitiClearContract extends Contract {
     const formUpdated = new Forms(
       asset.email,
       asset.message,
-      asset.createdAt,
       asset.status,
       asset.response,
       asset.createdBy,
-      asset.creatorByDescription
+      asset.creatorByDescription,
+      asset.createdAt
     );
     formUpdated.updateForms(status, response);
     const buffer = Buffer.from(JSON.stringify(formUpdated));

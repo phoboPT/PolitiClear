@@ -2,16 +2,16 @@
 
 class Forms {
 
-    constructor(email, message, createdAt, status, response, createdBy, creatorByDescription, upgradeRequest) {
+    constructor(email, message, status, response, createdBy, creatorByDescription, upgradeRequest, createdAt) {
         this.email = email;
         this.message = message;
         this.status = status;
         this.response = response;
-        this.createdAt = createdAt;
         this.createdBy = createdBy;
         this.creatorByDescription = creatorByDescription;
         this.updatedAt = '';
         this.upgradeRequest = upgradeRequest;
+        this.createdAt = (createdAt === '' || createdAt === undefined) ? new Date() : createdAt;
         this.type = 'Forms';
     }
 

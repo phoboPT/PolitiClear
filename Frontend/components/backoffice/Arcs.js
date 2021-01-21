@@ -86,39 +86,45 @@ class Arcs extends Component {
                             <td>{formatDate(createdAt)}</td>
                             <td>{formatDate(updatedAt)}</td>
 
+
                             <td className="center">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  this.setState({
-                                    form: 2,
-                                    data: { item },
-                                  });
-                                }}
-                              >
-                                ✏
+                              {item.Record.isVoted > 0 ? null :
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    this.setState({
+                                      form: 2,
+                                      data: { item },
+                                    });
+                                  }}
+                                >
+                                  ✏
                               </button>
+                              }
                             </td>
                             <td className="center">
-                              <button
-                                type="button"
-                                onClick={async () => {
-                                  const res = confirm(
-                                    'Do you really want to delete?',
-                                  );
-                                  if (res) {
-                                    await deleteByKey(
-                                      'http://127.0.0.1:5000/arcs/delete',
-                                      item.Key,
+                              {item.Record.isVoted > 0 ? null :
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    const res = confirm(
+                                      'Do you really want to delete?',
                                     );
-                                    this.fetch();
-                                  }
-                                }}
-                              >
-                                ❌
+                                    if (res) {
+                                      await deleteByKey(
+                                        'http://127.0.0.1:5000/arcs/delete',
+                                        item.Key,
+                                      );
+                                      this.fetch();
+                                    }
+                                  }}
+                                >
+                                  ❌
                               </button>
+                              }
                             </td>
                           </tr>
+
                         );
                       })}
                     </tbody>

@@ -17,39 +17,16 @@ exports.getByKey = async function (req, res, contract) {
 // create new form
 exports.createForms = async function (req, res, contract) {
   try {
-    const {
-      token,
-      userKey,
-      message,
-      email = "",
-      upgradeRequest = false,
-    } = req.body;
-    let createdBy = userKey;
-    let creatorByDescription = "";
+    const { token, message, email = "", upgradeRequest = false} = req.body;
+
+    let createdBy = '';
+    let creatorByDescription = ''
     if (token) {
-      createdBy = await dataVerifications.verifyToken(
-        contract,
-        token,
-        permissions[0]
-      );
-      creatorByDescription = JSON.parse(
-        await contract.submitTransaction("readUsers", createdBy)
-      ).name;
+      createdBy = await dataVerifications.verifyToken(contract, token,);
+      creatorByDescription = JSON.parse(await contract.submitTransaction("readUsers", createdBy)).name;
     }
     const key = uuidv4();
-    const createdAt = new Date();
-    await contract.submitTransaction(
-      "createForms",
-      key,
-      email,
-      message,
-      createdAt,
-      "Open",
-      "",
-      createdBy,
-      creatorByDescription,
-      upgradeRequest
-    );
+    await contract.submitTransaction("createForms", key, email, message, "Open", "", createdBy, creatorByDescription, upgradeRequest);
     return { data: "Created" };
   } catch (e) {
     return { error: e.message };
