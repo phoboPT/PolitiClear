@@ -419,8 +419,8 @@ class Search extends React.Component {
                         <th>Relation:</th>
                         <th>To:</th>
                         <th>Created At:</th>
-                        <th>Total Votes:</th>
-                        <th>Vote:</th>
+                        <th>Credibility:</th>
+                        <th>Verify:</th>
                       </tr>
                     </thead>
                     <tbody>

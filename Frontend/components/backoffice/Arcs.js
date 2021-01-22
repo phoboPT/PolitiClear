@@ -58,7 +58,7 @@ class Arcs extends Component {
                         <th>Relation </th>
                         <th>To</th>
                         <th>Created by:</th>
-                        <th>Votes</th>
+                        <th>Credibility</th>
                         <th>Created At:</th>
                         <th>Updated At:</th>
                         <th>Edit </th>
