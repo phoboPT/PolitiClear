@@ -85,6 +85,10 @@ app.delete("/arcs/delete", async (req, res) => {
   const response = await arcsRoute.deleteArcs(req, res, contract);
   res.status(200).send(response);
 });
+app.get("/arcs/userArcs", async (req, res) => {
+  const response = await arcsRoute.userArcs(req, res, contract);
+  res.status(200).send(response);
+});
 
 // Forms
 app.post("/forms/create", async (req, res) => {
@@ -145,10 +149,6 @@ app.get("/search", async (req, res) => {
   const response = await nodesRoute.search(req, res, contract);
   res.status(200).send(response);
 });
-app.get("/nodes/userNodes", async (req, res) => {
-  const response = await nodesRoute.userNodes(req, res, contract);
-  res.status(200).send(response);
-});
 
 app.get("/nodes/getRelations/", async (req, res) => {
   const response = await nodesRoute.getRelations(req, res, contract);
@@ -164,7 +164,6 @@ app.post("/nodesTypes/create", async (req, res) => {
   const response = await nodesTypesRoute.createNodesTypes(req, res, contract);
   res.status(200).send(response);
 });
-
 
 app.delete("/nodesTypes/delete", async (req, res) => {
   const response = await nodesTypesRoute.deleteNodesTypes(req, res, contract);

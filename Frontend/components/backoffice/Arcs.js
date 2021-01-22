@@ -54,10 +54,10 @@ class Arcs extends Component {
                   <Table>
                     <thead>
                       <tr>
-                        <th>Description </th>
+                        <th>From</th>
+                        <th>Relation </th>
+                        <th>To</th>
                         <th>Created by:</th>
-                        <th>Initial node</th>
-                        <th>Final node</th>
                         <th>Votes</th>
                         <th>Created At:</th>
                         <th>Updated At:</th>
@@ -78,17 +78,16 @@ class Arcs extends Component {
                         }
                         return (
                           <tr key={item.Key}>
-                            <td>{item.Record.description}</td>
-                            <td>{item.Record.creatorId}</td>
                             <td>{item.Record.initialNodeDescription}</td>
+                            <td>{item.Record.description}</td>
                             <td>{item.Record.finalNodeDescription}</td>
+                            <td>{item.Record.creatorIdDescription}</td>
                             <td>{item.Record.totalVotes}</td>
                             <td>{formatDate(createdAt)}</td>
                             <td>{formatDate(updatedAt)}</td>
 
-
                             <td className="center">
-                              {item.Record.isVoted > 0 ? null :
+                              {item.Record.isVoted > 0 ? null : (
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -99,11 +98,11 @@ class Arcs extends Component {
                                   }}
                                 >
                                   ✏
-                              </button>
-                              }
+                                </button>
+                              )}
                             </td>
                             <td className="center">
-                              {item.Record.isVoted > 0 ? null :
+                              {item.Record.isVoted > 0 ? null : (
                                 <button
                                   type="button"
                                   onClick={async () => {
@@ -120,11 +119,10 @@ class Arcs extends Component {
                                   }}
                                 >
                                   ❌
-                              </button>
-                              }
+                                </button>
+                              )}
                             </td>
                           </tr>
-
                         );
                       })}
                     </tbody>

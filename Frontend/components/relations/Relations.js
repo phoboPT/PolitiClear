@@ -7,6 +7,7 @@ import { permissions } from '../../lib/permissions';
 import Table from '../styles/Table';
 import Inner from '../styles/InnerDiv';
 import AddEvents from './AddEvents';
+import formatDate from '../../lib/formatDate';
 
 class Relations extends Component {
   constructor(props) {
@@ -50,7 +51,7 @@ class Relations extends Component {
   reqData = async () => {
     const token = Cookies.get('token');
 
-    const nodes = searchNodes('http://127.0.0.1:5000/nodes/userNodes', token);
+    const nodes = searchNodes('http://127.0.0.1:5000/arcs/userArcs', token);
     const nodesTypes = getData('http://127.0.0.1:5000/readByType/NodesTypes');
     const res = await Promise.all([nodes, nodesTypes]);
     return Promise.resolve(res);
@@ -74,38 +75,54 @@ class Relations extends Component {
                   <Table>
                     <thead>
                       <tr>
-                        <th>Description </th>
-                        <th>created by</th>
-                        <th>Type</th>
+                        <th>From</th>
+                        <th>Relation </th>
+                        <th>To</th>
+                        <th>Created by:</th>
+                        <th>Credibility</th>
                         <th>Created At:</th>
                         <th>Updated At:</th>
                         <th>Edit </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.formData.map((item) => (
-                        <tr key={item.Key}>
-                          <td>{item.Record.description}</td>
-                          <td>{item.Record.creatorId}</td>
-                          <td>{item.Record.nodeType}</td>
-                          <td>{item.Record.createdAt}</td>
-                          <td>{item.Record.updatedAt}</td>
+                      {this.state.formData.map((item) => {
+                        const createdAt = new Date(
+                          item.Record.createdAt,
+                        ).toISOString();
+                        let updatedAt = '';
+                        if (item.Record.updatedAt) {
+                          updatedAt = new Date(
+                            item.Record.updatedAt,
+                          ).toISOString();
+                        }
 
-                          <td className="center">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                this.setState({
-                                  form: 2,
-                                  data: { item },
-                                });
-                              }}
-                            >
-                              ✏
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                        return (
+                          <tr key={item.Key}>
+                            <td>{item.Record.initialNodeDescription}</td>
+                            <td>{item.Record.description}</td>
+                            <td>{item.Record.finalNodeDescription}</td>
+                            <td>{item.Record.creatorIdDescription}</td>
+                            <td>{item.Record.totalVotes}</td>
+                            <td>{formatDate(createdAt)}</td>
+                            <td>{formatDate(updatedAt)}</td>
+
+                            <td className="center">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  this.setState({
+                                    form: 2,
+                                    data: { item },
+                                  });
+                                }}
+                              >
+                                ✏
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </Table>
                   <button
