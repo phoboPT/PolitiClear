@@ -28,16 +28,6 @@ exports.createNodesTypes = async function (req, res, contract) {
   }
 };
 
-exports.updateNodesTypes = async function (req, res, contract) {
-  try {
-    const { key, isUsed } = req.body;
-    await contract.submitTransaction("updateNodesTypes", key, isUsed);
-    return { data: "Updated" };
-  } catch (e) {
-    return { error: e.message };
-  }
-};
-
 exports.deleteNodesTypes = async function (req, res, contract) {
   try {
     if (req.headers.key === "" || req.headers.key === undefined) {
