@@ -92,42 +92,44 @@ class NodesTypes extends Component {
                             <td>{formatDate(updatedAt)}</td>
 
                             <td className="center">
-                              <button
-                                type="button"
-                                onClick={async () => {
-                                  const res = confirm(
-                                    'Do you really want to delete?',
-                                  );
-                                  if (res) {
-                                    const data = await deleteByKey(
-                                      'http://127.0.0.1:5000/nodesTypes/delete',
-                                      nodeType.Key,
+                              {nodeType.Record.isUsed > 0 ? null :
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    const res = confirm(
+                                      'Do you really want to delete?',
                                     );
-                                    this.setState({
-                                      data: data.data.data,
-                                      error: '',
-                                    });
-                                    this.hideTimeout = setTimeout(
-                                      () =>
-                                        this.setState({
-                                          data: null,
-                                          error: null,
-                                        }),
-                                      3000,
-                                    );
-                                    if (data.data.error) {
+                                    if (res) {
+                                      const data = await deleteByKey(
+                                        'http://127.0.0.1:5000/nodesTypes/delete',
+                                        nodeType.Key,
+                                      );
                                       this.setState({
-                                        error: data.data.error || '',
-                                        data: '',
+                                        data: data.data.data,
+                                        error: '',
                                       });
+                                      this.hideTimeout = setTimeout(
+                                        () =>
+                                          this.setState({
+                                            data: null,
+                                            error: null,
+                                          }),
+                                        3000,
+                                      );
+                                      if (data.data.error) {
+                                        this.setState({
+                                          error: data.data.error || '',
+                                          data: '',
+                                        });
+                                      }
+                                      console.log(data);
+                                      this.fetch();
                                     }
-                                    console.log(data);
-                                    this.fetch();
-                                  }
-                                }}
-                              >
-                                ❌
+                                  }}
+                                >
+                                  ❌
                               </button>
+                              }
                             </td>
                           </tr>
                         );

@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const dataVerifications = require("./functions/dataVerifications");
+const { permissions } = require('./functions/permissions')
 const jwt = require("jsonwebtoken");
 
 // Pesquisa por key
@@ -48,6 +49,8 @@ exports.createNodes = async function (req, res, contract) {
       nodeType,
       nodeTypeDescription
     );
+    await contract.submitTransaction("updateNodesTypes", nodeType, 1);
+
     return { data: "Created" };
   } catch (e) {
     return { error: e.message };
@@ -58,31 +61,36 @@ exports.createNodes = async function (req, res, contract) {
 exports.updateNodes = async function (req, res, contract) {
   try {
     const { key, description, nodeType, token } = req.body;
-    const creatorId = await dataVerifications.verifyToken(
-      contract,
-      token,
-      permissions[1]
-    );
-    const creatorIdDescription = JSON.parse(
-      await contract.submitTransaction("readUsers", creatorId)
-    ).name;
-    let nodeTypeDescription;
+    const creatorId = await dataVerifications.verifyToken(contract, token, permissions[1]);
+    const creatorIdDescription = JSON.parse(await contract.submitTransaction("readUsers", creatorId)).name;
+
+    let nodeTypeDescription, nodeTypeBefore;
     if (nodeType !== "" && nodeType !== undefined) {
       await dataVerifications.verifyKeyExists(nodeType, "NodesTypes", contract);
-      nodeTypeDescription = JSON.parse(
-        await contract.submitTransaction("readNodesTypes", nodeType)
-      ).name;
+      nodeTypeDescription = JSON.parse(await contract.submitTransaction("readNodesTypes", nodeType)).name;
+
+      nodeTypeBefore = JSON.parse(await contract.submitTransaction("readNodes", key)).nodeType;
     }
 
-    await contract.submitTransaction(
-      "updateNodes",
-      key,
-      description || "",
-      nodeType || "",
-      nodeTypeDescription || "",
-      creatorId,
-      creatorIdDescription
-    );
+    await contract.submitTransaction("updateNodes", key, description || "", nodeType || "", nodeTypeDescription || "", creatorId, creatorIdDescription);
+
+
+    //verificar se existem nodes com o mesmo nodeType
+    if (nodeTypeBefore !== '' && nodeTypeBefore !== undefined) {
+      let existNode = 0;
+      const existsNodesByType = JSON.parse(await contract.submitTransaction("queryByObjectType", "Nodes"));
+      existsNodesByType.forEach((item) => {
+        if (item.Record.nodeType === nodeTypeBefore) {
+          existNode = 1;
+        }
+      })
+      if (existNode === 1) {
+        await contract.submitTransaction("updateNodesTypes", nodeTypeBefore, 1);
+      } else {
+        await contract.submitTransaction("updateNodesTypes", nodeTypeBefore, 0);
+      }
+    }
+
     return { data: "Updated" };
   } catch (e) {
     return { error: e.message };
@@ -93,10 +101,8 @@ exports.deleteNodes = async function (req, res, contract) {
   try {
     const { token, key } = req.body;
     await dataVerifications.verifyToken(contract, token, permissions[0]);
-    const response = await contract.submitTransaction(
-      "queryByObjectType",
-      "Arcs"
-    );
+    const response = await contract.submitTransaction("queryByObjectType", "Arcs");
+
     //verifica se existem arcos com votos positivos
     for (let i = 0; i < JSON.parse(response).length; i++) {
       if (
@@ -120,7 +126,24 @@ exports.deleteNodes = async function (req, res, contract) {
         );
       }
     }
+
+    const nodeType = JSON.parse(await contract.submitTransaction("readNodes", key)).nodeType;
+
     await contract.submitTransaction("deleteNodes", key);
+
+    //verificar se existem nodes com o mesmo nodeType
+    let existNode = 0;
+    const existsNodesByType = JSON.parse(await contract.submitTransaction("queryByObjectType", "Nodes"));
+    existsNodesByType.forEach((item) => {
+      if (item.Record.nodeType === nodeType) {
+        existNode = 1;
+      }
+    })
+    if (existNode === 1) {
+      await contract.submitTransaction("updateNodesTypes", nodeType, 1);
+    } else {
+      await contract.submitTransaction("updateNodesTypes", nodeType, 0);
+    }
 
     return { data: "Deleted" };
   } catch (e) {
@@ -271,7 +294,7 @@ exports.getRelations = async function (req, res, contract) {
         arcsByKey.push(arco.Key);
       }
     });
-    arcsByKey.forEach((arc) => {});
+    arcsByKey.forEach((arc) => { });
 
     return { nodes: nodesDetails, arcs: JSON.parse(arcos) };
   } catch (e) {

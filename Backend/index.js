@@ -164,6 +164,10 @@ app.post("/nodesTypes/create", async (req, res) => {
   const response = await nodesTypesRoute.createNodesTypes(req, res, contract);
   res.status(200).send(response);
 });
+app.put("/nodesTypes/update", async (req, res) => {
+  const response = await nodesTypesRoute.updateNodesTypes(req, res, contract);
+  res.status(200).send(response);
+});
 
 app.delete("/nodesTypes/delete", async (req, res) => {
   const response = await nodesTypesRoute.deleteNodesTypes(req, res, contract);

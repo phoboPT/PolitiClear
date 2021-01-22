@@ -21,13 +21,18 @@ exports.createNodesTypes = async function (req, res, contract) {
     const key = uuidv4();
     const createdAt = new Date();
 
-    const res = await contract.submitTransaction(
-      "createNodesTypes",
-      key,
-      name,
-      createdAt
-    );
+    const res = await contract.submitTransaction("createNodesTypes", key, name, createdAt);
     return JSON.parse(res);
+  } catch (e) {
+    return { error: e.message };
+  }
+};
+
+exports.updateNodesTypes = async function (req, res, contract) {
+  try {
+    const { key, isUsed } = req.body;
+    await contract.submitTransaction("updateNodesTypes", key, isUsed);
+    return { data: "Updated" };
   } catch (e) {
     return { error: e.message };
   }

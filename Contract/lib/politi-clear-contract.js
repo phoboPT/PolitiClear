@@ -134,7 +134,7 @@ class PolitiClearContract extends Contract {
 
   async createNodes(ctx, key, description, creatorId, creatorIdDescription, nodeType, nodeTypeDescription) {
     const asset = new Nodes(description, creatorId, creatorIdDescription, nodeType, nodeTypeDescription, '');
-
+  
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
     return JSON.parse(buffer.toString());
@@ -183,6 +183,18 @@ class PolitiClearContract extends Contract {
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
     return JSON.parse(buffer.toString());
+  }
+  async updateNodesTypes(ctx, key, isUsed) {
+    if (!(await this.dataExists(ctx, key, "NodesTypes"))) {
+      throw new Error(`Error! The NodesTypes ${key} does not exist`);
+    }
+    const buffer1 = await ctx.stub.getState(key);
+    const asset = JSON.parse(buffer1.toString());
+
+    const nodesTypesUpdated = new NodesTypes(asset.name, asset.createdAt, asset.creatorId, asset.isUsed);
+    nodesTypesUpdated.updateNodesTypes(isUsed);
+    const buffer = Buffer.from(JSON.stringify(nodesTypesUpdated));
+    await ctx.stub.putState(key, buffer);
   }
 
   async deleteNodesTypes(ctx, key) {
