@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcryptjs");
 const dataVerifications = require('./dataVerifications');
-const {permissions} = require('./permissions');
+const { permissions } = require('./permissions');
 
 exports.addData = async function (req, res, contract) {
   try {
@@ -13,7 +13,7 @@ exports.addData = async function (req, res, contract) {
     const creatorId = await dataVerifications.verifyToken(contract, req.body.token, permissions[0]);
     const creatorIdDescription = JSON.parse(await contract.submitTransaction('readUsers', creatorId)).name;
 
-    const nodeType = ['Partido Político', 'Representante Político', 'Politico', 'Função Politica', 'Eventos'];
+    const nodeType = ['Partido Político', 'Representante Político', 'Politico', 'Função Politica', 'Eventos', 'Jornalista'];
     const nodeTypeKey = [];
     const cargosPoliticos = ['Presidência da República', 'Primeiro Ministro', 'Presidente República'];
     let cargosPoliticosKey = [];
@@ -52,6 +52,10 @@ exports.addData = async function (req, res, contract) {
       const key = uuidv4();
       nodeTypeKey.push(key);
       await contract.submitTransaction('createNodesTypes', key, nodeType[i], createdAt);
+      if (i < 5) { 
+        console.log(key)
+        await contract.submitTransaction('updateNodesTypes', key, 1); 
+      }
     }
     for (let i = 0; i < cargosPoliticos.length; i++) {
       const key = uuidv4();
