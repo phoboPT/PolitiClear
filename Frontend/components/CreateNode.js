@@ -30,7 +30,7 @@ export default class CreateNode extends Component {
     const data = {
       description: this.state.name,
       token,
-      nodeType: this.state.nodeType,
+      nodeTypeId: this.state.nodeType,
     };
     const res = await sendRequest(
       "POST",

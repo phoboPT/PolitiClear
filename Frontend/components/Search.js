@@ -179,7 +179,7 @@ class Search extends React.Component {
   };
 
   async componentDidMount() {
-    await this.getAll();
+    // await this.getAll();
   }
 
   getAll = async () => {
@@ -503,17 +503,18 @@ class Search extends React.Component {
             </div>
           </TreeWrapper>
         )}
-
-        <FloatingIcon>
-          <div className="wsk-float">
-            <a
-              onClick={() => {
-                this.openForm();
-              }}
-              className="pulse-button"
-            ></a>
-          </div>
-        </FloatingIcon>
+        {!this.props.user.createdAt && (
+          <FloatingIcon>
+            <div className="wsk-float">
+              <a
+                onClick={() => {
+                  this.openForm();
+                }}
+                className="pulse-button"
+              ></a>
+            </div>
+          </FloatingIcon>
+        )}
       </>
     );
   }

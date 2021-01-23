@@ -40,7 +40,7 @@ const getNodesDescription = async (
 // create new form
 exports.createArcs = async function (req, res, contract) {
   try {
-    const { description, initialNode, finalNode, token = "" } = req.body;
+    const { description, initialNode, finalNode, token } = req.body;
     const creatorId = await dataVerifications.verifyToken(
       contract,
       token,
@@ -61,34 +61,50 @@ exports.createArcs = async function (req, res, contract) {
     const finalNodeInfo = JSON.parse(nodesData[1]);
     const creatorIdInfo = JSON.parse(nodesData[2]);
 
-    await contract.submitTransaction(
-      "createArcs",
+    const newArc = {
       key,
       description,
       initialNode,
-      initialNodeInfo.description,
-      initialNodeInfo.creatorId,
-      initialNodeInfo.creatorIdDescription,
-      initialNodeInfo.nodeType,
-      initialNodeInfo.nodeTypeDescription,
-      initialNodeInfo.createdAt,
-      initialNodeInfo.updatedAt,
+      initialNodeDescription: initialNodeInfo.description,
+      initialNodeCreatorId: initialNodeInfo.creatorId,
+      initialNodeCreatorIdDescription: initialNodeInfo.creatorIdDescription,
+      initialNodeNodeType: initialNodeInfo.nodeType,
+      initialNodeNodeTypeDescription: initialNodeInfo.nodeTypeDescription,
+      initialNodeCreatedAt: initialNodeInfo.createdAt,
+      initialNodeUpdatedAt: initialNodeInfo.updatedAt,
       finalNode,
-      finalNodeInfo.description,
-      finalNodeInfo.creatorId,
-      finalNodeInfo.creatorIdDescription,
-      finalNodeInfo.nodeType,
-      finalNodeInfo.nodeTypeDescription,
-      finalNodeInfo.createdAt,
-      finalNodeInfo.updatedAt,
+      finalNodeDescription: finalNodeInfo.description,
+      finalNodeCreatorId: finalNodeInfo.creatorId,
+      finalNodeCreatorIdDescription: finalNodeInfo.creatorIdDescription,
+      finalNodeNodeType: finalNodeInfo.nodeType,
+      finalNodeNodeTypeDescription: finalNodeInfo.nodeTypeDescription,
+      finalNodeCreatedAt: finalNodeInfo.createdAt,
+      finalNodeUpdatedAt: finalNodeInfo.updatedAt,
       creatorId,
-      creatorIdInfo.name,
-      0
+      creatorIdDescription: creatorIdInfo.name,
+      totalVotes: 0,
+    };
+
+    const response = await contract.submitTransaction(
+      "createArcs",
+      JSON.stringify(newArc)
     );
-    return { data: "Created" };
+    return JSON.parse(response);
   } catch (e) {
     return { error: e.message };
   }
+};
+
+const updatePromisses = async (contract, creatorId) => {
+  const creatorIdDescription = contract.submitTransaction(
+    "readUsers",
+    creatorId
+  ).name;
+
+  const votes = contract.submitTransaction("queryByObjectType", "Votes");
+
+  const res = await Promise.all([creatorIdDescription, votes]);
+  return Promise.resolve(res);
 };
 
 exports.updateArcs = async function (req, res, contract) {
@@ -97,36 +113,35 @@ exports.updateArcs = async function (req, res, contract) {
     if (key === "" || key === undefined) {
       return { error: "Key must be provided!" };
     }
-    const creatorId = await dataVerifications.verifyToken(
-      contract,
-      token,
-      permissions[1]
-    );
 
-    const creatorIdDescription = JSON.parse(
-      await contract.submitTransaction("readUsers", creatorId)
-    ).name;
-    const res = await contract.submitTransaction("queryByObjectType", "Votes");
+    const creatorId = jwt.verify(token, "MySecret").userId;
+    const data = await updatePromisses(contract, creatorId);
+
+    const creatorIdDescription = JSON.parse(data[0]);
+    const votes = JSON.parse(data[1]);
     let aux = 0;
-    JSON.parse(res).forEach((votesData) => {
+    votes.forEach((votesData) => {
       if (votesData.Record.arcId === key) {
         aux = 1;
+        return;
       }
     });
     if (aux === 1) {
       return { error: "Arc already have votes!" };
     }
 
-    await contract.submitTransaction(
-      "updateArcs",
+    const newArc = {
       key,
-      description || "",
-      "",
+      description,
       creatorId,
       creatorIdDescription,
-      ""
+    };
+
+    const response = await contract.submitTransaction(
+      "updateArcs",
+      JSON.stringify(newArc)
     );
-    return { data: "Updated" };
+    return JSON.parse(response);
   } catch (e) {
     return { error: e.message };
   }

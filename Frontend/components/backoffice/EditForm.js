@@ -40,8 +40,6 @@ class EditForm extends Component {
   saveForm = async () => {
     this.setState({ loading: true });
     const data = {
-      email: this.state.email,
-      message: this.state.message,
       response: this.state.response,
       key: this.props.data.Key,
       status: 'Closed',

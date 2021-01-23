@@ -18,13 +18,13 @@ exports.getByKey = async function (req, res, contract) {
 // cria novo tipo
 exports.createNodes = async function (req, res, contract) {
   try {
-    const { description, nodeType, token } = req.body;
+    const { description, nodeTypeId, token } = req.body;
     const creatorId = await dataVerifications.verifyToken(
       contract,
       token,
       permissions[1]
     );
-    await dataVerifications.verifyKeyExists(nodeType, "NodesTypes", contract);
+    await dataVerifications.verifyKeyExists(nodeTypeId, "NodesTypes", contract);
 
     const key = uuidv4();
 
@@ -35,7 +35,7 @@ exports.createNodes = async function (req, res, contract) {
     creatorIdDescription = JSON.parse(creatorIdDescription).name;
     let nodeTypeDescription = await contract.submitTransaction(
       "readNodesTypes",
-      nodeType
+      nodeTypeId
     );
     nodeTypeDescription = JSON.parse(nodeTypeDescription).name;
 
@@ -45,10 +45,13 @@ exports.createNodes = async function (req, res, contract) {
       description,
       creatorId,
       creatorIdDescription,
-      nodeType,
+      nodeTypeId,
       nodeTypeDescription
     );
-    await contract.submitTransaction("updateNodesTypes", nodeType, 1);
+    await contract.submitTransaction("updateNodesTypes", {
+      key: nodeTypeId,
+      isUsed: 1,
+    });
 
     return { data: "Created" };
   } catch (e) {
