@@ -19,11 +19,13 @@ exports.createNodesTypes = async function (req, res, contract) {
   try {
     const { name } = req.body;
     const key = uuidv4();
-
+    const nodeType = {
+      name,
+      key,
+    };
     const response = await contract.submitTransaction(
       "createNodesTypes",
-      key,
-      name
+      JSON.stringify(nodeType)
     );
     return JSON.parse(response);
   } catch (e) {

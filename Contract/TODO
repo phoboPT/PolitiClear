@@ -24,3 +24,36 @@ FIX:
 
         ALTERAR o parametro createdAT, verificar se é undefined e nao passar nada
         Quando faz update a um nodo tem de atualizar os arcos
+
+
+    Refactor to Contract:
+        NodesTypes:
+            ✔ Update @done(21-01-23 13:46)
+            ✔ Create @done(21-01-23 13:46)
+            ✔ Delete @done(21-01-23 13:46)
+        Votes:
+            ☐ Update
+            ☐ Create
+            ☐ Delete
+        Arcs:
+            ☐ Update
+            ☐ Create
+            ☐ Delete
+        Nodes:
+            ☐ Update
+            ☐ Create
+            ☐ Delete
+        Forms:
+            ☐ Update
+            ☐ Create
+            ☐ Delete
+        Nodes:
+            ☐ Update
+            ☐ Create
+            ☐ Delete
+        Users:
+            ☐ Update
+            ☐ Create
+            ☐ Delete
+            ☐ Login
+            ☐ Me

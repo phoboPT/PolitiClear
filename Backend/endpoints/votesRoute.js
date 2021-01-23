@@ -15,27 +15,30 @@ exports.getByKey = async function (req, res, contract) {
   }
 };
 
+const getData = async (contract, arcId, voter) => {
+  const arco = contract.submitTransaction("getByKey", arcId);
+  const votes = contract.submitTransaction("queryByObjectType", "Votes");
+  const user = contract.submitTransaction("readUsers", voter);
+
+  const res = await Promise.all([arco, votes, user]);
+
+  return Promise.resolve(res);
+};
+
 // cria novo tipo
 exports.createVotes = async function (req, res, contract) {
   try {
     const { token, arcId, vote } = req.body;
     if (vote === "") {
-      throw new Error(`The vote must be provided!`);
+      return { error: `You didnt provided a verification value` };
     }
+    const voter = jwt.verify(token, "MySecret").userId;
 
-    const voter = await dataVerifications.verifyToken(contract, token);
-    const voterDescription = JSON.parse(
-      await contract.submitTransaction("readUsers", voter)
-    ).name;
+    const data = await getData(contract, arcId, voter);
 
-    await dataVerifications.verifyKeyExists(arcId, "Arcs", contract);
-
-    const parsedData = JSON.parse(
-      await contract.submitTransaction("getByKey", arcId)
-    );
-    const parsedVote = JSON.parse(
-      await contract.submitTransaction("queryByObjectType", "Votes")
-    );
+    const parsedData = JSON.parse(data[0]);
+    const parsedVote = JSON.parse(data[1]);
+    const voterDescription = JSON.parse(data[3]);
 
     let alreadyVoted = false;
     for (let i = 0; i < parsedVote.length; i++) {
@@ -46,30 +49,32 @@ exports.createVotes = async function (req, res, contract) {
         }
       }
     }
+
     if (alreadyVoted) {
       return { error: "You already verified" };
     }
+
     const key = uuidv4();
     const createdAt = new Date();
     const total = (parseInt(parsedData.totalVotes) || 0) + parseInt(vote);
-    await contract.submitTransaction(
-      "createVotes",
+
+    const voteData = {
       key,
       voter,
       voterDescription,
       arcId,
       vote,
-      createdAt
-    );
-    await contract.submitTransaction(
-      "updateArcs",
-      arcId,
-      "",
-      parseInt(total),
-      "",
-      "",
-      1
-    );
+      createdAt,
+    };
+    await contract.submitTransaction("createVotes", JSON.stringify(voteData));
+
+    const arcData = {
+      key: arcId,
+      totalVotes: parseInt(total),
+      isVoted: 1,
+    };
+    await contract.submitTransaction("updateArcs", JSON.stringify(arcData));
+
     return { data: "Sucess!" };
   } catch (e) {
     return { error: e.message };

@@ -72,7 +72,7 @@ class PolitiClearContract extends Contract {
 
   async readArcs(ctx, key) {
     if (!(await this.dataExists(ctx, key, "Arcs"))) {
-      throw new Error(`The arc ${key} does not exist`);
+      return { error: `The arc ${key} does not exist` };
     }
     const buffer = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer.toString());
@@ -95,7 +95,7 @@ class PolitiClearContract extends Contract {
     isVoted
   ) {
     if (!(await this.dataExists(ctx, key, "Arcs"))) {
-      throw new Error(`Error! The arc ${key} does not exist`);
+      return { error: `The arc ${key} does not exist` };
     }
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
@@ -138,7 +138,7 @@ class PolitiClearContract extends Contract {
 
   async deleteArcs(ctx, key) {
     if (!(await this.dataExists(ctx, key, "Arcs"))) {
-      throw new Error(`The arc ${key} does not exist`);
+      return { error: `The arc ${key} does not exist` };
     }
     await ctx.stub.deleteState(key);
   }
@@ -171,7 +171,7 @@ class PolitiClearContract extends Contract {
 
   async readForms(ctx, key) {
     if (!(await this.dataExists(ctx, key, "Forms"))) {
-      throw new Error(`The formId ${key} does not exist`);
+      return { error: `The form ${key} does not exist` };
     }
     const buffer = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer.toString());
@@ -180,7 +180,7 @@ class PolitiClearContract extends Contract {
 
   async updateForms(ctx, key, status, response) {
     if (!(await this.dataExists(ctx, key, "Forms"))) {
-      throw new Error(`Error! The forms Id ${key} does not exist`);
+      return { error: `The form ${key} does not exist` };
     }
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
@@ -200,7 +200,7 @@ class PolitiClearContract extends Contract {
 
   async deleteForms(ctx, key) {
     if (!(await this.dataExists(ctx, key, "Forms"))) {
-      throw new Error(`The form ${key} does not exist`);
+      return { error: `The form ${key} does not exist` };
     }
     await ctx.stub.deleteState(key);
   }
@@ -208,7 +208,7 @@ class PolitiClearContract extends Contract {
   // Nodes
   async readNodes(ctx, key) {
     if (!(await this.dataExists(ctx, key, "Nodes"))) {
-      throw new Error(`The Nodes ${key} does not exist`);
+      return { error: `The node ${key} does not exist` };
     }
     const buffer = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer.toString());
@@ -248,10 +248,10 @@ class PolitiClearContract extends Contract {
     updatedByDescription
   ) {
     if (description === "" && nodeType === "") {
-      throw new Error(`Error! Any data was filled to node ${key}`);
+      return { error: `Error! Any data was filled to node ${key}` };
     }
     if (!(await this.dataExists(ctx, key, "Nodes"))) {
-      throw new Error(`The Node ${key} does not exist`);
+      return { error: `The node ${key} does not exist` };
     }
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
@@ -278,7 +278,7 @@ class PolitiClearContract extends Contract {
 
   async deleteNodes(ctx, key) {
     if (!(await this.dataExists(ctx, key, "Nodes"))) {
-      throw new Error(`The node ${key} does not exist`);
+      return { error: `The node ${key} does not exist` };
     }
     await ctx.stub.deleteState(key);
   }
@@ -293,7 +293,8 @@ class PolitiClearContract extends Contract {
     return { data: asset };
   }
 
-  async createNodesTypes(ctx, key, name) {
+  async createNodesTypes(ctx, payload) {
+    const { name, key } = JSON.parse(payload);
     const query = await this.verifyNameAlreadyExists(ctx, name, "NodesTypes");
     if (query) {
       return { error: `Error! The NodesTypes ${name} already exists` };
@@ -303,7 +304,9 @@ class PolitiClearContract extends Contract {
     await ctx.stub.putState(key, buffer);
     return { data: "Successfully added" };
   }
-  async updateNodesTypes(ctx, key, isUsed) {
+  async updateNodesTypes(ctx, payload) {
+    const { key, isUsed } = JSON.parse(payload);
+
     if (!(await this.dataExists(ctx, key, "NodesTypes"))) {
       throw new Error(`Error! The NodesTypes ${key} does not exist`);
     }
@@ -323,30 +326,15 @@ class PolitiClearContract extends Contract {
 
   async deleteNodesTypes(ctx, key) {
     if (!(await this.dataExists(ctx, key, "NodesTypes"))) {
-      throw new Error(`The NodesTypes ${key} does not exist`);
+      return { error: `The Type ${key} does not exist.` };
+    }
+    const buffer = await ctx.stub.getState(key);
+    const asset = JSON.parse(buffer.toString());
+
+    if (asset.isUsed > 0) {
+      return { error: `The Type ${key} is used, you can´t delete it.` };
     }
 
-    const queryString = {
-      selector: {
-        type: "Nodes",
-      },
-    };
-
-    const query = await this.queryWithQueryString(
-      ctx,
-      JSON.stringify(queryString)
-    );
-
-    const newData = JSON.parse(query);
-    let isUsed = false;
-    for (let i = 0; i < newData.length; i++) {
-      if (newData[i].Record.nodeType === key) {
-        isUsed = true;
-      }
-    }
-    if (isUsed) {
-      return { error: "Delete denied! The system use this type" };
-    }
     await ctx.stub.deleteState(key);
     return { data: "Successfully deleted" };
   }
@@ -354,7 +342,7 @@ class PolitiClearContract extends Contract {
   // USERS
   async readUsers(ctx, key) {
     if (!(await this.dataExists(ctx, key, "Users"))) {
-      throw new Error(`The userkey ${key} does not exist`);
+      throw new Error(`The userkey ${key} does not exist.`);
     }
     const buffer = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer.toString());
@@ -404,7 +392,10 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async createVotes(ctx, key, voter, voterDescription, arcId, vote, createdAt) {
+  async createVotes(ctx, payload) {
+    const { key, voter, voterDescription, arcId, vote, createdAt } = JSON.parse(
+      payload
+    );
     const asset = new Votes(voter, voterDescription, arcId, vote, createdAt);
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
