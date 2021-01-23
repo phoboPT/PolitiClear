@@ -17,16 +17,28 @@ exports.getByKey = async function (req, res, contract) {
 // create new form
 exports.createForms = async function (req, res, contract) {
   try {
-    const { token, message, email = "", upgradeRequest = false} = req.body;
+    const { token, message, email = "", upgradeRequest = false } = req.body;
 
-    let createdBy = '';
-    let creatorByDescription = ''
+    let createdBy = "";
+    let creatorByDescription = "";
     if (token) {
-      createdBy = await dataVerifications.verifyToken(contract, token,);
-      creatorByDescription = JSON.parse(await contract.submitTransaction("readUsers", createdBy)).name;
+      createdBy = await dataVerifications.verifyToken(contract, token);
+      creatorByDescription = JSON.parse(
+        await contract.submitTransaction("readUsers", createdBy)
+      ).name;
     }
     const key = uuidv4();
-    await contract.submitTransaction("createForms", key, email, message, "Open", "", createdBy, creatorByDescription, upgradeRequest);
+    await contract.submitTransaction(
+      "createForms",
+      key,
+      email,
+      message,
+      "Open",
+      "",
+      createdBy,
+      creatorByDescription,
+      upgradeRequest
+    );
     return { data: "Created" };
   } catch (e) {
     return { error: e.message };
@@ -35,10 +47,17 @@ exports.createForms = async function (req, res, contract) {
 
 exports.updateForms = async function (req, res, contract) {
   try {
-    const { key, status = "", response = "" } = req.body;
-
-    await contract.submitTransaction("updateForms", key, status, response);
-    return { data: "Updated" };
+    const { key, status, response } = req.body;
+    const newForm = {
+      key,
+      status,
+      response,
+    };
+    const res = await contract.submitTransaction(
+      "updateForms",
+      JSON.stringify(newForm)
+    );
+    return JSON.parse(res);
   } catch (e) {
     return { error: e.message };
   }

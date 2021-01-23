@@ -1,5 +1,4 @@
 const { v4: uuidv4 } = require("uuid");
-const dataVerifications = require("./functions/dataVerifications");
 
 // Pesquisa por key
 exports.getByKey = async function (req, res, contract) {

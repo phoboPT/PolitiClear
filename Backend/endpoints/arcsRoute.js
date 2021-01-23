@@ -61,30 +61,31 @@ exports.createArcs = async function (req, res, contract) {
     const finalNodeInfo = JSON.parse(nodesData[1]);
     const creatorIdInfo = JSON.parse(nodesData[2]);
 
-    await contract.submitTransaction(
-      "createArcs",
+    const newArc = {
       key,
       description,
       initialNode,
-      initialNodeInfo.description,
-      initialNodeInfo.creatorId,
-      initialNodeInfo.creatorIdDescription,
-      initialNodeInfo.nodeType,
-      initialNodeInfo.nodeTypeDescription,
-      initialNodeInfo.createdAt,
-      initialNodeInfo.updatedAt,
+      initialNodeDescription: initialNodeInfo.description,
+      initialNodeCreatorId: initialNodeInfo.creatorId,
+      initialNodeCreatorIdDescription: initialNodeInfo.creatorIdDescription,
+      initialNodeNodeType: initialNodeInfo.nodeType,
+      initialNodeNodeTypeDescription: initialNodeInfo.nodeTypeDescription,
+      initialNodeCreatedAt: initialNodeInfo.createdAt,
+      initialNodeUpdatedAt: initialNodeInfo.updatedAt,
       finalNode,
-      finalNodeInfo.description,
-      finalNodeInfo.creatorId,
-      finalNodeInfo.creatorIdDescription,
-      finalNodeInfo.nodeType,
-      finalNodeInfo.nodeTypeDescription,
-      finalNodeInfo.createdAt,
-      finalNodeInfo.updatedAt,
+      finalNodeDescription: finalNodeInfo.description,
+      finalNodeCreatorId: finalNodeInfo.creatorId,
+      finalNodeCreatorIdDescription: finalNodeInfo.creatorIdDescription,
+      finalNodeNodeType: finalNodeInfo.nodeType,
+      finalNodeNodeTypeDescription: finalNodeInfo.nodeTypeDescription,
+      finalNodeCreatedAt: finalNodeInfo.createdAt,
+      finalNodeUpdatedAt: finalNodeInfo.updatedAt,
       creatorId,
-      creatorIdInfo.name,
-      0
-    );
+      creatorIdDescription: creatorIdInfo.name,
+      totalVotes: 0,
+    };
+
+    await contract.submitTransaction("createArcs", JSON.stringify(newArc));
     return { data: "Created" };
   } catch (e) {
     return { error: e.message };

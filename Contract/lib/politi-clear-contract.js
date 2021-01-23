@@ -144,26 +144,10 @@ class PolitiClearContract extends Contract {
   }
 
   //FORMS
-  async createForms(
-    ctx,
-    key,
-    email,
-    message,
-    status,
-    response,
-    createdBy,
-    creatorByDescription,
-    upgradeRequest
-  ) {
-    const asset = new Forms(
-      email,
-      message,
-      status,
-      response,
-      createdBy,
-      creatorByDescription,
-      upgradeRequest
-    );
+  async createForms(ctx, payload) {
+    const { key } = JSON.parse(payload);
+
+    const asset = new Forms(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
     return JSON.parse(buffer.toString());
@@ -178,24 +162,29 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async updateForms(ctx, key, status, response) {
+  async updateForms(ctx, payload) {
+    const { key } = JSON.parse(payload);
     if (!(await this.dataExists(ctx, key, "Forms"))) {
       return { error: `The form ${key} does not exist` };
     }
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
-    const formUpdated = new Forms(
-      asset.email,
-      asset.message,
-      asset.status,
-      asset.response,
-      asset.createdBy,
-      asset.creatorByDescription,
-      asset.createdAt
-    );
-    formUpdated.updateForms(status, response);
+
+    const oldForm = {
+      email: asset.email,
+      message: asset.message,
+      status: asset.status,
+      response: asset.response,
+      createdBy: asset.createdBy,
+      creatorByDescription: asset.creatorByDescription,
+      createdAt: asset.createdAt,
+    };
+    const formUpdated = new Forms(oldForm);
+    formUpdated.updateForms(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(formUpdated));
     await ctx.stub.putState(key, buffer);
+
+    return { data: "Success" };
   }
 
   async deleteForms(ctx, key) {
@@ -393,10 +382,8 @@ class PolitiClearContract extends Contract {
   }
 
   async createVotes(ctx, payload) {
-    const { key, voter, voterDescription, arcId, vote, createdAt } = JSON.parse(
-      payload
-    );
-    const asset = new Votes(voter, voterDescription, arcId, vote, createdAt);
+    const { key } = JSON.parse(payload);
+    const asset = new Votes(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
     return JSON.parse(buffer.toString());
