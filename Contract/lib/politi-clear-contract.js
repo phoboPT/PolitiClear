@@ -18,56 +18,12 @@ class PolitiClearContract extends Contract {
   }
 
   //ARCS
-  async createArcs(
-    ctx,
-    key,
-    description,
-    initialNode,
-    initialNodeDescription,
-    initialNodeCreatorId,
-    initialNodeCreatorIdDescription,
-    initialNodeNodeType,
-    initialNodeNodeTypeDescription,
-    initialNodeCreatedAt,
-    initialNodeUpdatedAt,
-    finalNode,
-    finalNodeDescription,
-    finalNodeCreatorId,
-    finalNodeCreatorIdDescription,
-    finalNodeNodeType,
-    finalNodeNodeTypeDescription,
-    finalNodeCreatedAt,
-    finalNodeUpdatedAt,
-    creatorId,
-    creatorIdDescription,
-    totalVotes
-  ) {
-    const asset = new Arcs(
-      description,
-      initialNode,
-      initialNodeDescription,
-      initialNodeCreatorId,
-      initialNodeCreatorIdDescription,
-      initialNodeNodeType,
-      initialNodeNodeTypeDescription,
-      initialNodeCreatedAt,
-      initialNodeUpdatedAt,
-      finalNode,
-      finalNodeDescription,
-      finalNodeCreatorId,
-      finalNodeCreatorIdDescription,
-      finalNodeNodeType,
-      finalNodeNodeTypeDescription,
-      finalNodeCreatedAt,
-      finalNodeUpdatedAt,
-      creatorId,
-      creatorIdDescription,
-      totalVotes,
-      0
-    );
+  async createArcs(ctx, payload) {
+    const { key } = JSON.parse(payload);
+    const asset = new Arcs(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
-    return JSON.parse(buffer.toString());
+    return { data: "Created" };
   }
 
   async readArcs(ctx, key) {
@@ -85,55 +41,43 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async updateArcs(
-    ctx,
-    key,
-    description,
-    totalVotes,
-    updatedBy,
-    updatedByDescription,
-    isVoted
-  ) {
+  async updateArcs(ctx, payload) {
+    const { key } = JSON.parse(payload);
     if (!(await this.dataExists(ctx, key, "Arcs"))) {
       return { error: `The arc ${key} does not exist` };
     }
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
+    const newArc = {
+      description: asset.description,
+      initalNode: asset.initialNode,
+      initialNodeDescription: asset.initialNodeDescription,
+      initialNodeCreatorId: asset.initialNodeCreatorId,
+      initialNodeCreatorIdDescription: asset.initialNodeCreatorIdDescription,
+      initialNodeNodeType: asset.initialNodeNodeType,
+      initialNodeNodeTypeDescription: asset.initialNodeNodeTypeDescription,
+      initialNodeCreatedAt: asset.initialNodeCreatedAt,
+      initialNodeUpdatedAt: asset.initialNodeUpdatedAt,
+      finalNode: asset.finalNode,
+      finalNodeDescription: asset.finalNodeDescription,
+      finalNodeCreatorId: asset.finalNodeCreatorId,
+      finalNodeCreatorIdDescription: asset.finalNodeCreatorIdDescription,
+      finalNodeNodeType: asset.finalNodeNodeType,
+      finalNodeNodeTypeDescription: asset.finalNodeNodeTypeDescription,
+      finalNodeCreatedAt: asset.finalNodeCreatedAt,
+      finalNodeUpdatedAt: asset.finalNodeUpdatedAt,
+      creatorId: asset.creatorId,
+      creatorIdDescription: asset.creatorIdDescription,
+      totalVotes: asset.totalVotes,
+      isVoted: asset.isVoted,
+      createdAt: asset.createdAt,
+    };
+    const arcUpdated = new Arcs(newArc);
 
-    const arcUpdated = new Arcs(
-      asset.description,
-      asset.initialNode,
-      asset.initialNodeDescription,
-      asset.initialNodeCreatorId,
-      asset.initialNodeCreatorIdDescription,
-      asset.initialNodeNodeType,
-      asset.initialNodeNodeTypeDescription,
-      asset.initialNodeCreatedAt,
-      asset.initialNodeUpdatedAt,
-      asset.finalNode,
-      asset.finalNodeDescription,
-      asset.finalNodeCreatorId,
-      asset.finalNodeCreatorIdDescription,
-      asset.finalNodeNodeType,
-      asset.finalNodeNodeTypeDescription,
-      asset.finalNodeCreatedAt,
-      asset.finalNodeUpdatedAt,
-      asset.creatorId,
-      asset.creatorIdDescription,
-      asset.totalVotes,
-      asset.isVoted,
-      asset.createdAt
-    );
-
-    arcUpdated.updateArcs(
-      description,
-      totalVotes,
-      updatedBy,
-      updatedByDescription,
-      isVoted
-    );
+    arcUpdated.updateArcs(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(arcUpdated));
     await ctx.stub.putState(key, buffer);
+    return { data: "Updated" };
   }
 
   async deleteArcs(ctx, key) {
@@ -338,28 +282,31 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async createUsers(ctx, key, name, email, password, permission) {
-    const newEmail = email.toLowerCase();
-    const asset = new Users(name, newEmail, password, permission);
+  async createUsers(ctx, payload) {
+    const { key } = JSON.parse(payload);
+    const asset = new Users(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
   }
 
-  async updateUsers(ctx, key, name, password, permission, updatedBy) {
+  async updateUsers(ctx, payload) {
+    const { key } = Json.parse(payload);
     if (!(await this.dataExists(ctx, key, "Users"))) {
       throw new Error(`Error! The user ${key} does not exist`);
     }
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
 
-    const userUpdated = new Users(
-      asset.name,
-      asset.email,
-      asset.password,
-      asset.permission,
-      asset.createdAt
-    );
-    userUpdated.updateUsers(name, password, permission, updatedBy);
+    const newUser = {
+      name: asset.name,
+      email: asset.email,
+      password: asset.password,
+      permission: asset.permission,
+      createdAt: asset.createdAt,
+    };
+
+    const userUpdated = new Users(newUser);
+    userUpdated.updateUsers(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(userUpdated));
     await ctx.stub.putState(key, buffer);
   }
@@ -386,7 +333,7 @@ class PolitiClearContract extends Contract {
     const asset = new Votes(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
-    return JSON.parse(buffer.toString());
+    return { data: "Sucess" };
   }
 
   async deleteVotes(ctx, key) {

@@ -180,7 +180,7 @@ class Search extends React.Component {
   };
 
   async componentDidMount() {
-    await this.getAll();
+    // await this.getAll();
   }
 
   getAll = async () => {

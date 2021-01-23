@@ -1,29 +1,25 @@
 "use strict";
 
-
 class Users {
-  constructor(name, email, password, permission, createdAt) {
+  constructor(payload) {
+    const { name, email, password, permission, createdAt } = payload;
+
     this.name = name;
-    this.email = email;
+    this.email = email.toLowerCase();
     this.password = password;
     this.type = "Users";
-    this.permission = (permission === ''|| permission === undefined) ? "USER" : permission;
-    this.createdAt = (createdAt === '' || createdAt === undefined) ? new Date() : createdAt;
+    this.permission = permission ? permission : "USER";
+    this.createdAt = createdAt ? createdAt : new Date();
     this.updatedAt = "";
     this.updatedBy = "";
   }
 
-  updateUsers(name, password, permission, updatedBy) {
-    if (name !== "") {
-      this.name = name;
-    }
-    if (password !== "") {
-      this.password = password;
-    }
-    if (permission !== "") {
-      this.permission = permission;
-    }
+  updateUsers(payload) {
+    const { name, password, permission, updatedBy } = payload;
 
+    this.name = name ? name : this.name;
+    this.password = password ? password : this.password;
+    this.permission = permission ? permission : this.permission;
     this.updatedBy = updatedBy;
     this.updatedAt = new Date();
   }

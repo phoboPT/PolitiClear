@@ -32,9 +32,9 @@ FIX:
             ✔ Create @done(21-01-23 13:46)
             ✔ Delete @done(21-01-23 13:46)
         Votes:
-            ☐ Update
-            ☐ Create
-            ☐ Delete
+            ✔ Update @done(21-01-23 17:16)
+            ✔ Create @done(21-01-23 17:16)
+            ✔ Delete @done(21-01-23 17:16)
         Arcs:
             ☐ Update
             ☐ Create
@@ -44,13 +44,9 @@ FIX:
             ☐ Create
             ☐ Delete
         Forms:
-            ☐ Update
-            ☐ Create
-            ☐ Delete
-        Nodes:
-            ☐ Update
-            ☐ Create
-            ☐ Delete
+            ✔ Update @done(21-01-23 17:16)
+            ✔ Create @done(21-01-23 17:16)
+            ✔ Delete @done(21-01-23 17:16)
         Users:
             ☐ Update
             ☐ Create

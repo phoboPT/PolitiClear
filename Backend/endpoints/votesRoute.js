@@ -35,9 +35,10 @@ exports.createVotes = async function (req, res, contract) {
 
     const data = await getData(contract, arcId, voter);
 
+    console.log(JSON.parse(data[1]));
     const parsedData = JSON.parse(data[0]);
     const parsedVote = JSON.parse(data[1]);
-    const voterDescription = JSON.parse(data[3]);
+    const voterDescription = JSON.parse(data[2]);
 
     let alreadyVoted = false;
     for (let i = 0; i < parsedVote.length; i++) {
@@ -52,7 +53,6 @@ exports.createVotes = async function (req, res, contract) {
     if (alreadyVoted) {
       return { error: "You already verified" };
     }
-
     const key = uuidv4();
     const createdAt = new Date();
     const total = (parseInt(parsedData.totalVotes) || 0) + parseInt(vote);
@@ -65,7 +65,11 @@ exports.createVotes = async function (req, res, contract) {
       vote,
       createdAt,
     };
-    await contract.submitTransaction("createVotes", JSON.stringify(voteData));
+
+    const response = await contract.submitTransaction(
+      "createVotes",
+      JSON.stringify(voteData)
+    );
 
     const arcData = {
       key: arcId,
@@ -74,7 +78,7 @@ exports.createVotes = async function (req, res, contract) {
     };
     await contract.submitTransaction("updateArcs", JSON.stringify(arcData));
 
-    return { data: "Sucess!" };
+    return JSON.parse(response);
   } catch (e) {
     return { error: e.message };
   }
