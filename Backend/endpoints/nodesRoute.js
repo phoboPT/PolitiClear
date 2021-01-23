@@ -249,56 +249,67 @@ exports.searchNodes = async function (req, res, contract) {
 exports.getRelations = async function (req, res, contract) {
   try {
     const { key } = req.headers;
-    const arcos = await contract.submitTransaction("queryByObjectType", "Arcs");
-    const nodes = await contract.submitTransaction(
-      "queryByObjectType",
-      "Nodes"
-    );
-    let neededNodes = [];
-    let nodesDetails = [];
+    const edges = JSON.parse(await contract.submitTransaction("queryByObjectType", "Arcs"));
+    let arco = [];
+    let nodo = [];
+    let existe = 0
+    let existeNodo = 0;
+    var stack = [];
 
-    // lista de nodos que tem ligações
-    JSON.parse(arcos).forEach((arco) => {
-      let aux = 0;
+    const query = procurarAdjacente(key)
 
-      neededNodes.forEach((item) => {
-        if (arco.Record.initialNode === item) {
-          aux = 1;
+    function procurarAdjacente(key) {
+      //percorre todos arcos
+      edges.forEach((edge) => {
+        //verifica se arco tem inicial = key
+        if (key === edge.Record.initialNode) {
+          //verifica se o arco já foi adicionado
+          for (let i = 0; i < arco.length; i++) {
+            if (edge.Key === arco[i][0]) {
+              existe = 1;
+              break;
+            }
+          }
+          //se nao existir adiciona nova iteração
+          if (existe !== 1) {
+            stack.push(edge.Record.initialNode)
+            arco.push([edge.Key, edge.Record.initialNode, edge.Record.initialNodeDescription, edge.Record.finalNode, edge.Record.finalNodeDescription])
+            procurarAdjacente(edge.Record.finalNode)
+          }
+          existe = 0;
         }
-      });
-
-      if (aux === 0) {
-        neededNodes.push(arco.Record.initialNode);
+      })
+      const anterior = stack.pop()
+      if (anterior) {
+        procurarAdjacente(anterior)
       }
-      aux = 0;
+      return arco;
+    }
 
-      neededNodes.forEach((item) => {
-        if (arco.Record.finalNode === item) {
-          aux = 1;
+    arco.forEach((item) => {
+      for (let i = 0; i < nodo.length; i++) {
+        if (nodo[i][0] === item[1]) {
+          existeNodo = 1; break;
         }
-      });
-      if (aux === 0) {
-        neededNodes.push(arco.Record.finalNode);
       }
-    });
-    //adiciona os nodos em detalhe
-    JSON.parse(nodes).forEach((nodo) => {
-      neededNodes.forEach((item) => {
-        if (nodo.Key === item) {
-          nodesDetails.push(nodo);
+      if (existeNodo !== 1) {
+        nodo.push([item[1], item[2]])
+      }
+      existeNodo = 0;
+
+      for (let i = 0; i < nodo.length; i++) {
+        if (nodo[i][0] === item[3]) {
+          existeNodo = 1; break;
         }
-      });
-    });
-
-    let arcsByKey = [];
-    JSON.parse(arcos).forEach((arco) => {
-      if (arco.Record.initialNode === key) {
-        arcsByKey.push(arco.Key);
       }
-    });
-    arcsByKey.forEach((arc) => {});
+      if (existeNodo !== 1) {
+        nodo.push([item[3], item[4]])
+      }
+      existeNodo = 0;
 
-    return { nodes: nodesDetails, arcs: JSON.parse(arcos) };
+    })
+
+    return { arcs: query, nodes: nodo }
   } catch (e) {
     return { error: e.error };
   }

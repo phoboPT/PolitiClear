@@ -131,35 +131,34 @@ class Search extends React.Component {
   populate = async (item) => {
     this.setState({ loading: true, key: item.Key, data: null });
     const relations = await searchNodes(
-      'http://localhost:5000/searchNodes',
+      'http://localhost:5000/nodes/getRelations',
       item.Key,
     );
     console.log(relations);
-    if (relations.data.data.length > 0) {
+    if (relations.data.nodes.length > 0) {
       let graph = {
         nodes: [],
 
         links: [],
       };
-      relations.data.data.forEach((relation) => {
+
+
+      
+      relations.data.nodes.forEach((relation) => {
         graph.nodes.push({
-          id: relation.finalNode.Record.description,
-          arc: relation.arc,
-          keyNode: relation.arc.Record.finalNode,
-          arcId: relation.arc.Key,
-        });
-        graph.nodes.push({
-          id: relation.initialNode.Record.description,
-          arc: relation.arc,
-          keyNode: relation.arc.Record.initialNode,
-          arcId: relation.arc.Key,
+          id: relation[1],
+          arc: relation[0],
+          name: relation[1],
+          arcId: relation[0],
         });
 
-        graph.links.push({
-          source: relation.initialNode.Record.description,
-          target: relation.finalNode.Record.description,
-        });
       });
+      relations.data.arcs.forEach((arc) => {
+        graph.links.push({
+          source: arc[2],
+          target: arc[4],
+        });
+      })
 
       graph = {
         ...graph,
@@ -187,7 +186,7 @@ class Search extends React.Component {
     this.setState({ loading: true, data: null });
     const user = await searchNodes('http://localhost:5000/nodes/getRelations');
 
-    if (user.data.nodes.length > 0) {
+    if (user.data.arcs.length > 0) {
       let graph = {
         nodes: [],
 
@@ -195,8 +194,8 @@ class Search extends React.Component {
       };
       for (let i = 0; i < user.data.nodes.length; i++) {
         graph.nodes.push({
-          id: user.data.nodes[i].Record.description,
-          keyNode: user.data.nodes[i].Key,
+          id: user.data.nodes[i][1],
+          keyNode: user.data.nodes[i][1],
           // arc: user.data[i],
           // arcId: user.data[i].arcId,
         });
