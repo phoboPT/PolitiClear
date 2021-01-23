@@ -41,7 +41,7 @@ exports.getByName = async (req, res, contract) => {
 // Create user
 exports.createUsers = async (req, res, contract) => {
   try {
-    const { name, email, password, permission = "" } = req.body;
+    const { name, email, password, permission } = req.body;
     const user = await contract.submitTransaction("queryByObjectType", "Users");
     // verify if there is already an email
     let users;
@@ -59,18 +59,20 @@ exports.createUsers = async (req, res, contract) => {
     }
     const key = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
-    await contract.submitTransaction(
-      "createUsers",
+
+    const newUser = {
       key,
       name,
       email,
-      hashedPassword,
-      permission
-    );
+      password: hashedPassword,
+      permission,
+    };
+
+    await contract.submitTransaction("createUsers", JSON.stringify(newUser));
     const token = jwt.sign({ userId: key }, "MySecret");
 
     res.token = token;
-    return { data: token };
+    return { token: token };
   } catch (e) {
     return { error: e.message };
   }
@@ -79,16 +81,12 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
-    const {
-      key,
-      token,
-      name = "",
-      oldPassword = "",
-      newPassword = "",
-      permission = "",
-    } = req.body;
+    const { key, token, name, oldPassword, newPassword, permission } = req.body;
     let updaterId, id;
-    let permissionIfAdmin = permission;
+    const newUser = {
+      name,
+      permission: permission,
+    };
 
     if (key) {
       updaterId = await dataVerifications.verifyToken(
@@ -100,10 +98,11 @@ exports.updateUsers = async (req, res, contract) => {
     } else {
       updaterId = await dataVerifications.verifyToken(contract, token);
       id = updaterId;
-      permissionIfAdmin = "";
+      delete newUser["permission"];
     }
-
-    if (oldPassword !== "" && newPassword !== "") {
+    newUser.key = id;
+    newUser.updaterId = updaterId;
+    if (oldPassword && newPassword) {
       const user = await contract.submitTransaction("readUsers", id);
       if (!user) {
         return { error: "No email found" };
@@ -117,27 +116,13 @@ exports.updateUsers = async (req, res, contract) => {
         return { error: "password invalid" };
       }
       const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await contract.submitTransaction(
-        "updateUsers",
-        id,
-        name,
-        hashedPassword,
-        permissionIfAdmin,
-        updaterId
-      );
-      return { data: "Updated" };
-    } else {
-      await contract.submitTransaction(
-        "updateUsers",
-        id,
-        name,
-        "",
-        permissionIfAdmin,
-        updaterId
-      );
-
-      return { data: "Updated" };
+      newUser.password = hashedPassword;
     }
+    const response = await contract.submitTransaction(
+      "updateUsers",
+      JSON.stringify(newUser)
+    );
+    return JSON.parse(response);
   } catch (e) {
     return { error: e.message };
   }
@@ -147,7 +132,7 @@ exports.updateUsers = async (req, res, contract) => {
 exports.deleteUsers = async (req, res, contract) => {
   try {
     const { key, token } = req.body;
-    //  await dataVerifications.verifyToken(contract, token, permissions[0]);
+    await dataVerifications.verifyToken(contract, token, permissions[0]);
     await contract.submitTransaction("deleteUsers", key);
     return { data: "Deleted" };
   } catch (e) {
@@ -170,7 +155,6 @@ exports.me = async (req, res, contract) => {
 exports.login = async (req, res, contract) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
 
     const data = await contract.submitTransaction("queryByObjectType", "Users");
     let user;
@@ -197,7 +181,6 @@ exports.login = async (req, res, contract) => {
     );
     return { token: token };
   } catch (e) {
-    // res.status(500).json(JSON.stringify(e.message));
     return { error: e.message };
   }
 };

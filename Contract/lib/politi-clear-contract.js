@@ -94,7 +94,7 @@ class PolitiClearContract extends Contract {
     const asset = new Forms(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
-    return JSON.parse(buffer.toString());
+    return { data: "Success" };
   }
 
   async readForms(ctx, key) {
@@ -108,9 +108,11 @@ class PolitiClearContract extends Contract {
 
   async updateForms(ctx, payload) {
     const { key } = JSON.parse(payload);
+
     if (!(await this.dataExists(ctx, key, "Forms"))) {
       return { error: `The form ${key} does not exist` };
     }
+
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
 
@@ -123,6 +125,7 @@ class PolitiClearContract extends Contract {
       creatorByDescription: asset.creatorByDescription,
       createdAt: asset.createdAt,
     };
+
     const formUpdated = new Forms(oldForm);
     formUpdated.updateForms(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(formUpdated));
@@ -290,13 +293,13 @@ class PolitiClearContract extends Contract {
   }
 
   async updateUsers(ctx, payload) {
-    const { key } = Json.parse(payload);
+    const { key } = JSON.parse(payload);
+
     if (!(await this.dataExists(ctx, key, "Users"))) {
       throw new Error(`Error! The user ${key} does not exist`);
     }
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
-
     const newUser = {
       name: asset.name,
       email: asset.email,
@@ -309,6 +312,7 @@ class PolitiClearContract extends Contract {
     userUpdated.updateUsers(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(userUpdated));
     await ctx.stub.putState(key, buffer);
+    return { data: "Updated" };
   }
 
   async deleteUsers(ctx, key) {

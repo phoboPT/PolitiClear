@@ -36,9 +36,9 @@ FIX:
             ✔ Create @done(21-01-23 17:16)
             ✔ Delete @done(21-01-23 17:16)
         Arcs:
-            ☐ Update
-            ☐ Create
-            ☐ Delete
+            ✔ Update @done(21-01-23 17:19)
+            ✔ Create @done(21-01-23 17:19)
+            ✔ Delete @done(21-01-23 17:19)
         Nodes:
             ☐ Update
             ☐ Create
@@ -48,8 +48,8 @@ FIX:
             ✔ Create @done(21-01-23 17:16)
             ✔ Delete @done(21-01-23 17:16)
         Users:
-            ☐ Update
-            ☐ Create
+            ✔ Update @done(21-01-23 18:26)
+            ✔ Create @done(21-01-23 18:26)
             ☐ Delete
             ☐ Login
             ☐ Me

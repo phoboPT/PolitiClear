@@ -5,7 +5,7 @@ class Users {
     const { name, email, password, permission, createdAt } = payload;
 
     this.name = name;
-    this.email = email.toLowerCase();
+    this.email = email;
     this.password = password;
     this.type = "Users";
     this.permission = permission ? permission : "USER";

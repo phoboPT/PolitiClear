@@ -28,18 +28,22 @@ exports.createForms = async function (req, res, contract) {
       ).name;
     }
     const key = uuidv4();
-    await contract.submitTransaction(
-      "createForms",
+
+    const newForm = {
       key,
       email,
       message,
-      "Open",
-      "",
+      status: "Open",
+
       createdBy,
       creatorByDescription,
-      upgradeRequest
+      upgradeRequest,
+    };
+    const response = await contract.submitTransaction(
+      "createForms",
+      JSON.stringify(newForm)
     );
-    return { data: "Created" };
+    return JSON.parse(response);
   } catch (e) {
     return { error: e.message };
   }
