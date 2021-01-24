@@ -220,7 +220,8 @@ exports.addData = async function (req, res, contract) {
       );
     }
     //Candidatos presidenciais
-    for (let i = 0; i < candidatosPresidencia.length; i++) {
+    for (let i = 0; candidatosPresidencia.length; i++) {
+      //i < 2; i++){//
       const key = uuidv4();
       candidatosPresidenciaKey.push(key);
       await contract.submitTransaction(
