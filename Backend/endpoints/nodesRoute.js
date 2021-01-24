@@ -285,6 +285,7 @@ exports.getRelations = async function (req, res, contract) {
               edge.Record.initialNodeDescription,
               edge.Record.finalNode,
               edge.Record.finalNodeDescription,
+              edge.Record.description,
             ]);
             procurarAdjacente(edge.Record.finalNode);
           }
@@ -310,6 +311,7 @@ exports.getRelations = async function (req, res, contract) {
                 edge.Record.initialNodeDescription,
                 edge.Record.finalNode,
                 edge.Record.finalNodeDescription,
+                edge.Record.description,
               ]);
               procurarAdjacenteInverso(edge.Record.initialNode);
             }

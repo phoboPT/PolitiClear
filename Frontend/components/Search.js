@@ -98,6 +98,7 @@ const myConfig = {
   },
   link: {
     highlightColor: 'lightblue',
+    labelProperty: 'label',
     fontSize: 10,
     strokeLinecap: '"round"',
     fontWeight: 'normal',
@@ -105,7 +106,7 @@ const myConfig = {
     highlightFontWeight: 'bold',
     mouseCursor: 'pointer',
     opacity: 1,
-    renderLabel: false,
+    renderLabel: true,
     semanticStrokeWidth: false,
     strokeWidth: 4,
     markerHeight: 6,
@@ -154,6 +155,7 @@ class Search extends React.Component {
         graph.links.push({
           source: arc[1],
           target: arc[3],
+          label: arc[5],
         });
       });
 
@@ -183,7 +185,6 @@ class Search extends React.Component {
   getAll = async () => {
     this.setState({ loading: true, data: null });
     const arcs = await searchNodes('http://localhost:5000/nodes/getRelations');
-    console.log(arcs);
     if (user.data.arcs.length > 0) {
       let graph = {
         nodes: [],
