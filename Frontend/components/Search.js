@@ -142,8 +142,6 @@ class Search extends React.Component {
         links: [],
       };
 
-
-      
       relations.data.nodes.forEach((relation) => {
         graph.nodes.push({
           id: relation[1],

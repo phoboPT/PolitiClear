@@ -84,8 +84,9 @@ exports.addData = async function (req, res, contract) {
       await insertData(contract, 'Representante', representantesPartidosKey[i], partidosKey[i], creatorId);
     }
 
+///ALTERAR LENGHT
     //Candidatos presidenciais
-    for (let i = 0; i < candidatosPresidencia.length; i++) {
+    for (let i = 0; candidatosPresidencia.length; i++) { //i < 2; i++){//
       const key = uuidv4();
       candidatosPresidenciaKey.push(key);
       await contract.submitTransaction('createNodes', key, candidatosPresidencia[i], creatorId, creatorIdDescription, nodeTypeKey[2], nodeType[2]);

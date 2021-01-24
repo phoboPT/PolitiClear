@@ -255,7 +255,7 @@ exports.getRelations = async function (req, res, contract) {
     const edges = JSON.parse(await contract.submitTransaction("queryByObjectType", "Arcs"));
     let arco = [];
     let nodo = [];
-    let existe = 0
+    let existe = 0, existe1 = 0;
     let existeNodo = 0;
     var stack = [];
 
@@ -280,8 +280,29 @@ exports.getRelations = async function (req, res, contract) {
             procurarAdjacente(edge.Record.finalNode)
           }
           existe = 0;
-        }
+        } 
       })
+      procurarAdjacenteInverso(key)
+
+      function procurarAdjacenteInverso(key) {
+        edges.forEach((edge) => {
+          if (key === edge.Record.finalNode) {
+            for (let i = 0; i < arco.length; i++) {
+              if (edge.Key === arco[i][0]) {
+                existe1 = 1;
+                break;
+              }
+            }
+            if (existe1 !== 1) {
+              stack.push(edge.Record.initialNode)
+              arco.push([edge.Key, edge.Record.initialNode, edge.Record.initialNodeDescription, edge.Record.finalNode, edge.Record.finalNodeDescription])
+              procurarAdjacenteInverso(edge.Record.initialNode)
+            }
+            existe1 = 0;
+          }
+        })
+      }
+      
       const anterior = stack.pop()
       if (anterior) {
         procurarAdjacente(anterior)
@@ -317,3 +338,75 @@ exports.getRelations = async function (req, res, contract) {
     return { error: e.error };
   }
 };
+
+
+//..................................................................//
+
+// exports.getRelations = async function (req, res, contract) {
+//   try {
+//     const { key } = req.headers;
+//     const edges = JSON.parse(await contract.submitTransaction("queryByObjectType", "Arcs"));
+//     let arco = [];
+//     let nodo = [];
+//     let existe = 0
+//     let existeNodo = 0;
+//     var stack = [];
+
+//     const query = procurarAdjacente(key)
+
+//     function procurarAdjacente(key) {
+//       //percorre todos arcos
+//       edges.forEach((edge) => {
+//         //verifica se arco tem inicial = key
+//         if (key === edge.Record.initialNode) {
+//           //verifica se o arco já foi adicionado
+//           for (let i = 0; i < arco.length; i++) {
+//             if (edge.Key === arco[i][0]) {
+//               existe = 1;
+//               break;
+//             }
+//           }
+//           //se nao existir adiciona nova iteração
+//           if (existe !== 1) {
+//             stack.push(edge.Record.initialNode)
+//             arco.push([edge.Key, edge.Record.initialNode, edge.Record.initialNodeDescription, edge.Record.finalNode, edge.Record.finalNodeDescription])
+//             procurarAdjacente(edge.Record.finalNode)
+//           }
+//           existe = 0;
+//         }
+//       })
+//       const anterior = stack.pop()
+//       if (anterior) {
+//         procurarAdjacente(anterior)
+//       }
+//       return arco;
+//     }
+
+//     arco.forEach((item) => {
+//       for (let i = 0; i < nodo.length; i++) {
+//         if (nodo[i][0] === item[1]) {
+//           existeNodo = 1; break;
+//         }
+//       }
+//       if (existeNodo !== 1) {
+//         nodo.push([item[1], item[2]])
+//       }
+//       existeNodo = 0;
+
+//       for (let i = 0; i < nodo.length; i++) {
+//         if (nodo[i][0] === item[3]) {
+//           existeNodo = 1; break;
+//         }
+//       }
+//       if (existeNodo !== 1) {
+//         nodo.push([item[3], item[4]])
+//       }
+//       existeNodo = 0;
+
+//     })
+
+//     return { arcs: query, nodes: nodo }
+//   } catch (e) {
+//     return { error: e.error };
+//   }
+// };
