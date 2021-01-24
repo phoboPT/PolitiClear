@@ -98,7 +98,6 @@ exports.updateUsers = async (req, res, contract) => {
     } else {
       updaterId = await dataVerifications.verifyToken(contract, token);
       id = updaterId;
-      delete newUser["permission"];
     }
     newUser.key = id;
     newUser.updaterId = updaterId;

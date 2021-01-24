@@ -116,7 +116,7 @@ app.delete("/forms/delete", async (req, res) => {
 });
 
 // nodes
-app.post("/nodes/createRandom", async (req, res) => {
+app.get("/nodes/createRandom/:token", async (req, res) => {
   const response = await addData.addData(req, res, contract);
   res.status(200).send(response);
 });

@@ -55,7 +55,7 @@ const myConfig = {
   nodeHighlightBehavior: true,
   automaticRearrangeAfterDropNode: false,
   collapsible: false,
-  directed: false,
+  directed: true,
   focusAnimationDuration: 0.75,
   focusZoom: 1,
   freezeAllDragEvents: false,
@@ -80,7 +80,7 @@ const myConfig = {
   node: {
     color: 'lightgreen',
     highlightStrokeColor: 'blue',
-    labelProperty: 'id',
+    labelProperty: 'name',
     mouseCursor: 'pointer',
     opacity: 1,
     fontSize: 12,
@@ -98,6 +98,7 @@ const myConfig = {
   },
   link: {
     highlightColor: 'lightblue',
+    labelProperty: 'label',
     fontSize: 10,
     strokeLinecap: '"round"',
     fontWeight: 'normal',
@@ -105,14 +106,14 @@ const myConfig = {
     highlightFontWeight: 'bold',
     mouseCursor: 'pointer',
     opacity: 1,
-    renderLabel: false,
+    renderLabel: true,
     semanticStrokeWidth: false,
     strokeWidth: 4,
     markerHeight: 6,
     markerWidth: 6,
     strokeDasharray: 0,
     strokeDashoffset: 0,
-    type: 'CURVE_SMOOTH',
+    type: 'STRAIGHT',
   },
 };
 
@@ -135,7 +136,7 @@ class Search extends React.Component {
       item.Key,
     );
     console.log(relations);
-    if (relations.data.nodes.length > 0) {
+    if (relations.data.arcs.length > 0) {
       let graph = {
         nodes: [],
 
@@ -144,23 +145,24 @@ class Search extends React.Component {
 
       relations.data.nodes.forEach((relation) => {
         graph.nodes.push({
-          id: relation[1],
-          arc: relation[0],
+          id: relation[0],
+          // arc: relation.Record,
           name: relation[1],
-          arcId: relation[0],
+          // arcId: relation.Key,
         });
-
       });
       relations.data.arcs.forEach((arc) => {
         graph.links.push({
-          source: arc[2],
-          target: arc[4],
+          source: arc[1],
+          target: arc[3],
+          label: arc[5],
         });
-      })
+      });
 
       graph = {
         ...graph,
       };
+      console.log(graph);
       this.setState({
         show: true,
         loading: false,
@@ -182,8 +184,7 @@ class Search extends React.Component {
 
   getAll = async () => {
     this.setState({ loading: true, data: null });
-    const user = await searchNodes('http://localhost:5000/nodes/getRelations');
-
+    const arcs = await searchNodes('http://localhost:5000/nodes/getRelations');
     if (user.data.arcs.length > 0) {
       let graph = {
         nodes: [],

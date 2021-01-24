@@ -252,14 +252,17 @@ exports.searchNodes = async function (req, res, contract) {
 exports.getRelations = async function (req, res, contract) {
   try {
     const { key } = req.headers;
-    const edges = JSON.parse(await contract.submitTransaction("queryByObjectType", "Arcs"));
-    let arco = [];
-    let nodo = [];
-    let existe = 0, existe1 = 0;
+    const edges = JSON.parse(
+      await contract.submitTransaction("queryByObjectType", "Arcs")
+    );
+    const arco = [];
+    const nodo = [];
+    let existe = 0,
+      existe1 = 0;
     let existeNodo = 0;
-    var stack = [];
-
-    const query = procurarAdjacente(key)
+    const stack = [];
+    console.log(key);
+    const query = procurarAdjacente(key);
 
     function procurarAdjacente(key) {
       //percorre todos arcos
@@ -300,12 +303,12 @@ exports.getRelations = async function (req, res, contract) {
             }
             existe1 = 0;
           }
-        })
+        });
       }
 
       const anterior = stack.pop()
       if (anterior) {
-        procurarAdjacente(anterior)
+        procurarAdjacente(anterior);
       }
       return arco;
     }
@@ -313,7 +316,8 @@ exports.getRelations = async function (req, res, contract) {
     arco.forEach((item) => {
       for (let i = 0; i < nodo.length; i++) {
         if (nodo[i][0] === item[1]) {
-          existeNodo = 1; break;
+          existeNodo = 1;
+          break;
         }
       }
       if (existeNodo !== 1) {
@@ -330,15 +334,13 @@ exports.getRelations = async function (req, res, contract) {
         nodo.push([item[4], item[5], item[6]])
       }
       existeNodo = 0;
+    });
 
-    })
-
-    return { arcs: query, nodes: nodo }
+    return { arcs: query, nodes: nodo };
   } catch (e) {
     return { error: e.error };
   }
 };
-
 
 //..................................................................//
 
