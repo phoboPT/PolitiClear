@@ -276,11 +276,11 @@ exports.getRelations = async function (req, res, contract) {
           //se nao existir adiciona nova iteração
           if (existe !== 1) {
             stack.push(edge.Record.initialNode)
-            arco.push([edge.Key, edge.Record.initialNode, edge.Record.initialNodeDescription, edge.Record.finalNode, edge.Record.finalNodeDescription])
+            arco.push([edge.Key, edge.Record.initialNode, edge.Record.initialNodeDescription, edge.Record.initialNodeNodeTypeDescription, edge.Record.finalNode, edge.Record.finalNodeDescription, edge.Record.finalNodeNodeTypeDescription])
             procurarAdjacente(edge.Record.finalNode)
           }
           existe = 0;
-        } 
+        }
       })
       procurarAdjacenteInverso(key)
 
@@ -295,14 +295,14 @@ exports.getRelations = async function (req, res, contract) {
             }
             if (existe1 !== 1) {
               stack.push(edge.Record.initialNode)
-              arco.push([edge.Key, edge.Record.initialNode, edge.Record.initialNodeDescription, edge.Record.finalNode, edge.Record.finalNodeDescription])
+              arco.push([edge.Key, edge.Record.initialNode, edge.Record.initialNodeDescription, edge.Record.initialNodeNodeTypeDescription, edge.Record.finalNode, edge.Record.finalNodeDescription, edge.Record.finalNodeNodeTypeDescription])
               procurarAdjacenteInverso(edge.Record.initialNode)
             }
             existe1 = 0;
           }
         })
       }
-      
+
       const anterior = stack.pop()
       if (anterior) {
         procurarAdjacente(anterior)
@@ -317,17 +317,17 @@ exports.getRelations = async function (req, res, contract) {
         }
       }
       if (existeNodo !== 1) {
-        nodo.push([item[1], item[2]])
+        nodo.push([item[1], item[2], item[3]])
       }
       existeNodo = 0;
 
       for (let i = 0; i < nodo.length; i++) {
-        if (nodo[i][0] === item[3]) {
+        if (nodo[i][0] === item[4]) {
           existeNodo = 1; break;
         }
       }
       if (existeNodo !== 1) {
-        nodo.push([item[3], item[4]])
+        nodo.push([item[4], item[5], item[6]])
       }
       existeNodo = 0;
 
