@@ -94,7 +94,6 @@ const myConfig = {
     size: 450,
     strokeColor: 'none',
     strokeWidth: 1.5,
-    symbolType: 'circle',
   },
   link: {
     highlightColor: 'lightblue',
@@ -113,7 +112,7 @@ const myConfig = {
     markerWidth: 6,
     strokeDasharray: 0,
     strokeDashoffset: 0,
-    type: 'STRAIGHT',
+    type: 'CURVE_SMOOTH',
   },
 };
 
@@ -135,27 +134,36 @@ class Search extends React.Component {
       'http://localhost:5000/nodes/getRelations',
       item.Key,
     );
-    console.log(relations);
     if (relations.data.arcs.length > 0) {
+      console.log(relations);
       let graph = {
         nodes: [],
 
         links: [],
       };
 
+      const symbol = {
+        Jornalista: 'square',
+        'Representante Político': 'circle',
+        'Partido Político': 'triangle',
+        'Função Politica': 'cross',
+        Politico: 'diamond',
+        Eventos: 'star',
+      };
       relations.data.nodes.forEach((relation) => {
         graph.nodes.push({
           id: relation[0],
           // arc: relation.Record,
           name: relation[1],
-          // arcId: relation.Key,
+          symbolType: symbol[relation[2]],
+          // arcId: relation.Key,post
         });
       });
       relations.data.arcs.forEach((arc) => {
         graph.links.push({
           source: arc[1],
-          target: arc[3],
-          label: arc[5],
+          target: arc[4],
+          label: arc[7],
         });
       });
 

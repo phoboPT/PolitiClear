@@ -22,6 +22,7 @@ class EditForm extends Component {
       data: '',
       certify: false,
       error: '',
+      loading: false,
     };
   }
 
@@ -110,7 +111,7 @@ class EditForm extends Component {
           <h2>Respond to the form</h2>
           <Error error={this.state.error} />
           <SuccessMessage message={this.state.data} />
-          {this.props.data.Record.upgradeRequest === 'true' && (
+          {this.props.data.Record.upgradeRequest && (
             <>
               <label htmlFor="email">
                 Email
@@ -156,7 +157,7 @@ class EditForm extends Component {
             </>
           )}
 
-          {this.props.data.Record.upgradeRequest === 'false' && (
+          {!this.props.data.Record.upgradeRequest && (
             <>
               <label htmlFor="email">
                 Email
@@ -195,7 +196,7 @@ class EditForm extends Component {
             <SickButton
               type="button"
               onClick={() => {
-                certify ? this.updateUser() : this.saveForm();
+                certify ? this.saveForm() : this.updateUser();
               }}
             >
               Sav{loading ? 'ing' : 'e'}

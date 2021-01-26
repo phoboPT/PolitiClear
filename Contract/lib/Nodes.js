@@ -1,31 +1,46 @@
-'use strict';
+"use strict";
 
 class Nodes {
+  constructor(payload) {
+    const {
+      description,
+      creatorId,
+      creatorIdDescription,
+      nodeType,
+      nodeTypeDescription,
+      createdAt,
+    } = payload;
+    this.description = description;
+    this.creatorId = creatorId;
+    this.creatorIdDescription = creatorIdDescription;
+    this.nodeType = nodeType;
+    this.nodeTypeDescription = nodeTypeDescription;
+    this.createdAt = createdAt ? createdAt : new Date();
+    this.updatedAt = "";
+    this.updatedBy = "";
+    this.type = "Nodes";
+  }
 
-    constructor(description, creatorId, creatorIdDescription, nodeType, nodeTypeDescription, createdAt) {
-        this.description = description;
-        this.creatorId = creatorId;
-        this.creatorIdDescription = creatorIdDescription;
-        this.nodeType = nodeType;
-        this.nodeTypeDescription = nodeTypeDescription;
-        this.createdAt = (createdAt === '' || createdAt === undefined) ? new Date() : createdAt;
-        this.updatedAt = '';
-        this.updatedBy = ''
-        this.type = 'Nodes';
-    }
+  updateNodes(payload) {
+    const {
+      description,
+      nodeType,
+      nodeTypeDescription,
+      updatedBy,
+      updatedByDescription,
+    } = payload;
 
-    updateNodes(description, nodeType, nodeTypeDescription, updatedBy, updatedByDescription) {
-        if (description !== '' && description !== undefined) {
-            this.description = description;
-        }
-        if (nodeType !== '' && nodeType !== undefined) {
-            this.nodeType = nodeType;
-            this.nodeTypeDescription = nodeTypeDescription;
-        }
-        this.updatedBy = updatedBy;
-        this.updatedByDescription = updatedByDescription;
-        this.updatedAt = new Date();
-    }
+    this.description = description ? description : this.description;
+
+    this.nodeType = nodeType ? nodeType : this.nodeType;
+    this.nodeTypeDescription = nodeTypeDescription
+      ? nodeTypeDescription
+      : this.nodeTypeDescription;
+
+    this.updatedBy = updatedBy;
+    this.updatedByDescription = updatedByDescription;
+    this.updatedAt = new Date();
+  }
 }
 
 module.exports = Nodes;

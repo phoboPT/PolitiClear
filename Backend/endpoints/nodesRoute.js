@@ -63,14 +63,22 @@ exports.createNodes = async function (req, res, contract) {
 exports.updateNodes = async function (req, res, contract) {
   try {
     const { key, description, nodeType, token } = req.body;
+    const newNode = {
+      key,
+      description,
+      nodeType,
+    };
+    console.log(req.body);
     const creatorId = await dataVerifications.verifyToken(
       contract,
       token,
       permissions[1]
     );
+    newNode.creatorId = creatorId;
     const creatorIdDescription = JSON.parse(
       await contract.submitTransaction("readUsers", creatorId)
     ).name;
+    newNode.creatorIdDescription = creatorIdDescription;
 
     let nodeTypeDescription, nodeTypeBefore;
     if (nodeType !== "" && nodeType !== undefined) {
@@ -84,16 +92,6 @@ exports.updateNodes = async function (req, res, contract) {
       ).nodeType;
     }
 
-    await contract.submitTransaction(
-      "updateNodes",
-      key,
-      description || "",
-      nodeType || "",
-      nodeTypeDescription || "",
-      creatorId,
-      creatorIdDescription
-    );
-
     //verificar se existem nodes com o mesmo nodeType
     if (nodeTypeBefore !== "" && nodeTypeBefore !== undefined) {
       let existNode = 0;
@@ -105,14 +103,32 @@ exports.updateNodes = async function (req, res, contract) {
           existNode = 1;
         }
       });
+
+      const newNodeType = {
+        key: nodeTypeBefore,
+      };
       if (existNode === 1) {
-        await contract.submitTransaction("updateNodesTypes", nodeTypeBefore, 1);
+        newNodeType.isUsed = 1;
+        await contract.submitTransaction(
+          "updateNodesTypes",
+          JSON.stringify(newNodeType)
+        );
       } else {
-        await contract.submitTransaction("updateNodesTypes", nodeTypeBefore, 0);
+        newNodeType.isUsed = 0;
+        await contract.submitTransaction(
+          "updateNodesTypes",
+          JSON.stringify(newNodeType)
+        );
       }
     }
+    newNode.nodeTypeDescription = nodeTypeDescription;
+    console.log(newNode);
+    const response = await contract.submitTransaction(
+      "updateNodes",
+      JSON.stringify(newNode)
+    );
 
-    return { data: "Updated" };
+    return JSON.parse(response);
   } catch (e) {
     return { error: e.message };
   }
@@ -122,32 +138,26 @@ exports.deleteNodes = async function (req, res, contract) {
   try {
     const { token, key } = req.body;
     await dataVerifications.verifyToken(contract, token, permissions[0]);
-    const response = await contract.submitTransaction(
-      "queryByObjectType",
-      "Arcs"
-    );
-
+    const arcs = await contract.submitTransaction("queryByObjectType", "Arcs");
+    const response = JSON.parse(arcs);
     //verifica se existem arcos com votos positivos
-    for (let i = 0; i < JSON.parse(response).length; i++) {
+    for (let i = 0; i < response.length; i++) {
       if (
-        JSON.parse(response)[i].Record.finalNode === key ||
-        JSON.parse(response)[i].Record.initialNode === key
+        response[i].Record.finalNode === key ||
+        response[i].Record.initialNode === key
       ) {
-        if (JSON.parse(response)[i].Record.totalVotes > 0) {
+        if (response[i].Record.totalVotes > 0) {
           return { error: "Delete denied! Arcs already have votes" };
         }
       }
     }
     //remove nodo e arcos caso não haja votos em nenhum deles
-    for (let i = 0; i < JSON.parse(response).length; i++) {
+    for (let i = 0; i < response.length; i++) {
       if (
-        JSON.parse(response)[i].Record.finalNode === key ||
-        JSON.parse(response)[i].Record.initialNode === key
+        response[i].Record.finalNode === key ||
+        response[i].Record.initialNode === key
       ) {
-        await contract.submitTransaction(
-          "deleteArcs",
-          JSON.parse(response)[i].Key
-        );
+        await contract.submitTransaction("deleteArcs", response[i].Key);
       }
     }
 
@@ -278,14 +288,23 @@ exports.getRelations = async function (req, res, contract) {
           }
           //se nao existir adiciona nova iteração
           if (existe !== 1) {
-            stack.push(edge.Record.initialNode)
-            arco.push([edge.Key, edge.Record.initialNode, edge.Record.initialNodeDescription, edge.Record.initialNodeNodeTypeDescription, edge.Record.finalNode, edge.Record.finalNodeDescription, edge.Record.finalNodeNodeTypeDescription])
-            procurarAdjacente(edge.Record.finalNode)
+            stack.push(edge.Record.initialNode);
+            arco.push([
+              edge.Key,
+              edge.Record.initialNode,
+              edge.Record.initialNodeDescription,
+              edge.Record.initialNodeNodeTypeDescription,
+              edge.Record.finalNode,
+              edge.Record.finalNodeDescription,
+              edge.Record.finalNodeNodeTypeDescription,
+              edge.Record.description,
+            ]);
+            procurarAdjacente(edge.Record.finalNode);
           }
           existe = 0;
         }
-      })
-      procurarAdjacenteInverso(key)
+      });
+      procurarAdjacenteInverso(key);
 
       function procurarAdjacenteInverso(key) {
         edges.forEach((edge) => {
@@ -297,16 +316,25 @@ exports.getRelations = async function (req, res, contract) {
               }
             }
             if (existe1 !== 1) {
-              stack.push(edge.Record.initialNode)
-              arco.push([edge.Key, edge.Record.initialNode, edge.Record.initialNodeDescription, edge.Record.initialNodeNodeTypeDescription, edge.Record.finalNode, edge.Record.finalNodeDescription, edge.Record.finalNodeNodeTypeDescription])
-              procurarAdjacenteInverso(edge.Record.initialNode)
+              stack.push(edge.Record.initialNode);
+              arco.push([
+                edge.Key,
+                edge.Record.initialNode,
+                edge.Record.initialNodeDescription,
+                edge.Record.initialNodeNodeTypeDescription,
+                edge.Record.finalNode,
+                edge.Record.finalNodeDescription,
+                edge.Record.finalNodeNodeTypeDescription,
+                edge.Record.description,
+              ]);
+              procurarAdjacenteInverso(edge.Record.initialNode);
             }
             existe1 = 0;
           }
         });
       }
 
-      const anterior = stack.pop()
+      const anterior = stack.pop();
       if (anterior) {
         procurarAdjacente(anterior);
       }
@@ -321,17 +349,18 @@ exports.getRelations = async function (req, res, contract) {
         }
       }
       if (existeNodo !== 1) {
-        nodo.push([item[1], item[2], item[3]])
+        nodo.push([item[1], item[2], item[3]]);
       }
       existeNodo = 0;
 
       for (let i = 0; i < nodo.length; i++) {
         if (nodo[i][0] === item[4]) {
-          existeNodo = 1; break;
+          existeNodo = 1;
+          break;
         }
       }
       if (existeNodo !== 1) {
-        nodo.push([item[4], item[5], item[6]])
+        nodo.push([item[4], item[5], item[6]]);
       }
       existeNodo = 0;
     });

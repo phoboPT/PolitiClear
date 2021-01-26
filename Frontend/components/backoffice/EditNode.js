@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import Cookies from 'js-cookie';
 import Form from '../styles/Form';
 import Error from '../ErrorMessage';
 import SuccessMessage from '../styles/SuccessMessage';
@@ -30,10 +31,12 @@ class EditNode extends Component {
 
   saveForm = async () => {
     this.setState({ loading: true });
+    const token = Cookies.get('token');
     const data = {
       key: this.props.data.Key,
       description: this.state.description,
       nodeType: this.state.nodeType,
+      token,
     };
     const res = await sendRequest(
       'PUT',

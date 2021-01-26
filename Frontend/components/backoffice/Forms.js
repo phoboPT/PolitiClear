@@ -87,13 +87,12 @@ class Forms extends Component {
                             <td>{formatDate(updatedAt)}</td>
                             <td
                               style={{
-                                color:
-                                  item.Record.upgradeRequest === 'true'
-                                    ? 'red'
-                                    : 'black',
+                                color: item.Record.upgradeRequest
+                                  ? 'red'
+                                  : 'black',
                               }}
                             >
-                              {item.Record.upgradeRequest}
+                              {item.Record.upgradeRequest.toString()}
                             </td>
                             <td className="center">
                               <button

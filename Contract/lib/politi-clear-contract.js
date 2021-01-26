@@ -174,42 +174,32 @@ class PolitiClearContract extends Contract {
     return JSON.parse(buffer.toString());
   }
 
-  async updateNodes(
-    ctx,
-    key,
-    description,
-    nodeType,
-    nodeTypeDescription,
-    updatedBy,
-    updatedByDescription
-  ) {
+  async updateNodes(ctx, payload) {
+    const { key, description, nodeType } = JSON.parse(payload);
+
     if (description === "" && nodeType === "") {
       return { error: `Error! Any data was filled to node ${key}` };
     }
     if (!(await this.dataExists(ctx, key, "Nodes"))) {
       return { error: `The node ${key} does not exist` };
     }
+    console.log("newNode", JSON.parse(payload));
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
-
-    const nodesUpdated = new Nodes(
-      asset.description,
-      asset.creatorId,
-      asset.creatorIdDescription,
-      asset.nodeType,
-      asset.nodeTypeDescription,
-      asset.createdAt
-    );
-    nodesUpdated.updateNodes(
-      description,
-      nodeType,
-      nodeTypeDescription,
-      updatedBy,
-      updatedByDescription
-    );
+    const oldNode = {
+      description: asset.description,
+      creatorId: asset.creatorId,
+      creatorIdDescription: asset.creatorIdDescription,
+      nodeType: asset.nodeType,
+      nodeTypeDescription: asset.nodeTypeDescription,
+      createdAt: asset.createdAt,
+    };
+    const nodesUpdated = new Nodes(oldNode);
+    nodesUpdated.updateNodes(JSON.parse(payload));
 
     const buffer = Buffer.from(JSON.stringify(nodesUpdated));
     await ctx.stub.putState(key, buffer);
+    return { data: "Successfully updated" };
   }
 
   async deleteNodes(ctx, key) {
