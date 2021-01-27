@@ -151,23 +151,9 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async createNodes(
-    ctx,
-    key,
-    description,
-    creatorId,
-    creatorIdDescription,
-    nodeType,
-    nodeTypeDescription
-  ) {
-    const asset = new Nodes(
-      description,
-      creatorId,
-      creatorIdDescription,
-      nodeType,
-      nodeTypeDescription,
-      ""
-    );
+  async createNodes(ctx, payload) {
+    const { key } = JSON.parse(payload);
+    const asset = new Nodes(JSON.parse(payload));
 
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
@@ -221,11 +207,13 @@ class PolitiClearContract extends Contract {
 
   async createNodesTypes(ctx, payload) {
     const { name, key } = JSON.parse(payload);
+
     const query = await this.verifyNameAlreadyExists(ctx, name, "NodesTypes");
     if (query) {
       return { error: `Error! The NodesTypes ${name} already exists` };
     }
-    const asset = new NodesTypes(name);
+
+    const asset = new NodesTypes(JSON.parse(payload));
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
     return { data: "Successfully added" };

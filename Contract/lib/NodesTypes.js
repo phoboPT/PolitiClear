@@ -1,19 +1,17 @@
 "use strict";
 
 class NodesTypes {
-  constructor(name, createdAt, creatorId, isUsed) {
+  constructor(payload) {
+    const { name, createdAt, creatorId, isUsed } = payload;
     this.name = name;
-    this.createdAt =
-      createdAt === "" || createdAt === undefined ? new Date() : createdAt;
+    this.createdAt = createdAt ? createdAt : new Date();
     this.creatorId = creatorId;
-    this.isUsed = isUsed === "" || isUsed === undefined ? 0 : isUsed;
+    this.isUsed = isUsed ? isUsed : 0;
     this.type = "NodesTypes";
   }
 
   updateNodesTypes(isUsed) {
-    if (isUsed !== "" && isUsed !== undefined) {
-      this.isUsed = isUsed;
-    }
+    this.isUsed = isUsed ? isUsed : this.isUsed;
   }
 }
 

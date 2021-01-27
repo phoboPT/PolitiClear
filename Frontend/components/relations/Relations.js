@@ -27,17 +27,20 @@ class Relations extends Component {
   }
 
   fetch = async () => {
-    const data = await this.reqData();
-    data[0].data.map((item) => {
-      console.log(item.Record.nodeType);
+    const token = Cookies.get('token');
+    if (token) {
+      const data = await this.reqData(token);
+      data[0].data.map((item) => {
+        console.log(item.Record.nodeType);
 
-      data[1].data.map((nodeType) => {
-        if (item.Record.nodeType === nodeType.Key) {
-          item.Record.nodeType = nodeType.Record.name;
-        }
+        data[1].data.map((nodeType) => {
+          if (item.Record.nodeType === nodeType.Key) {
+            item.Record.nodeType = nodeType.Record.name;
+          }
+        });
       });
-    });
-    this.setState({ formData: data[0].data });
+      this.setState({ formData: data[0].data });
+    }
   };
 
   changeForm = () => {
@@ -48,9 +51,7 @@ class Relations extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  reqData = async () => {
-    const token = Cookies.get('token');
-
+  reqData = async (token) => {
     const nodes = searchNodes('http://127.0.0.1:5000/arcs/userArcs', token);
     const nodesTypes = getData('http://127.0.0.1:5000/readByType/NodesTypes');
     const res = await Promise.all([nodes, nodesTypes]);
@@ -61,11 +62,7 @@ class Relations extends Component {
     return (
       <Me>
         {(items, isLoaded) => {
-          if (
-            items.error !== 0 &&
-            isLoaded &&
-            items.permission === permissions[2]
-          ) {
+          if (!items.error && isLoaded && items.permission === permissions[2]) {
             if (this.state.form == 0) {
               return (
                 <div>
@@ -150,7 +147,12 @@ class Relations extends Component {
               );
             }
           }
-          return null;
+          return (
+            <p>
+              You dont have permissions to access this page, or you need to
+              login
+            </p>
+          );
         }}
       </Me>
     );

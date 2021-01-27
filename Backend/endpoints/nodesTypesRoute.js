@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
-
+const jwt = require("jsonwebtoken");
 // Pesquisa por key
 exports.getByKey = async function (req, res, contract) {
   try {
@@ -16,12 +16,17 @@ exports.getByKey = async function (req, res, contract) {
 // cria novo tipo
 exports.createNodesTypes = async function (req, res, contract) {
   try {
-    const { name } = req.body;
+    const { name, token } = req.body;
+
+    const userID = jwt.verify(token, "MySecret");
+
     const key = uuidv4();
     const nodeType = {
       name,
       key,
+      creatorId: userID.userId,
     };
+    console.log(nodeType);
     const response = await contract.submitTransaction(
       "createNodesTypes",
       JSON.stringify(nodeType)
@@ -34,13 +39,13 @@ exports.createNodesTypes = async function (req, res, contract) {
 
 exports.deleteNodesTypes = async function (req, res, contract) {
   try {
-    if (req.headers.key === "" || req.headers.key === undefined) {
+    if (req.body.key === "" || req.body.key === undefined) {
       return { error: "Key must be provided!" };
     }
 
     const response = await contract.submitTransaction(
       "deleteNodesTypes",
-      req.headers.key
+      req.body.key
     );
     return JSON.parse(response);
   } catch (e) {

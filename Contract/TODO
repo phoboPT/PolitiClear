@@ -4,5 +4,4 @@ FIX:
             Users:
                 ☐ consigo apagar o meu próprio utilizador. Temos de passar contas a inativo e não apagar.
         Home:
-            ☐ apenas apresentar o floatingIcon se o User não estiver logado
     BACKEND:       

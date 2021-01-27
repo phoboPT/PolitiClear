@@ -57,7 +57,6 @@ exports.updateForms = async function (req, res, contract) {
       status,
       response,
     };
-    console.log(req.body);
     const res = await contract.submitTransaction(
       "updateForms",
       JSON.stringify(newForm)

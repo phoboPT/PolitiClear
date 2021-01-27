@@ -10,6 +10,7 @@ class Nodes {
       nodeTypeDescription,
       createdAt,
     } = payload;
+
     this.description = description;
     this.creatorId = creatorId;
     this.creatorIdDescription = creatorIdDescription;

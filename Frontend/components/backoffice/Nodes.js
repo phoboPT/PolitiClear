@@ -73,6 +73,7 @@ class Nodes extends Component {
                             item.Record.updatedAt,
                           ).toISOString();
                         }
+                        console.log(item);
                         return (
                           <tr key={item.Key}>
                             <td>{item.Record.description}</td>

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import Cookies from 'js-cookie';
 import Form from '../styles/Form';
 import Error from '../ErrorMessage';
 import SuccessMessage from '../styles/SuccessMessage';
 import { sendRequest } from '../../lib/requests';
 import SickButton from '../styles/SickButton';
+
 const ButtonDiv = styled.div`
   button {
     margin: 0 auto;
@@ -34,7 +36,8 @@ class EditNodeType extends Component {
   saveUser = async (create) => {
     this.setState({ loading: true });
     if (create) {
-      const data = { name: this.state.name };
+      const token = Cookies.get('token');
+      const data = { name: this.state.name, token };
       const res = await sendRequest(
         'POST',
         'http://127.0.0.1:5000/nodesTypes/create',
