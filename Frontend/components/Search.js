@@ -2,7 +2,6 @@ import Downshift, { resetIdCounter } from 'downshift';
 import debounce from 'lodash.debounce';
 import React from 'react';
 import { Graph } from 'react-d3-graph';
-import styled from 'styled-components';
 import Cookies from 'js-cookie';
 import swal from '@sweetalert/with-react';
 import { searchNodes, search, sendRequest } from '../lib/requests';
@@ -15,54 +14,7 @@ import SuccessMessage from './styles/SuccessMessage';
 import FloatingIcon from './styles/FloatingIcon';
 import HelpForm from './HelpForm';
 import formatDate from '../lib/formatDate';
-
-const TreeWrapper = styled.div`
-  #graph-id-graph-wrapper {
-    background-color: #eaf6f0;
-  }
-  .img {
-    text-align: center;
-    display: inline-flex;
-    margin: 10px; /* vertical-align: middle; */
-    img {
-      margin: auto 50px auto 5px;
-      width: 30px;
-      height: 30px;
-    }
-    p {
-      margin: 5px;
-    }
-  }
-  h2 {
-    margin: 5px;
-  }
-  margin-top: 50px;
-  .left {
-    margin: auto;
-  }
-  .right {
-    margin-left: 20px;
-    width: 100%;
-  }
-  .votes {
-    display: flex;
-    justify-content: space-evenly;
-    width: 100px;
-    border: none;
-    height: 80%;
-    margin: auto;
-    img {
-      border: none;
-      padding-top: 3px;
-    }
-    .upvote {
-      background-color: rgba(10, 169, 113, 0.46);
-    }
-    .downvote {
-      background-color: #e42121;
-    }
-  }
-`;
+import TreeWrapper from './styles/TreeWrapper';
 
 // the graph configuration, you only need to pass down properties
 // that you want to override, otherwise default ones will be used

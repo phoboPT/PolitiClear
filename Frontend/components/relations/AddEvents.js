@@ -254,6 +254,9 @@ class AddRelation extends Component {
             <button type="button" onClick={this.createArc}>
               Create
             </button>
+            <button type="button" onClick={this.createArc}>
+              Back
+            </button>
           </ButtonDiv>
         </fieldset>
       </Form>

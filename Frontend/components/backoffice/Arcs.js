@@ -19,10 +19,6 @@ class Arcs extends Component {
     };
   }
 
-  saveToState = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
   fetch = async () => {
     const data = await getData('http://127.0.0.1:5000/readByType/Arcs');
     this.setState({ formData: data.data });

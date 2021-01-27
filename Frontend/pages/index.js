@@ -20,7 +20,7 @@ const index = () => (
         <Div>
           <h2>Welcome to the PolitiClear</h2>
           <h3>
-            A platform made to acredit relationships between Politcs/Entitys
+            A platform made to acredit relationships between Politics/Entitys
           </h3>
         </Div>
         <P>Search a name to start</P>

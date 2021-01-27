@@ -1,8 +1,8 @@
 import Account from '../components/Account';
-const account = () => (
+const AccountPage = () => (
   <div>
     <Account></Account>
   </div>
 );
 
-export default account;
+export default AccountPage;

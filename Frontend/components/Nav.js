@@ -13,6 +13,9 @@ const Nav = () => (
   <Me>
     {(items, isLoaded, fetch) => (
       <NavStyles data-test="nav">
+        <Link href="/credibility">
+          <a>Credibility</a>
+        </Link>
         {!items.error && isLoaded && (
           <>
             {items.permission === permissions[0] && (
@@ -34,19 +37,21 @@ const Nav = () => (
         )}
 
         {items.error && isLoaded && (
-          <button
-            type="button"
-            onClick={async () => {
-              swal({
-                width: '1800px',
-                height: '600px',
-                buttons: false,
-                content: <Login refetch={fetch} closeSwal={close} />,
-              }).then;
-            }}
-          >
-            Sign in
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={async () => {
+                swal({
+                  width: '1800px',
+                  height: '600px',
+                  buttons: false,
+                  content: <Login refetch={fetch} closeSwal={close} />,
+                }).then;
+              }}
+            >
+              Sign in
+            </button>
+          </>
         )}
       </NavStyles>
     )}
