@@ -131,7 +131,7 @@ exports.updateUsers = async (req, res, contract) => {
 exports.deleteUsers = async (req, res, contract) => {
   try {
     const { key, token } = req.body;
-    // await dataVerifications.verifyToken(contract, token, permissions[0]);
+    await dataVerifications.verifyToken(contract, token, permissions[0]);
     await contract.submitTransaction("deleteUsers", key);
     return { data: "Deleted" };
   } catch (e) {

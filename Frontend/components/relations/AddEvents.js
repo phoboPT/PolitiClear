@@ -72,7 +72,7 @@ class AddRelation extends Component {
     );
 
     this.hideTimeout = setTimeout(
-      () => this.setState({ data2: null, error: null }),
+      () => this.setState({ data: null, error: null }),
       3000,
     );
     if (res.data.data) this.setState({ data: res.data.data });
@@ -126,7 +126,7 @@ class AddRelation extends Component {
           <SuccessMessage message={this.state.data} />
           <Error error={this.state.error} />
           <label htmlFor="politician">
-            Relation from:
+            Source:
             <Downshift
               onChange={(e) => this.populate(e, 1)}
               itemToString={(item) =>
@@ -182,8 +182,18 @@ class AddRelation extends Component {
               )}
             </Downshift>
           </label>
+          <label htmlFor="description">
+            Relation:
+            <input
+              type="text"
+              name="description"
+              placeholder="Description"
+              value={this.state.description}
+              onChange={this.saveToState}
+            />
+          </label>
           <label htmlFor="politician">
-            to:
+            To:
             <Downshift
               onChange={(e) => this.populate(e, 2)}
               itemToString={(item) =>
@@ -239,16 +249,7 @@ class AddRelation extends Component {
               )}
             </Downshift>
           </label>
-          <label htmlFor="description">
-            Description
-            <input
-              type="text"
-              name="description"
-              placeholder="Description"
-              value={this.state.description}
-              onChange={this.saveToState}
-            />
-          </label>
+
           <ButtonDiv>
             <button type="button" onClick={this.createArc}>
               Create

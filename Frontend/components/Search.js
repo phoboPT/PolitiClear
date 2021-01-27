@@ -145,11 +145,11 @@ class Search extends React.Component {
       width: window.innerWidth * 0.8,
       myConfig: {
         nodeHighlightBehavior: true,
-        automaticRearrangeAfterDropNode: false,
+        automaticRearrangeAfterDropNode: true,
         collapsible: false,
-        directed: true,
+        directed: false,
         focusAnimationDuration: 0.75,
-        focusZoom: 0.5,
+        initialZoom: 0.8,
         freezeAllDragEvents: false,
         height: 600,
         highlightDegree: 1,
@@ -190,7 +190,7 @@ class Search extends React.Component {
         link: {
           highlightColor: 'lightblue',
           labelProperty: 'label',
-          fontSize: 10,
+          fontSize: 15,
           strokeLinecap: '"round"',
           fontWeight: 'normal',
           highlightFontSize: 8,
@@ -199,7 +199,7 @@ class Search extends React.Component {
           opacity: 1,
           renderLabel: true,
           semanticStrokeWidth: false,
-          strokeWidth: 4,
+          strokeWidth: 7,
           markerHeight: 6,
           markerWidth: 6,
           strokeDasharray: 0,
@@ -284,9 +284,10 @@ class Search extends React.Component {
   };
 
   onClickNode = (nodeId, node) => {
+    console.log(node);
     this.setState({ nodesInfo: null });
     const item = {
-      Key: node.keyNode,
+      Key: node.id,
     };
     this.populate(item);
   };
@@ -539,7 +540,7 @@ class Search extends React.Component {
             </div>
           </TreeWrapper>
         )}
-        {!this.props.user.createdAt && (
+        {!this.props.user.createdAt && this.props.loading && (
           <FloatingIcon>
             <div className="wsk-float">
               <a

@@ -202,7 +202,6 @@ app.get("/votes/key", async (req, res) => {
 
 app.post("/votes/create", async (req, res) => {
   const response = await votesRoute.createVotes(req, res, contract);
-  console.log(response);
   res.status(200).send(response);
 });
 

@@ -35,7 +35,6 @@ exports.createVotes = async function (req, res, contract) {
 
     const data = await getData(contract, arcId, voter);
 
-    console.log(JSON.parse(data[1]));
     const parsedData = JSON.parse(data[0]);
     const parsedVote = JSON.parse(data[1]);
     const voterDescription = JSON.parse(data[2]);

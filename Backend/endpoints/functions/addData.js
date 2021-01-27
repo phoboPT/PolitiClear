@@ -138,7 +138,6 @@ exports.addData = async function (req, res, contract) {
     for (let i = 0; i < nodeTypes.length; i++) {
       const key = uuidv4();
       nodeTypeKey.push(key);
-      console.log(key);
       const nodeType = {
         key,
         name: nodeTypes[i],
@@ -147,7 +146,6 @@ exports.addData = async function (req, res, contract) {
         "createNodesTypes",
         JSON.stringify(nodeType)
       );
-      console.log(key);
       if (i < 5) {
         await contract.submitTransaction(
           "updateNodesTypes",
@@ -156,10 +154,8 @@ exports.addData = async function (req, res, contract) {
             isUsed: 1,
           })
         );
-        console.log("-1");
       }
     }
-    console.log("0");
     for (let i = 0; i < cargosPoliticos.length; i++) {
       const key = uuidv4();
       cargosPoliticosKey.push(key);

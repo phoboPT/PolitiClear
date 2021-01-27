@@ -191,7 +191,6 @@ exports.userArcs = async function (req, res, contract) {
       "Arcs"
     );
     const asset = JSON.parse(buffer1.toString());
-    console.log(creatorId);
     const result = asset.filter((item) => {
       return item.Record.creatorId === creatorId;
     });

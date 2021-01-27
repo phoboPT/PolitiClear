@@ -1,9 +1,9 @@
-import Link from "next/link";
-import React, { Component } from "react";
-import styled from "styled-components";
-import { permissions } from "../lib/permissions";
-import EditAccount from "./EditAccount";
-import Me from "./Me";
+import Link from 'next/link';
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { permissions } from '../lib/permissions';
+import EditAccount from './EditAccount';
+import Me from './Me';
 
 const Grid = styled.div`
   display: flex;
@@ -27,6 +27,7 @@ class Account extends Component {
       edit: false,
     };
   }
+
   changeEdit = () => {
     const { edit } = this.state;
 
@@ -39,7 +40,7 @@ class Account extends Component {
       <Me>
         {(items, isLoaded, fetch) => (
           <Grid>
-            {items.error !== 0 && isLoaded && (
+            {!items.error && isLoaded && (
               <>
                 {edit ? (
                   <>
@@ -80,6 +81,7 @@ class Account extends Component {
                 )}
               </>
             )}
+            {items.error && <p>You need to login first</p>}
           </Grid>
         )}
       </Me>
