@@ -38,6 +38,22 @@ exports.getByName = async (req, res, contract) => {
   }
 };
 
+exports.getAcreditedUsers = async function (req, res, contract) {
+  try {
+    const response = await contract.submitTransaction("queryByObjectType", "Users");
+    let data = [];
+
+    JSON.parse(response).forEach((item) => {
+      if (item.Record.permission === permissions[1]) {
+        data.push(item);
+      }
+    });
+    return { data: data };
+  } catch (e) {
+    return { error: e.message };
+  }
+};
+
 // Create user
 exports.createUsers = async (req, res, contract) => {
   try {
@@ -81,7 +97,7 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
-    const { key, token, name, oldPassword, newPassword, permission } = req.body;
+    const { key, token, name, oldPassword, newPassword, permission, credibility } = req.body;
     let updaterId, id;
     const newUser = {
       name,

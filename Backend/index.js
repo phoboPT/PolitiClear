@@ -179,6 +179,11 @@ app.get("/users/name/:name", async (req, res) => {
   const response = await usersRoute.getByName(req, res, contract);
   res.status(200).send(response);
 });
+app.get("/users/acredited", async (req, res) => {
+  const response = await usersRoute.getAcreditedUsers(req, res, contract);
+  res.status(200).send(response);
+});
+
 app.post("/users/create", async (req, res) => {
   const response = await usersRoute.createUsers(req, res, contract);
   res.status(200).send(response);

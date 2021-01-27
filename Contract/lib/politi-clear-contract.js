@@ -296,6 +296,7 @@ class PolitiClearContract extends Contract {
       password: asset.password,
       permission: asset.permission,
       createdAt: asset.createdAt,
+      credibility: asset.credibility
     };
 
     const userUpdated = new Users(newUser);
