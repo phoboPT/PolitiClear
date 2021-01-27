@@ -1,9 +1,9 @@
 import VerifyAccount from '../components/VerifyAccount';
 
-const Verify = () => (
+const VerifyPage = () => (
   <div>
     <VerifyAccount></VerifyAccount>
   </div>
 );
 
-export default Verify;
+export default VerifyPage;

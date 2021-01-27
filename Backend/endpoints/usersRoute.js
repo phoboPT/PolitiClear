@@ -40,7 +40,10 @@ exports.getByName = async (req, res, contract) => {
 
 exports.getAcreditedUsers = async function (req, res, contract) {
   try {
-    const response = await contract.submitTransaction("queryByObjectType", "Users");
+    const response = await contract.submitTransaction(
+      "queryByObjectType",
+      "Users"
+    );
     let data = [];
 
     JSON.parse(response).forEach((item) => {
@@ -48,7 +51,7 @@ exports.getAcreditedUsers = async function (req, res, contract) {
         data.push(item);
       }
     });
-    return { data: data };
+    return data;
   } catch (e) {
     return { error: e.message };
   }
@@ -97,7 +100,15 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
-    const { key, token, name, oldPassword, newPassword, permission, credibility } = req.body;
+    const {
+      key,
+      token,
+      name,
+      oldPassword,
+      newPassword,
+      permission,
+      credibility,
+    } = req.body;
     let updaterId, id;
     const newUser = {
       name,
