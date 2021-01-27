@@ -6,7 +6,7 @@ class Votes {
     this.voter = voter;
     this.voterDescription = voterDescription;
     this.arcId = arcId;
-    this.vote = vote;
+    this.vote = parseInt(vote);
     this.createdAt = createdAt;
     this.updatedAt = "";
     this.type = "Votes";

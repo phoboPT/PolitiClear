@@ -1,7 +1,9 @@
-FIX:
     Frontend:
         ADMIN:
             Users:
                 ☐ consigo apagar o meu próprio utilizador. Temos de passar contas a inativo e não apagar.
         Home:
-    BACKEND:       
+
+        update arcs - falta jwt
+    BACKEND:      
+

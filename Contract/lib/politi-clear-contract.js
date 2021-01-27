@@ -341,7 +341,6 @@ class PolitiClearContract extends Contract {
       }
       if (res.done) {
         await resultsIterator.close();
-        console.log("allnodes: " + allNodes.toString());
         return allNodes;
       }
     }
@@ -359,7 +358,6 @@ class PolitiClearContract extends Contract {
       },
     };
 
-    console.log("query", queryString);
     const queryResults = await this.queryWithQueryString(
       ctx,
       JSON.stringify(queryString)
