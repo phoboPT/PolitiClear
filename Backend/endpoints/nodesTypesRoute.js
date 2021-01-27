@@ -34,13 +34,14 @@ exports.createNodesTypes = async function (req, res, contract) {
 
 exports.deleteNodesTypes = async function (req, res, contract) {
   try {
-    if (req.headers.key === "" || req.headers.key === undefined) {
+    console.log(req.body);
+    if (req.body.key === "" || req.body.key === undefined) {
       return { error: "Key must be provided!" };
     }
 
     const response = await contract.submitTransaction(
       "deleteNodesTypes",
-      req.headers.key
+      req.body.key
     );
     return JSON.parse(response);
   } catch (e) {

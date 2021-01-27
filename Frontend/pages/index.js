@@ -13,10 +13,10 @@ const index = () => (
       return (
         <div>
           <Div>
-            <h1>Welcome to the PolitiClear</h1>
-            <h2>
+            <h2>Welcome to the PolitiClear</h2>
+            <h3>
               A platform made to acredit relationships between Politcs/Entitys
-            </h2>
+            </h3>
           </Div>
           <p>Search a name to start</p>
           <Search user={items}></Search>

@@ -80,7 +80,7 @@ const Table = styled.table`
       cursor: pointer;
       background-color: transparent;
       border: none;
-      height: 50px;
+      height: 30px;
       width: 100%;
       color: #3498db;
       font-size: 1.5em;

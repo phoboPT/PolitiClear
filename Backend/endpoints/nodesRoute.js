@@ -33,25 +33,28 @@ exports.createNodes = async function (req, res, contract) {
       creatorId
     );
     creatorIdDescription = JSON.parse(creatorIdDescription).name;
-    let nodeTypeDescription = await contract.submitTransaction(
+    const nodeTypeDescription = await contract.submitTransaction(
       "readNodesTypes",
       nodeTypeId
     );
-    nodeTypeDescription = JSON.parse(nodeTypeDescription).name;
 
-    await contract.submitTransaction(
-      "createNodes",
+    const newNode = {
       key,
       description,
       creatorId,
       creatorIdDescription,
       nodeTypeId,
-      nodeTypeDescription
+      nodeTypeDescription: JSON.parse(nodeTypeDescription).data.name,
+    };
+    await contract.submitTransaction("createNodes", JSON.stringify(newNode));
+    console.log(newNode);
+    await contract.submitTransaction(
+      "updateNodesTypes",
+      JSON.stringify({
+        key: nodeTypeId,
+        isUsed: 1,
+      })
     );
-    await contract.submitTransaction("updateNodesTypes", {
-      key: nodeTypeId,
-      isUsed: 1,
-    });
 
     return { data: "Created" };
   } catch (e) {
@@ -122,7 +125,6 @@ exports.updateNodes = async function (req, res, contract) {
       }
     }
     newNode.nodeTypeDescription = nodeTypeDescription;
-    console.log(newNode);
     const response = await contract.submitTransaction(
       "updateNodes",
       JSON.stringify(newNode)
@@ -210,54 +212,53 @@ exports.search = async function (req, res, contract) {
   }
 };
 
-exports.searchNodes = async function (req, res, contract) {
-  try {
-    console.log("hey");
-    const { key } = req.headers;
-    const allArcs = await contract.submitTransaction(
-      "queryByObjectType",
-      "Arcs"
-    );
-    const allNodes = await contract.submitTransaction(
-      "queryByObjectType",
-      "Nodes"
-    );
+// exports.searchNodes = async function (req, res, contract) {
+//   try {
+//     const { key } = req.headers;
+//     const allArcs = await contract.submitTransaction(
+//       "queryByObjectType",
+//       "Arcs"
+//     );
+//     const allNodes = await contract.submitTransaction(
+//       "queryByObjectType",
+//       "Nodes"
+//     );
 
-    const arcos = JSON.parse(allArcs);
-    const nodes = JSON.parse(allNodes);
-    const filteredArcs = [];
+//     const arcos = JSON.parse(allArcs);
+//     const nodes = JSON.parse(allNodes);
+//     const filteredArcs = [];
 
-    arcos.forEach((arco) => {
-      if (arco.Record.initialNode === key || arco.Record.finalNode === key) {
-        filteredArcs.push(arco);
-      }
-    });
-    const final = [];
-    filteredArcs.forEach((arco) => {
-      const finalData = {};
-      nodes.forEach((node) => {
-        if (node.Key === arco.Record.initialNode) {
-          finalData[arco.Key] = { ...finalData[arco.Key], initialNode: node };
-        }
-        if (node.Key === arco.Record.finalNode) {
-          console.log(arco, node);
-          finalData[arco.Key] = { ...finalData[arco.Key], finalNode: node };
-        }
-      });
-      if (finalData[arco.Key]) {
-        const data = {
-          arc: arco,
-          ...finalData[arco.Key],
-        };
-        final.push(data);
-      }
-    });
+//     arcos.forEach((arco) => {
+//       if (arco.Record.initialNode === key || arco.Record.finalNode === key) {
+//         filteredArcs.push(arco);
+//       }
+//     });
+//     const final = [];
+//     filteredArcs.forEach((arco) => {
+//       const finalData = {};
+//       nodes.forEach((node) => {
+//         if (node.Key === arco.Record.initialNode) {
+//           finalData[arco.Key] = { ...finalData[arco.Key], initialNode: node };
+//         }
+//         if (node.Key === arco.Record.finalNode) {
+//           console.log(arco, node);
+//           finalData[arco.Key] = { ...finalData[arco.Key], finalNode: node };
+//         }
+//       });
+//       if (finalData[arco.Key]) {
+//         const data = {
+//           arc: arco,
+//           ...finalData[arco.Key],
+//         };
+//         final.push(data);
+//       }
+//     });
 
-    return { data: final };
-  } catch (e) {
-    return { error: e.message };
-  }
-};
+//     return { data: final };
+//   } catch (e) {
+//     return { error: e.message };
+//   }
+// };
 
 exports.getRelations = async function (req, res, contract) {
   try {
@@ -271,7 +272,6 @@ exports.getRelations = async function (req, res, contract) {
       existe1 = 0;
     let existeNodo = 0;
     const stack = [];
-    console.log(key);
     const query = procurarAdjacente(key);
 
     function procurarAdjacente(key) {
@@ -298,6 +298,8 @@ exports.getRelations = async function (req, res, contract) {
               edge.Record.finalNodeDescription,
               edge.Record.finalNodeNodeTypeDescription,
               edge.Record.description,
+              edge.Record.createdAt,
+              edge.Record.totalVotes,
             ]);
             procurarAdjacente(edge.Record.finalNode);
           }
@@ -326,6 +328,8 @@ exports.getRelations = async function (req, res, contract) {
                 edge.Record.finalNodeDescription,
                 edge.Record.finalNodeNodeTypeDescription,
                 edge.Record.description,
+                edge.Record.createdAt,
+                edge.Record.totalVotes,
               ]);
               procurarAdjacenteInverso(edge.Record.initialNode);
             }
@@ -349,7 +353,7 @@ exports.getRelations = async function (req, res, contract) {
         }
       }
       if (existeNodo !== 1) {
-        nodo.push([item[1], item[2], item[3]]);
+        nodo.push([item[1], item[2], item[3], item[0]]);
       }
       existeNodo = 0;
 
@@ -370,74 +374,3 @@ exports.getRelations = async function (req, res, contract) {
     return { error: e.error };
   }
 };
-
-//..................................................................//
-
-// exports.getRelations = async function (req, res, contract) {
-//   try {
-//     const { key } = req.headers;
-//     const edges = JSON.parse(await contract.submitTransaction("queryByObjectType", "Arcs"));
-//     let arco = [];
-//     let nodo = [];
-//     let existe = 0
-//     let existeNodo = 0;
-//     var stack = [];
-
-//     const query = procurarAdjacente(key)
-
-//     function procurarAdjacente(key) {
-//       //percorre todos arcos
-//       edges.forEach((edge) => {
-//         //verifica se arco tem inicial = key
-//         if (key === edge.Record.initialNode) {
-//           //verifica se o arco já foi adicionado
-//           for (let i = 0; i < arco.length; i++) {
-//             if (edge.Key === arco[i][0]) {
-//               existe = 1;
-//               break;
-//             }
-//           }
-//           //se nao existir adiciona nova iteração
-//           if (existe !== 1) {
-//             stack.push(edge.Record.initialNode)
-//             arco.push([edge.Key, edge.Record.initialNode, edge.Record.initialNodeDescription, edge.Record.finalNode, edge.Record.finalNodeDescription])
-//             procurarAdjacente(edge.Record.finalNode)
-//           }
-//           existe = 0;
-//         }
-//       })
-//       const anterior = stack.pop()
-//       if (anterior) {
-//         procurarAdjacente(anterior)
-//       }
-//       return arco;
-//     }
-
-//     arco.forEach((item) => {
-//       for (let i = 0; i < nodo.length; i++) {
-//         if (nodo[i][0] === item[1]) {
-//           existeNodo = 1; break;
-//         }
-//       }
-//       if (existeNodo !== 1) {
-//         nodo.push([item[1], item[2]])
-//       }
-//       existeNodo = 0;
-
-//       for (let i = 0; i < nodo.length; i++) {
-//         if (nodo[i][0] === item[3]) {
-//           existeNodo = 1; break;
-//         }
-//       }
-//       if (existeNodo !== 1) {
-//         nodo.push([item[3], item[4]])
-//       }
-//       existeNodo = 0;
-
-//     })
-
-//     return { arcs: query, nodes: nodo }
-//   } catch (e) {
-//     return { error: e.error };
-//   }
-// };

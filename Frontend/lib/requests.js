@@ -29,8 +29,8 @@ const deleteByKey = async (url, params) => {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      key: params,
     },
+    body: JSON.stringify({ key: params }),
   };
   const response = await fetch(url, requestMetadata)
     .then((res) => res.json())

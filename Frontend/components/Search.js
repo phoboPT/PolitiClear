@@ -69,7 +69,7 @@ const myConfig = {
   panAndZoom: false,
   staticGraph: false,
   staticGraphWithDragAndDrop: false,
-  width: 1700,
+  width: 1660,
   d3: {
     alphaTarget: 0.05,
     gravity: -400,
@@ -164,13 +164,13 @@ class Search extends React.Component {
           source: arc[1],
           target: arc[4],
           label: arc[7],
+          arc,
         });
       });
 
       graph = {
         ...graph,
       };
-      console.log(graph);
       this.setState({
         show: true,
         loading: false,
@@ -190,49 +190,49 @@ class Search extends React.Component {
     // await this.getAll();
   }
 
-  getAll = async () => {
-    this.setState({ loading: true, data: null });
-    const arcs = await searchNodes('http://localhost:5000/nodes/getRelations');
-    if (user.data.arcs.length > 0) {
-      let graph = {
-        nodes: [],
+  // getAll = async () => {
+  //   this.setState({ loading: true, data: null });
+  //   const arcs = await searchNodes('http://localhost:5000/nodes/getRelations');
+  //   if (user.data.arcs.length > 0) {
+  //     let graph = {
+  //       nodes: [],
 
-        links: [],
-      };
-      for (let i = 0; i < user.data.nodes.length; i++) {
-        graph.nodes.push({
-          id: user.data.nodes[i][1],
-          keyNode: user.data.nodes[i][1],
-          // arc: user.data[i],
-          // arcId: user.data[i].arcId,
-        });
-      }
+  //       links: [],
+  //     };
+  //     for (let i = 0; i < user.data.nodes.length; i++) {
+  //       graph.nodes.push({
+  //         id: user.data.nodes[i][1],
+  //         keyNode: user.data.nodes[i][1],
+  //         // arc: user.data[i],
+  //         arcId: user.data.nodes[i][2],
+  //       });
+  //     }
 
-      for (let i = 0; i < user.data.arcs.length; i++) {
-        graph.links.push({
-          source: user.data.arcs[i].Record.initialNodeDescription,
-          target: user.data.arcs[i].Record.finalNodeDescription,
-        });
-      }
+  //     for (let i = 0; i < user.data.arcs.length; i++) {
+  //       graph.links.push({
+  //         source: user.data.arcs[i].Record.initialNodeDescription,
+  //         target: user.data.arcs[i].Record.finalNodeDescription,
+  //       });
+  //     }
 
-      graph = {
-        ...graph,
-      };
-      // console.log(graph);
-      this.setState({
-        show: true,
-        loading: false,
-        message: null,
-        data: { ...graph },
-      });
-    } else {
-      this.setState({
-        show: false,
-        loading: false,
-        message: 'The politician don´t exist or don´t have any relation',
-      });
-    }
-  };
+  //     graph = {
+  //       ...graph,
+  //     };
+  //     // console.log(graph);
+  //     this.setState({
+  //       show: true,
+  //       loading: false,
+  //       message: null,
+  //       data: { ...graph },
+  //     });
+  //   } else {
+  //     this.setState({
+  //       show: false,
+  //       loading: false,
+  //       message: 'The politician don´t exist or don´t have any relation',
+  //     });
+  //   }
+  // };
 
   onChange = debounce(async () => {
     // turn loading on
@@ -242,19 +242,14 @@ class Search extends React.Component {
 
   onClickLink = (source, target) => {
     const nodes = {};
-    this.state.data.nodes.map((item) => {
+    this.state.data.links.map((item) => {
       if (
-        (item.arc.Record.finalNodeDescription === source ||
-          item.arc.Record.finalNodeDescription === target) &&
-        (item.arc.Record.initialNodeDescription === source ||
-          item.arc.Record.initialNodeDescription === target)
+        (item.target === source || item.target === target) &&
+        (item.source === source || item.source === target)
       ) {
-        if (!nodes[item.arc.Record.description]) {
-          nodes[item.arc.Record.description] = {
-            arc: item.arc.Record,
-            from: item.arc.Record.initialNodeDescription,
-            to: item.arc.Record.finalNodeDescription,
-            arcId: item.arc.Key,
+        if (!nodes[item.arc[0]]) {
+          nodes[item.arc[0]] = {
+            arc: item,
           };
         }
       }
@@ -301,7 +296,7 @@ class Search extends React.Component {
       () => this.setState({ error: null, data2: null }),
       3000,
     );
-    if (res.data.data === 'Created') {
+    if (res.data.data === 'Sucess') {
       this.setState({
         voted: { arcId: id, vote: isUpvote ? 1 : -1 },
         data2: res.data.data,
@@ -332,6 +327,7 @@ class Search extends React.Component {
 
   render() {
     const { loading, nodes, data } = this.state;
+    console.log(nodes);
     resetIdCounter();
     return (
       <>
@@ -391,7 +387,8 @@ class Search extends React.Component {
         {this.state.message && <p>{this.state.message}</p>}
         {this.state.data && (
           <TreeWrapper>
-            <h2>Graph</h2>
+            <p>Legend: </p>
+
             <div className="left">
               <Graph
                 id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
@@ -430,34 +427,22 @@ class Search extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.nodesInfo.map((item, index) => {
+                      {this.state.nodesInfo.map((item) => {
+                        console.log(item);
                         const createdAt = new Date(
-                          item.arc.createdAt,
+                          item.arc.arc[8],
                         ).toISOString();
 
                         return (
-                          <tr key={item.arcId + index}>
+                          <tr key={item.arc.arc[0]}>
                             <td>
                               <ToolTip>
                                 <li
                                   className="tooltip fade"
-                                  data-title={item.from}
-                                >
-                                  <p>{formatString(item.from || '', 20)}</p>
-                                </li>
-                              </ToolTip>
-                            </td>
-                            <td>
-                              <ToolTip>
-                                <li
-                                  className="tooltip fade"
-                                  data-title={item.arc.description}
+                                  data-title={item.arc.arc[2]}
                                 >
                                   <p>
-                                    {formatString(
-                                      item.arc.description || '',
-                                      20,
-                                    )}
+                                    {formatString(item.arc.arc[2] || '', 20)}
                                   </p>
                                 </li>
                               </ToolTip>
@@ -466,20 +451,32 @@ class Search extends React.Component {
                               <ToolTip>
                                 <li
                                   className="tooltip fade"
-                                  data-title={item.to}
+                                  data-title={item.arc.arc[7]}
                                 >
-                                  <p>{formatString(item.to || '', 20)}</p>
+                                  <p>
+                                    {formatString(item.arc.arc[7] || '', 20)}
+                                  </p>
+                                </li>
+                              </ToolTip>
+                            </td>
+                            <td>
+                              <ToolTip>
+                                <li
+                                  className="tooltip fade"
+                                  data-title={item.arc.arc[5]}
+                                >
+                                  <p>
+                                    {formatString(item.arc.arc[5] || '', 20)}
+                                  </p>
                                 </li>
                               </ToolTip>
                             </td>
 
                             <td>{formatDate(createdAt)}</td>
-                            {item.arcId === this.state.voted.arcId ? (
-                              <td>
-                                {item.arc.totalVotes + this.state.voted.vote}
-                              </td>
+                            {item.arc.arc[0] === this.state.voted.arcId ? (
+                              <td>{item.arc.arc[9] + this.state.voted.vote}</td>
                             ) : (
-                              <td>{item.arc.totalVotes}</td>
+                              <td>{item.arc.arc[9]}</td>
                             )}
 
                             <td className="votes">
@@ -487,14 +484,14 @@ class Search extends React.Component {
                                 className="upvote"
                                 src="../static/like.svg"
                                 onClick={async () => {
-                                  this.vote(item.arcId, true);
+                                  this.vote(item.arc.arc[0], true);
                                 }}
                               ></img>
                               <img
                                 className="downvote"
                                 src="../static/dislike.svg"
                                 onClick={async () => {
-                                  this.vote(item.arcId, false);
+                                  this.vote(item.arc.arc[0], false);
                                 }}
                               ></img>
                             </td>

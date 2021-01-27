@@ -39,7 +39,7 @@ class admin extends Component {
           <>
             {!items.error && isLoaded && (
               <>
-                {items.permission === permissions[0] && (
+                {items.permission === permissions[0] ? (
                   <>
                     <Div>
                       <button
@@ -91,6 +91,8 @@ class admin extends Component {
                       {this.state.show === 5 && <Forms></Forms>}
                     </div>
                   </>
+                ) : (
+                  <h1>You dont have permissions to access this page</h1>
                 )}
               </>
             )}

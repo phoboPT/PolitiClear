@@ -151,23 +151,9 @@ class PolitiClearContract extends Contract {
     return asset;
   }
 
-  async createNodes(
-    ctx,
-    key,
-    description,
-    creatorId,
-    creatorIdDescription,
-    nodeType,
-    nodeTypeDescription
-  ) {
-    const asset = new Nodes(
-      description,
-      creatorId,
-      creatorIdDescription,
-      nodeType,
-      nodeTypeDescription,
-      ""
-    );
+  async createNodes(ctx, payload) {
+    const { key } = JSON.parse(payload);
+    const asset = new Nodes(JSON.parse(payload));
 
     const buffer = Buffer.from(JSON.stringify(asset));
     await ctx.stub.putState(key, buffer);
