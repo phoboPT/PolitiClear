@@ -100,9 +100,6 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
-<<<<<<< HEAD
-    const { key, token, name, oldPassword, newPassword, permission } = req.body;
-=======
     const {
       key,
       token,
@@ -112,7 +109,6 @@ exports.updateUsers = async (req, res, contract) => {
       permission,
       credibility,
     } = req.body;
->>>>>>> 91514cd91fed026b07480658314d41c60088ee1e
     let updaterId, id;
     const newUser = {
       name,
