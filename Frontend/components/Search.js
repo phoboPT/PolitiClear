@@ -20,9 +20,24 @@ const TreeWrapper = styled.div`
   #graph-id-graph-wrapper {
     background-color: #eaf6f0;
   }
+  .img {
+    text-align: center;
+    display: inline-flex;
+    margin: 10px; /* vertical-align: middle; */
+    img {
+      margin: auto 50px auto 5px;
+      width: 30px;
+      height: 30px;
+    }
+    p {
+      margin: 5px;
+    }
+  }
+  h2 {
+    margin: 5px;
+  }
   margin-top: 50px;
   .left {
-    width: 100%;
     margin: auto;
   }
   .right {
@@ -51,70 +66,6 @@ const TreeWrapper = styled.div`
 
 // the graph configuration, you only need to pass down properties
 // that you want to override, otherwise default ones will be used
-const myConfig = {
-  nodeHighlightBehavior: true,
-  automaticRearrangeAfterDropNode: false,
-  collapsible: false,
-  directed: true,
-  focusAnimationDuration: 0.75,
-  focusZoom: 1,
-  freezeAllDragEvents: false,
-  height: 800,
-  highlightDegree: 1,
-  highlightOpacity: 0.2,
-  linkHighlightBehavior: true,
-  maxZoom: 8,
-  minZoom: 0.1,
-  nodeHighlightBehavior: true,
-  panAndZoom: false,
-  staticGraph: false,
-  staticGraphWithDragAndDrop: false,
-  width: 1660,
-  d3: {
-    alphaTarget: 0.05,
-    gravity: -400,
-    linkLength: 300,
-    linkStrength: 1,
-    disableLinkForce: false,
-  },
-  node: {
-    color: 'lightgreen',
-    highlightStrokeColor: 'blue',
-    labelProperty: 'name',
-    mouseCursor: 'pointer',
-    opacity: 1,
-    fontSize: 12,
-    fontWeight: 'normal',
-    highlightFontSize: 12,
-    highlightFontWeight: 'bold',
-    highlightStrokeWidth: 1.5,
-    mouseCursor: 'pointer',
-    opacity: 1,
-    renderLabel: true,
-    size: 450,
-    strokeColor: 'none',
-    strokeWidth: 1.5,
-  },
-  link: {
-    highlightColor: 'lightblue',
-    labelProperty: 'label',
-    fontSize: 10,
-    strokeLinecap: '"round"',
-    fontWeight: 'normal',
-    highlightFontSize: 8,
-    highlightFontWeight: 'bold',
-    mouseCursor: 'pointer',
-    opacity: 1,
-    renderLabel: true,
-    semanticStrokeWidth: false,
-    strokeWidth: 4,
-    markerHeight: 6,
-    markerWidth: 6,
-    strokeDasharray: 0,
-    strokeDashoffset: 0,
-    type: 'CURVE_SMOOTH',
-  },
-};
 
 class Search extends React.Component {
   constructor(props) {
@@ -188,6 +139,75 @@ class Search extends React.Component {
 
   async componentDidMount() {
     // await this.getAll();
+    console.log(window.innerWidth);
+
+    this.setState({
+      width: window.innerWidth * 0.8,
+      myConfig: {
+        nodeHighlightBehavior: true,
+        automaticRearrangeAfterDropNode: false,
+        collapsible: false,
+        directed: true,
+        focusAnimationDuration: 0.75,
+        focusZoom: 0.5,
+        freezeAllDragEvents: false,
+        height: 600,
+        highlightDegree: 1,
+        highlightOpacity: 0.2,
+        linkHighlightBehavior: true,
+        maxZoom: 8,
+        minZoom: 0.1,
+        nodeHighlightBehavior: true,
+        panAndZoom: false,
+        staticGraph: false,
+        staticGraphWithDragAndDrop: false,
+        width: window.innerWidth * 0.8,
+        d3: {
+          alphaTarget: 0.05,
+          gravity: -400,
+          linkLength: 300,
+          linkStrength: 1,
+          disableLinkForce: false,
+        },
+        node: {
+          color: 'lightgreen',
+          highlightStrokeColor: 'blue',
+          labelProperty: 'name',
+          mouseCursor: 'pointer',
+          opacity: 1,
+          fontSize: 12,
+          fontWeight: 'normal',
+          highlightFontSize: 12,
+          highlightFontWeight: 'bold',
+          highlightStrokeWidth: 1.5,
+          mouseCursor: 'pointer',
+          opacity: 1,
+          renderLabel: true,
+          size: 450,
+          strokeColor: 'none',
+          strokeWidth: 1.5,
+        },
+        link: {
+          highlightColor: 'lightblue',
+          labelProperty: 'label',
+          fontSize: 10,
+          strokeLinecap: '"round"',
+          fontWeight: 'normal',
+          highlightFontSize: 8,
+          highlightFontWeight: 'bold',
+          mouseCursor: 'pointer',
+          opacity: 1,
+          renderLabel: true,
+          semanticStrokeWidth: false,
+          strokeWidth: 4,
+          markerHeight: 6,
+          markerWidth: 6,
+          strokeDasharray: 0,
+          strokeDashoffset: 0,
+          type: 'CURVE_SMOOTH',
+        },
+      },
+    });
   }
 
   // getAll = async () => {
@@ -326,8 +346,7 @@ class Search extends React.Component {
   };
 
   render() {
-    const { loading, nodes, data } = this.state;
-    console.log(nodes);
+    const { loading, nodes, data, myConfig } = this.state;
     resetIdCounter();
     return (
       <>
@@ -387,9 +406,22 @@ class Search extends React.Component {
         {this.state.message && <p>{this.state.message}</p>}
         {this.state.data && (
           <TreeWrapper>
-            <p>Legend: </p>
+            <div className="img">
+              <p>Representante Político:</p>
+              <img src="../static/circle.png" alt="" />
+              <p>Jornalista:</p>
+              <img src="../static/square.png" alt="" />
+              <p>Partido Político:</p>
+              <img src="../static/triangle.png" alt="" />
+              <p>Função Politica:</p>
+              <img src="../static/cross.png" alt="" />
+              <p>Politico:</p>
+              <img src="../static/diamond.png" alt="" />
+              <p>Evento:</p>
+              <img src="../static/star.png" alt="" />
+            </div>
 
-            <div className="left">
+            <div className="left" style={{ width: this.state.width }}>
               <Graph
                 id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
                 data={data}

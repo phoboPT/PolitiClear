@@ -28,7 +28,7 @@ const Inner = styled.div`
   margin-left: ${(props) => props.sidebarState === 2 && '200px!important'};
 
   max-width: ${(props) => props.theme.maxWidth};
-  margin: 10px auto auto auto;
+  margin: 10px 80px auto 80px;
   min-height: calc(100vh - 210px);
   @media (max-width: 1300px) {
     margin-left: ${(props) => props.sidebarState === 1 && '80px!important'};

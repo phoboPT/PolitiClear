@@ -4,6 +4,12 @@ import Search from '../components/Search';
 
 const Div = styled.div`
   text-align: center;
+  h2,h3{
+    margin:5px;
+  }
+`;
+const P=styled.p`
+  margin:5px;
 `;
 const index = () => (
   <Me>
@@ -18,7 +24,7 @@ const index = () => (
               A platform made to acredit relationships between Politcs/Entitys
             </h3>
           </Div>
-          <p>Search a name to start</p>
+          <P>Search a name to start</P>
           <Search user={items}></Search>
         </div>
       );
