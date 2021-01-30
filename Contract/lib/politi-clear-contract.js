@@ -226,13 +226,13 @@ class PolitiClearContract extends Contract {
     }
     const buffer1 = await ctx.stub.getState(key);
     const asset = JSON.parse(buffer1.toString());
-
-    const nodesTypesUpdated = new NodesTypes(
-      asset.name,
-      asset.createdAt,
-      asset.creatorId,
-      asset.isUsed
-    );
+    const newNodeType = {
+      name: asset.name,
+      createdAt: asset.createdAt,
+      creatorId: asset.creatorId,
+      isUsed: asset.isUsed,
+    };
+    const nodesTypesUpdated = new NodesTypes(newNodeType);
     nodesTypesUpdated.updateNodesTypes(isUsed);
     const buffer = Buffer.from(JSON.stringify(nodesTypesUpdated));
     await ctx.stub.putState(key, buffer);

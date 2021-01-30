@@ -47,7 +47,6 @@ exports.createNodes = async function (req, res, contract) {
       nodeTypeDescription: JSON.parse(nodeTypeDescription).data.name,
     };
     await contract.submitTransaction("createNodes", JSON.stringify(newNode));
-    console.log(newNode);
     await contract.submitTransaction(
       "updateNodesTypes",
       JSON.stringify({
