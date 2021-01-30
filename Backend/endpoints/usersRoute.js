@@ -104,15 +104,7 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
-    const {
-      key,
-      token,
-      name,
-      oldPassword,
-      newPassword,
-      permission,
-      credibility,
-    } = req.body;
+    const { key, token, name, oldPassword, newPassword, permission, credibility, activated } = req.body;
     let updaterId, id;
     const newUser = {
       name,
@@ -120,12 +112,9 @@ exports.updateUsers = async (req, res, contract) => {
     };
 
     if (key) {
-      updaterId = await dataVerifications.verifyToken(
-        contract,
-        token,
-        permissions[0]
-      );
+      updaterId = await dataVerifications.verifyToken(contract, token, permissions[0]);
       id = key;
+      newUser.activated = activated;
     } else {
       updaterId = await dataVerifications.verifyToken(contract, token);
       id = updaterId;
@@ -153,18 +142,6 @@ exports.updateUsers = async (req, res, contract) => {
       JSON.stringify(newUser)
     );
     return JSON.parse(response);
-  } catch (e) {
-    return { error: e.message };
-  }
-};
-
-// delete user
-exports.deleteUsers = async (req, res, contract) => {
-  try {
-    const { key, token } = req.body;
-    await dataVerifications.verifyToken(contract, token, permissions[0]);
-    await contract.submitTransaction("deleteUsers", key);
-    return { data: "Deleted" };
   } catch (e) {
     return { error: e.message };
   }

@@ -194,11 +194,6 @@ app.put("/users/update", async (req, res) => {
   res.status(200).send(response);
 });
 
-app.delete("/users/delete", async (req, res) => {
-  const response = await usersRoute.deleteUsers(req, res, contract);
-  res.status(200).send(response);
-});
-
 // Votes
 app.get("/votes/key", async (req, res) => {
   const response = await votesRoute.getByKey(req, res, contract);

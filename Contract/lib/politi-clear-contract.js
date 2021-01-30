@@ -285,6 +285,7 @@ class PolitiClearContract extends Contract {
       permission: asset.permission,
       createdAt: asset.createdAt,
       credibility: asset.credibility,
+      activated: asset.activated
     };
 
     const userUpdated = new Users(newUser);
@@ -292,13 +293,6 @@ class PolitiClearContract extends Contract {
     const buffer = Buffer.from(JSON.stringify(userUpdated));
     await ctx.stub.putState(key, buffer);
     return { data: "Updated" };
-  }
-
-  async deleteUsers(ctx, key) {
-    if (!(await this.dataExists(ctx, key, "Users"))) {
-      throw new Error(`The user ${key} does not exist`);
-    }
-    await ctx.stub.deleteState(key);
   }
 
   // VOTES
