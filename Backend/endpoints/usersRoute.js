@@ -176,6 +176,9 @@ exports.login = async (req, res, contract) => {
     if (!user) {
       return { error: "No email found" };
     }
+    if (user.Record.activated === 0) {
+      return { error: "Your account is blocked! Please contact support." };
+    }
     const valid = await bcrypt.compare(password, user.Record.password);
     if (!valid) {
       return { error: "email or password invalid" };
