@@ -249,6 +249,7 @@ class Search extends React.Component {
       'http://127.0.0.1:5000/search',
       this.state.search,
     );
+    console.log(data);
     this.setState({ nodes: data.data, loading: false });
   };
 
