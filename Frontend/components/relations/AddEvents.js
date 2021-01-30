@@ -117,6 +117,7 @@ class AddRelation extends Component {
 
   render() {
     const { nodes, loading } = this.state;
+    const { changeForm } = this.props;
     resetIdCounter();
 
     return (
@@ -254,7 +255,7 @@ class AddRelation extends Component {
             <button type="button" onClick={this.createArc}>
               Create
             </button>
-            <button type="button" onClick={this.createArc}>
+            <button type="button" onClick={changeForm}>
               Back
             </button>
           </ButtonDiv>

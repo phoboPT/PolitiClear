@@ -3,51 +3,13 @@ import Cookies from 'js-cookie';
 import styled from 'styled-components';
 import Me from '../Me';
 import Error from '../ErrorMessage';
-import { getData, searchNodes } from '../../lib/requests';
+import { getData, searchByKey } from '../../lib/requests';
 import { permissions } from '../../lib/permissions';
 import Table from '../styles/Table';
 import Inner from '../styles/InnerDiv';
 import AddEvents from './AddEvents';
 import formatDate from '../../lib/formatDate';
-const Button = styled.button`
-  background: #e4e5e6;
-  background-image: -webkit-linear-gradient(
-    top,
-    rgba(233, 233, 233, 0.781),
-    #a7a3a3
-  );
-  background-image: -moz-linear-gradient(top, #c2c2c2, #a7a3a3);
-  background-image: -ms-linear-gradient(top, #c2c2c2, #a7a3a3);
-  background-image: -o-linear-gradient(top, #c2c2c2, #a7a3a3);
-  background-image: -webkit-gradient(to bottom, #c2c2c2, #a7a3a3);
-  -webkit-border-radius: 20px;
-  -moz-border-radius: 20px;
-  border-radius: 5px;
-  color: #000000;
-  padding: 10px;
-  -webkit-box-shadow: 1px 1px 42px 0 #c7c4c4;
-  -moz-box-shadow: 1px 1px 42px 0 #c7c4c4;
-  box-shadow: 1px 1px 42px 0 #c7c4c4;
-  border: solid #c2c2c2 1px;
-  text-decoration: none;
-  display: inline-block;
-  cursor: pointer;
-  text-align: center;
-
-  :hover {
-    border: solid #c2c2c2 1px;
-    background: #a7a3a3;
-    background-image: -webkit-linear-gradient(top, #a7a3a3, #c2c2c2);
-    background-image: -moz-linear-gradient(top, #a7a3a3, #c2c2c2);
-    background-image: -ms-linear-gradient(top, #a7a3a3, #c2c2c2);
-    background-image: -o-linear-gradient(top, #a7a3a3, #c2c2c2);
-    background-image: -webkit-gradient(to bottom, #a7a3a3, #c2c2c2);
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    border-radius: 5px;
-    text-decoration: none;
-  }
-`;
+import SickButton from '../styles/SickButton';
 
 class Relations extends Component {
   constructor(props) {
@@ -92,7 +54,7 @@ class Relations extends Component {
   };
 
   reqData = async (token) => {
-    const nodes = searchNodes('http://127.0.0.1:5000/arcs/userArcs', token);
+    const nodes = searchByKey('http://127.0.0.1:5000/arcs/userArcs', token);
     const nodesTypes = getData('http://127.0.0.1:5000/readByType/NodesTypes');
     const res = await Promise.all([nodes, nodesTypes]);
     return Promise.resolve(res);
@@ -108,14 +70,14 @@ class Relations extends Component {
                 <div>
                   <h1>Relations</h1>
                   <Error error={this.state.error} />
-                  <Button
+                  <SickButton
                     type="button"
                     onClick={() => {
                       this.setState({ form: 2 });
                     }}
                   >
                     Add new
-                  </Button>
+                  </SickButton>
                   <br />
                   <br />
                   <Table>

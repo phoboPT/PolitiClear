@@ -63,7 +63,6 @@ const getUser = async (recipeUrl) => {
 };
 
 const login = async (recipeUrl, email, password) => {
-  console.log(email, password);
   const response = await sendRequest('POST', recipeUrl, { email, password });
   Cookies.set('token', response.data.token, {
     path: '',
@@ -90,7 +89,6 @@ const signup = async (userData) => {
   const recipeUrl = 'http://127.0.0.1:5000/users/create';
 
   const data = await sendRequest('POST', recipeUrl, userData);
-  console.log(data.data);
   Cookies.set('token', data.data.token, {
     path: '',
     expires: 1000 * 24 * 365 * 60 * 60, // 1 year cookie
@@ -117,7 +115,7 @@ const search = async (url, searchTerm) => {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      description: searchTerm,
+      search: searchTerm,
     },
   };
 
@@ -132,12 +130,11 @@ const search = async (url, searchTerm) => {
   return response;
 };
 
-const searchNodes = async (url, searchTerm) => {
+const searchByKey = async (url, searchTerm) => {
   const requestMetadata = {
     method: 'GET',
     credentials: 'same-origin',
     headers: {
-      'Bypass-Tunnel-Reminder': '1',
       Accept: 'application/json',
       'Content-Type': 'application/json',
       key: searchTerm,
@@ -182,7 +179,7 @@ export {
   signup,
   update,
   search,
-  searchNodes,
+  searchByKey,
   getData,
   sendRequest,
   deleteByKey,

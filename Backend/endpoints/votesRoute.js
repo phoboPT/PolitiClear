@@ -79,10 +79,9 @@ exports.createVotes = async function (req, res, contract) {
 
     const newUser = {
       key: arcUserId,
-      credibility: vote
+      credibility: vote,
     };
-    console.log(newUser)
-    await contract.submitTransaction("updateUsers", JSON.stringify(newUser))
+    await contract.submitTransaction("updateUsers", JSON.stringify(newUser));
 
     return JSON.parse(response);
   } catch (e) {
@@ -116,12 +115,9 @@ exports.deleteVotes = async function (req, res, contract) {
     const newArc = {
       key: arcId,
       totalVotes,
-      isVoted
-    }
-    await contract.submitTransaction(
-      "updateArcs",
-      JSON.stringify(newArc)
-    );
+      isVoted,
+    };
+    await contract.submitTransaction("updateArcs", JSON.stringify(newArc));
     return { data: "Deleted" };
   } catch (e) {
     return { error: e.message };

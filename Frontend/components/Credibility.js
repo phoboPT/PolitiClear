@@ -3,7 +3,7 @@ import Downshift, { resetIdCounter } from 'downshift';
 import debounce from 'lodash.debounce';
 import Table from './styles/Table';
 import Error from './ErrorMessage';
-import { getData } from '../lib/requests';
+import { searchByKey, search } from '../lib/requests';
 import formatDate from '../lib/formatDate';
 import { DropDown, DropDownItem, SearchStyles } from './styles/DropDown';
 import TreeWrapper from './styles/TreeWrapper';
@@ -15,19 +15,26 @@ export default class Credibility extends Component {
     this.state = {
       error: null,
       formData: [],
-      data: null,
+      data: [],
       users: [],
     };
   }
 
-  populate = async () => {
-    const data = await getData('http://127.0.0.1:5000/users/acredited');
-    this.setState({ users: data.data });
+  populate = async (item) => {
+    this.setState({ loading: true });
+    const data = await searchByKey(
+      `http://127.0.0.1:5000/users/key/${item.Key}`,
+    );
+
+    this.setState({ users: [data.data], loading: false });
   };
 
   fetch = async () => {
-    const data = await getData('http://127.0.0.1:5000/users/acredited');
-    this.setState({ users: data.data });
+    const data = await search(
+      'http://127.0.0.1:5000/users/acredited',
+      this.state.search,
+    );
+    this.setState({ data: data.data });
   };
 
   saveToState = (e) => {
@@ -46,11 +53,12 @@ export default class Credibility extends Component {
   };
 
   async componentDidMount() {
-    this.fetch();
+    // this.fetch();
   }
 
   render() {
-    const { users, loading } = this.state;
+    resetIdCounter();
+    const { users, loading, data } = this.state;
     return (
       <div>
         <h1>Credibility</h1>
@@ -81,7 +89,7 @@ export default class Credibility extends Component {
                   />
                   {isOpen && (
                     <DropDown>
-                      {users.map((item, index) => {
+                      {data.map((item, index) => {
                         if (item) {
                           return (
                             <DropDownItem
@@ -106,36 +114,40 @@ export default class Credibility extends Component {
             </Downshift>
           </SearchStyles>
         </TreeWrapper>
+        <br />
+        <br />
 
         <Error error={this.state.error} />
-
-        <Table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Credibility </th>
-              <th>Created At:</th>
-              <th>Updated At:</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((item) => {
-              const createdAt = new Date(item.Record.createdAt).toISOString();
-              let updatedAt = '';
-              if (item.Record.updatedAt) {
-                updatedAt = new Date(item.Record.updatedAt).toISOString();
-              }
-              return (
-                <tr key={item.Key}>
-                  <td>{item.Record.name}</td>
-                  <td>{item.Record.credibility}</td>
-                  <td>{formatDate(createdAt)}</td>
-                  <td>{formatDate(updatedAt)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
+        {users.length > 0 && (
+          <Table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Credibility </th>
+                <th>Created At:</th>
+                <th>Updated At:</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(({ data }, index) => {
+                console.log('item', data);
+                const createdAt = new Date(data.createdAt).toISOString();
+                let updatedAt = '';
+                if (data.updatedAt) {
+                  updatedAt = new Date(data.updatedAt).toISOString();
+                }
+                return (
+                  <tr key={index}>
+                    <td>{data.name}</td>
+                    <td>{data.credibility}</td>
+                    <td>{formatDate(createdAt)}</td>
+                    <td>{formatDate(updatedAt)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        )}
       </div>
     );
   }

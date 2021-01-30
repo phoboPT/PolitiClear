@@ -71,7 +71,6 @@ exports.updateNodes = async function (req, res, contract) {
       description,
       nodeType,
     };
-    console.log(req.body);
     const creatorId = await dataVerifications.verifyToken(
       contract,
       token,
@@ -193,15 +192,13 @@ exports.deleteNodes = async function (req, res, contract) {
 
 exports.search = async function (req, res, contract) {
   try {
-    const { description } = req.headers;
+    const { search } = req.headers;
     const res1 = await contract.submitTransaction("queryByObjectType", "Nodes");
     const res = JSON.parse(res1);
     const key = [];
     for (let i = 0; i < res.length; i++) {
       if (
-        res[i].Record.description
-          .toLowerCase()
-          .includes(description.toLowerCase())
+        res[i].Record.description.toLowerCase().includes(search.toLowerCase())
       ) {
         key.push(res[i]);
       }
@@ -300,6 +297,7 @@ exports.getRelations = async function (req, res, contract) {
               edge.Record.description,
               edge.Record.createdAt,
               edge.Record.totalVotes,
+              edge.Record.creatorId,
             ]);
             procurarAdjacente(edge.Record.finalNode);
           }
@@ -330,6 +328,7 @@ exports.getRelations = async function (req, res, contract) {
                 edge.Record.description,
                 edge.Record.createdAt,
                 edge.Record.totalVotes,
+                edge.Record.creatorId,
               ]);
               procurarAdjacenteInverso(edge.Record.initialNode);
             }
@@ -368,7 +367,6 @@ exports.getRelations = async function (req, res, contract) {
       }
       existeNodo = 0;
     });
-
     return { arcs: query, nodes: nodo };
   } catch (e) {
     return { error: e.error };

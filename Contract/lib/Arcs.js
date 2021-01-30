@@ -67,7 +67,9 @@ class Arcs {
 
     this.description = description ? description : this.description;
 
-    this.totalVotes = totalVotes ? parseInt(totalVotes) : parseInt(this.totalVotes);
+    this.totalVotes = totalVotes
+      ? parseInt(totalVotes)
+      : parseInt(this.totalVotes);
     this.updatedBy = updatedBy ? updatedBy : this.updatedBy;
     this.updatedByDescription = updatedByDescription
       ? updatedByDescription

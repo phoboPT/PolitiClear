@@ -50,7 +50,7 @@ class PolitiClearContract extends Contract {
     const asset = JSON.parse(buffer1.toString());
     const newArc = {
       description: asset.description,
-      initalNode: asset.initialNode,
+      initialNode: asset.initialNode,
       initialNodeDescription: asset.initialNodeDescription,
       initialNodeCreatorId: asset.initialNodeCreatorId,
       initialNodeCreatorIdDescription: asset.initialNodeCreatorIdDescription,
@@ -284,7 +284,7 @@ class PolitiClearContract extends Contract {
       password: asset.password,
       permission: asset.permission,
       createdAt: asset.createdAt,
-      credibility: asset.credibility
+      credibility: asset.credibility,
     };
 
     const userUpdated = new Users(newUser);

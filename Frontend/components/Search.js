@@ -4,7 +4,7 @@ import React from 'react';
 import { Graph } from 'react-d3-graph';
 import Cookies from 'js-cookie';
 import swal from '@sweetalert/with-react';
-import { searchNodes, search, sendRequest } from '../lib/requests';
+import { searchByKey, search, sendRequest } from '../lib/requests';
 import { DropDown, DropDownItem, SearchStyles } from './styles/DropDown';
 import Table from './styles/Table';
 import formatString from '../lib/formatString';
@@ -33,12 +33,11 @@ class Search extends React.Component {
 
   populate = async (item) => {
     this.setState({ loading: true, key: item.Key, data: null });
-    const relations = await searchNodes(
+    const relations = await searchByKey(
       'http://localhost:5000/nodes/getRelations',
       item.Key,
     );
     if (relations.data.arcs.length > 0) {
-      console.log(relations);
       let graph = {
         nodes: [],
 
@@ -54,8 +53,9 @@ class Search extends React.Component {
         Eventos: 'star',
       };
       relations.data.nodes.forEach((relation) => {
+        console.log(relation);
         graph.nodes.push({
-          id: relation[0],
+          id: relation[0] || 0,
           // arc: relation.Record,
           name: relation[1],
           symbolType: symbol[relation[2]],
@@ -64,7 +64,7 @@ class Search extends React.Component {
       });
       relations.data.arcs.forEach((arc) => {
         graph.links.push({
-          source: arc[1],
+          source: arc[1] || 0,
           target: arc[4],
           label: arc[7],
           arc,
@@ -74,6 +74,7 @@ class Search extends React.Component {
       graph = {
         ...graph,
       };
+      console.log(graph);
       this.setState({
         show: true,
         loading: false,
@@ -91,7 +92,6 @@ class Search extends React.Component {
 
   async componentDidMount() {
     // await this.getAll();
-    console.log(window.innerWidth);
 
     this.setState({
       width: window.innerWidth * 0.8,
@@ -162,50 +162,6 @@ class Search extends React.Component {
     });
   }
 
-  // getAll = async () => {
-  //   this.setState({ loading: true, data: null });
-  //   const arcs = await searchNodes('http://localhost:5000/nodes/getRelations');
-  //   if (user.data.arcs.length > 0) {
-  //     let graph = {
-  //       nodes: [],
-
-  //       links: [],
-  //     };
-  //     for (let i = 0; i < user.data.nodes.length; i++) {
-  //       graph.nodes.push({
-  //         id: user.data.nodes[i][1],
-  //         keyNode: user.data.nodes[i][1],
-  //         // arc: user.data[i],
-  //         arcId: user.data.nodes[i][2],
-  //       });
-  //     }
-
-  //     for (let i = 0; i < user.data.arcs.length; i++) {
-  //       graph.links.push({
-  //         source: user.data.arcs[i].Record.initialNodeDescription,
-  //         target: user.data.arcs[i].Record.finalNodeDescription,
-  //       });
-  //     }
-
-  //     graph = {
-  //       ...graph,
-  //     };
-  //     // console.log(graph);
-  //     this.setState({
-  //       show: true,
-  //       loading: false,
-  //       message: null,
-  //       data: { ...graph },
-  //     });
-  //   } else {
-  //     this.setState({
-  //       show: false,
-  //       loading: false,
-  //       message: 'The politician don´t exist or don´t have any relation',
-  //     });
-  //   }
-  // };
-
   onChange = debounce(async () => {
     // turn loading on
     this.setState({ loading: true });
@@ -236,7 +192,6 @@ class Search extends React.Component {
   };
 
   onClickNode = (nodeId, node) => {
-    console.log(node);
     this.setState({ nodesInfo: null });
     const item = {
       Key: node.id,
@@ -249,16 +204,17 @@ class Search extends React.Component {
       'http://127.0.0.1:5000/search',
       this.state.search,
     );
-    console.log(data);
     this.setState({ nodes: data.data, loading: false });
   };
 
-  vote = async (id, isUpvote) => {
+  vote = async (id, isUpvote, arcUserId) => {
     const token = Cookies.get('token');
+    console.log(arcUserId);
     const data = {
       token,
       arcId: id,
       vote: isUpvote ? 1 : -1,
+      arcUserId,
     };
 
     const res = await sendRequest(
@@ -470,14 +426,22 @@ class Search extends React.Component {
                                 className="upvote"
                                 src="../static/like.svg"
                                 onClick={async () => {
-                                  this.vote(item.arc.arc[0], true);
+                                  this.vote(
+                                    item.arc.arc[0],
+                                    true,
+                                    item.arc.arc[10],
+                                  );
                                 }}
                               ></img>
                               <img
                                 className="downvote"
                                 src="../static/dislike.svg"
                                 onClick={async () => {
-                                  this.vote(item.arc.arc[0], false);
+                                  this.vote(
+                                    item.arc.arc[0],
+                                    false,
+                                    item.arc.arc[10],
+                                  );
                                 }}
                               ></img>
                             </td>

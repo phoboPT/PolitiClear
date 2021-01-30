@@ -40,6 +40,7 @@ exports.getByName = async (req, res, contract) => {
 
 exports.getAcreditedUsers = async function (req, res, contract) {
   try {
+    const { search } = req.headers;
     const response = await contract.submitTransaction(
       "queryByObjectType",
       "Users"
@@ -47,7 +48,10 @@ exports.getAcreditedUsers = async function (req, res, contract) {
     let data = [];
 
     JSON.parse(response).forEach((item) => {
-      if (item.Record.permission === permissions[1]) {
+      if (
+        item.Record.permission === permissions[1] &&
+        item.Record.name.toLowerCase().includes(search.toLowerCase())
+      ) {
         data.push(item);
       }
     });
@@ -84,7 +88,7 @@ exports.createUsers = async (req, res, contract) => {
       name,
       email,
       password: hashedPassword,
-      permission
+      permission,
     };
 
     await contract.submitTransaction("createUsers", JSON.stringify(newUser));
@@ -144,7 +148,10 @@ exports.updateUsers = async (req, res, contract) => {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       newUser.password = hashedPassword;
     }
-    const response = await contract.submitTransaction("updateUsers", JSON.stringify(newUser));
+    const response = await contract.submitTransaction(
+      "updateUsers",
+      JSON.stringify(newUser)
+    );
     return JSON.parse(response);
   } catch (e) {
     return { error: e.message };
