@@ -27,7 +27,7 @@ const getData = async (contract, arcId, voter) => {
 // cria novo tipo
 exports.createVotes = async function (req, res, contract) {
   try {
-    const { token, arcId, vote } = req.body;
+    const { token, arcId, vote, arcUserId } = req.body;
     if (vote === "") {
       return { error: `You didnt provided a verification value` };
     }
@@ -77,6 +77,13 @@ exports.createVotes = async function (req, res, contract) {
     };
     await contract.submitTransaction("updateArcs", JSON.stringify(arcData));
 
+    const newUser = {
+      key: arcUserId,
+      credibility: vote
+    };
+    console.log(newUser)
+    await contract.submitTransaction("updateUsers", JSON.stringify(newUser))
+
     return JSON.parse(response);
   } catch (e) {
     return { error: e.message };
@@ -106,14 +113,14 @@ exports.deleteVotes = async function (req, res, contract) {
     });
 
     await contract.submitTransaction("deleteVotes", req.headers.key);
+    const newArc = {
+      key: arcId,
+      totalVotes,
+      isVoted
+    }
     await contract.submitTransaction(
       "updateArcs",
-      arcId,
-      "",
-      totalVotes,
-      "",
-      "",
-      isVoted
+      JSON.stringify(newArc)
     );
     return { data: "Deleted" };
   } catch (e) {

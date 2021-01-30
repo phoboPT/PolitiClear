@@ -23,7 +23,7 @@ class Users {
     this.permission = permission ? permission : this.permission;
     this.updatedBy = updatedBy;
     this.updatedAt = new Date();
-    this.credibility = credibility ? credibility : this.credibility;
+    this.credibility = credibility ? (parseInt(this.credibility || 0)) + parseInt(credibility) : parseInt(this.credibility);
   }
 }
 

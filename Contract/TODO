@@ -1,4 +1,3 @@
-FIX:
     Frontend:
         ADMIN:
             Users:
@@ -11,3 +10,6 @@ FIX:
         Geral:
             ☐ Melhorar o aspeto dos botões e do layout um pouco
     BACKEND:       
+        ☐ update arcs - falta jwt
+    BACKEND:      
+

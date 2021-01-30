@@ -84,7 +84,7 @@ exports.createUsers = async (req, res, contract) => {
       name,
       email,
       password: hashedPassword,
-      permission,
+      permission
     };
 
     await contract.submitTransaction("createUsers", JSON.stringify(newUser));
@@ -144,10 +144,7 @@ exports.updateUsers = async (req, res, contract) => {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       newUser.password = hashedPassword;
     }
-    const response = await contract.submitTransaction(
-      "updateUsers",
-      JSON.stringify(newUser)
-    );
+    const response = await contract.submitTransaction("updateUsers", JSON.stringify(newUser));
     return JSON.parse(response);
   } catch (e) {
     return { error: e.message };

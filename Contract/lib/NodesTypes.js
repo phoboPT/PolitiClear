@@ -6,12 +6,12 @@ class NodesTypes {
     this.name = name;
     this.createdAt = createdAt ? createdAt : new Date();
     this.creatorId = creatorId;
-    this.isUsed = isUsed ? isUsed : 0;
+    this.isUsed = isUsed ? parseInt(isUsed) : 0;
     this.type = "NodesTypes";
   }
 
   updateNodesTypes(isUsed) {
-    this.isUsed = isUsed ? isUsed : this.isUsed;
+    this.isUsed = isUsed ? parseInt(isUsed) : parseInt(this.isUsed);
   }
 }
 
