@@ -249,7 +249,7 @@ exports.searchNodes = async function (req, res, contract) {
         final.push(data);
       }
     });
-
+    console.log(final);
     return { data: final };
   } catch (e) {
     return { error: e.message };
@@ -297,6 +297,7 @@ exports.getRelations = async function (req, res, contract) {
               edge.Record.createdAt,
               edge.Record.totalVotes,
               edge.Record.creatorId,
+              edge.Record.creatorIdDescription,
             ]);
             procurarAdjacente(edge.Record.finalNode);
           }
@@ -328,6 +329,7 @@ exports.getRelations = async function (req, res, contract) {
                 edge.Record.createdAt,
                 edge.Record.totalVotes,
                 edge.Record.creatorId,
+                edge.Record.creatorIdDescription,
               ]);
               procurarAdjacenteInverso(edge.Record.initialNode);
             }

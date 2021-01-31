@@ -18,7 +18,22 @@ import TreeWrapper from './styles/TreeWrapper';
 
 // the graph configuration, you only need to pass down properties
 // that you want to override, otherwise default ones will be used
+const symbol = {
+  'Partido Político':
+    'https://cdn3.iconfinder.com/data/icons/election-world-1/64/candidate-compititor-election-nominee-vote-256.png',
+  'Cargo Político':
+    'https://cdn1.iconfinder.com/data/icons/government-1/100/government_politics_political_legal_administrative_leadership-29-256.png',
+  Politico:
+    'https://cdn3.iconfinder.com/data/icons/politics-line/96/politic_congress_government_president-256.png',
+  Evento:
+    'https://cdn4.iconfinder.com/data/icons/business-and-finance-163/32/finance_event_calendar-256.png',
+  Jornalista:
+    'https://i.pinimg.com/originals/81/6b/0a/816b0ac0aff866ec3a155995811b2a24.png',
 
+  Cidadão: 'https://img.icons8.com/ios/452/global-citizen.png',
+  Empresa:
+    'https://cdn0.iconfinder.com/data/icons/stock-market-3/64/enterprise-organization-business-company-team-512.png',
+};
 class Search extends React.Component {
   constructor(props) {
     super(props);
@@ -28,6 +43,7 @@ class Search extends React.Component {
       data: null,
       nodes: [],
       voted: { arcId: '', vote: 0 },
+      level: true,
     };
   }
 
@@ -44,22 +60,6 @@ class Search extends React.Component {
         links: [],
       };
 
-      const symbol = {
-        'Partido Político':
-          'https://cdn3.iconfinder.com/data/icons/election-world-1/64/candidate-compititor-election-nominee-vote-256.png',
-        'Cargo Político':
-          'https://cdn1.iconfinder.com/data/icons/government-1/100/government_politics_political_legal_administrative_leadership-29-256.png',
-        Politico:
-          'https://cdn3.iconfinder.com/data/icons/politics-line/96/politic_congress_government_president-256.png',
-        Evento:
-          'https://cdn4.iconfinder.com/data/icons/business-and-finance-163/32/finance_event_calendar-256.png',
-        Jornalista:
-          'https://i.pinimg.com/originals/81/6b/0a/816b0ac0aff866ec3a155995811b2a24.png',
-
-        Cidadão: 'https://img.icons8.com/ios/452/global-citizen.png',
-        Empresa:
-          'https://cdn0.iconfinder.com/data/icons/stock-market-3/64/enterprise-organization-business-company-team-512.png',
-      };
       relations.data.nodes.forEach((relation) => {
         console.log(relation);
         graph.nodes.push({
@@ -100,7 +100,10 @@ class Search extends React.Component {
   };
 
   async componentDidMount() {
+    const token = Cookies.get('token');
+
     this.setState({
+      token,
       width: window.innerWidth * 0.8,
       myConfig: {
         nodeHighlightBehavior: true,
@@ -212,35 +215,35 @@ class Search extends React.Component {
       'http://localhost:5000/searchNodes',
       item.Key,
     );
-    console.log(user);
 
-    if (user.data.nodes.length > 0) {
+    console.log(user.data.data);
+    if (user.data.data.length > 0) {
       let graph = {
         nodes: [],
 
         links: [],
       };
-      for (let i = 0; i < user.data.nodes.length; i++) {
-        console.log(user.data.nodes[i]);
+      for (let i = 0; i < user.data.data.length; i++) {
         graph.nodes.push({
-          id: user.data.nodes[i].Record.description,
-          keyNode: user.data.nodes[i].Key,
-          arc: user.data[i],
-          arcId: user.data[i].arcId,
+          id: user.data.data[i].arc.Record.description,
+          name: user.data.data[i].arc.Record.initialNode,
+          svg: symbol[user.data.data[i].arc.Record.initialNodeDescription],
         });
       }
 
-      for (let i = 0; i < user.data.arcs.length; i++) {
+      for (let i = 0; i < user.data.data.length; i++) {
         graph.links.push({
-          source: user.data.arcs[i].Record.initialNodeDescription,
-          target: user.data.arcs[i].Record.finalNodeDescription,
+          source: user.data.data[i].arc.Record.initialNode || 0,
+          target: user.data.data[i].arc.Record.finalNode,
+          label: user.data.data[i].arc.Record.description,
+          arc: user.data.data[i].arc.Record,
         });
       }
 
       graph = {
         ...graph,
       };
-      // console.log(graph);
+      console.log(graph);
       this.setState({
         show: true,
         loading: false,
@@ -265,9 +268,8 @@ class Search extends React.Component {
   };
 
   vote = async (id, isUpvote, arcUserId) => {
-    const token = Cookies.get('token');
     const data = {
-      token,
+      token: this.state.token,
       arcId: id,
       vote: isUpvote ? 1 : -1,
       arcUserId,
@@ -305,23 +307,21 @@ class Search extends React.Component {
   showLabels = () => {
     const config = this.state.myConfig;
     config.link.renderLabel = !config.link.renderLabel;
-    this.setState({ loading: true, config });
+    this.setState({ loading: true });
 
     this.setState({
       labels: !this.state.labels,
-      myConfig: config,
+      config,
       loading: false,
     });
   };
 
   levelSwitch = (e) => {
-    const config = this.state.myConfig;
-    config.link.renderLabel = !config.link.renderLabel;
-    this.setState({ loading: true, config });
+    this.setState({ loading: true });
 
     this.setState({
-      labels: !this.state.labels,
-      myConfig: config,
+      level: !this.state.level,
+
       loading: false,
     });
   };
@@ -336,13 +336,13 @@ class Search extends React.Component {
   };
 
   render() {
-    const { loading, nodes, data, myConfig } = this.state;
+    const { loading, nodes, data, myConfig, token, level } = this.state;
     resetIdCounter();
     return (
       <>
         <SearchStyles>
           <Downshift
-            onChange={this.populate}
+            onChange={level ? this.populate : this.teste}
             itemToString={(item) =>
               item === null ? '' : item.Record.description
             }
@@ -428,9 +428,10 @@ class Search extends React.Component {
                         <th>From:</th>
                         <th>Relation:</th>
                         <th>To:</th>
+                        <th>Author:</th>
                         <th>Created At:</th>
                         <th>Credibility:</th>
-                        <th>Verify:</th>
+                        {token && <th>Verify:</th>}
                       </tr>
                     </thead>
                     <tbody>
@@ -478,6 +479,18 @@ class Search extends React.Component {
                                 </li>
                               </ToolTip>
                             </td>
+                            <td>
+                              <ToolTip>
+                                <li
+                                  className="tooltip fade"
+                                  data-title={item.arc.arc[11]}
+                                >
+                                  <p>
+                                    {formatString(item.arc.arc[11] || '', 20)}
+                                  </p>
+                                </li>
+                              </ToolTip>
+                            </td>
 
                             <td>{formatDate(createdAt)}</td>
                             {item.arc.arc[0] === this.state.voted.arcId ? (
@@ -485,31 +498,32 @@ class Search extends React.Component {
                             ) : (
                               <td>{item.arc.arc[9]}</td>
                             )}
-
-                            <td className="votes">
-                              <img
-                                className="upvote"
-                                src="../static/like.svg"
-                                onClick={async () => {
-                                  this.vote(
-                                    item.arc.arc[0],
-                                    true,
-                                    item.arc.arc[10],
-                                  );
-                                }}
-                              ></img>
-                              <img
-                                className="downvote"
-                                src="../static/dislike.svg"
-                                onClick={async () => {
-                                  this.vote(
-                                    item.arc.arc[0],
-                                    false,
-                                    item.arc.arc[10],
-                                  );
-                                }}
-                              ></img>
-                            </td>
+                            {token && (
+                              <td className="votes">
+                                <img
+                                  className="upvote"
+                                  src="../static/like.svg"
+                                  onClick={async () => {
+                                    this.vote(
+                                      item.arc.arc[0],
+                                      true,
+                                      item.arc.arc[10],
+                                    );
+                                  }}
+                                ></img>
+                                <img
+                                  className="downvote"
+                                  src="../static/dislike.svg"
+                                  onClick={async () => {
+                                    this.vote(
+                                      item.arc.arc[0],
+                                      false,
+                                      item.arc.arc[10],
+                                    );
+                                  }}
+                                ></img>
+                              </td>
+                            )}
                           </tr>
                         );
                       })}
