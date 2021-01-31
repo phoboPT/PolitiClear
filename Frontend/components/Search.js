@@ -199,6 +199,53 @@ class Search extends React.Component {
     this.populate(item);
   };
 
+  getAll = async (item) => {
+    this.setState({ loading: true, data: null });
+    const users = await searchByKey(
+      'http://localhost:5000/nodes/searchNodes',
+      item.Key,
+    );
+    if (user.data.arcs.length > 0) {
+      let graph = {
+        nodes: [],
+
+        links: [],
+      };
+      for (let i = 0; i < user.data.nodes.length; i++) {
+        graph.nodes.push({
+          id: user.data.nodes[i][1],
+          keyNode: user.data.nodes[i][1],
+          // arc: user.data[i],
+          arcId: user.data.nodes[i][2],
+        });
+      }
+
+      for (let i = 0; i < user.data.arcs.length; i++) {
+        graph.links.push({
+          source: user.data.arcs[i].Record.initialNodeDescription,
+          target: user.data.arcs[i].Record.finalNodeDescription,
+        });
+      }
+
+      graph = {
+        ...graph,
+      };
+      // console.log(graph);
+      this.setState({
+        show: true,
+        loading: false,
+        message: null,
+        data: { ...graph },
+      });
+    } else {
+      this.setState({
+        show: false,
+        loading: false,
+        message: 'The politician don´t exist or don´t have any relation',
+      });
+    }
+  };
+
   fetch = async () => {
     const data = await search(
       'http://127.0.0.1:5000/search',
@@ -209,7 +256,6 @@ class Search extends React.Component {
 
   vote = async (id, isUpvote, arcUserId) => {
     const token = Cookies.get('token');
-    console.log(arcUserId);
     const data = {
       token,
       arcId: id,

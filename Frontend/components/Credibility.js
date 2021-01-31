@@ -17,6 +17,7 @@ export default class Credibility extends Component {
       formData: [],
       data: [],
       users: [],
+      user: [],
     };
   }
 
@@ -26,7 +27,7 @@ export default class Credibility extends Component {
       `http://127.0.0.1:5000/users/key/${item.Key}`,
     );
 
-    this.setState({ users: [data.data], loading: false });
+    this.setState({ user: [data.data], loading: false, users: [] });
   };
 
   fetch = async () => {
@@ -53,12 +54,14 @@ export default class Credibility extends Component {
   };
 
   async componentDidMount() {
-    // this.fetch();
+    this.setState({ loading: true });
+    const data = await search('http://127.0.0.1:5000/users/acredited');
+    this.setState({ users: data.data, loading: false });
   }
 
   render() {
     resetIdCounter();
-    const { users, loading, data } = this.state;
+    const { users, loading, data, user } = this.state;
     return (
       <div>
         <h1>Credibility</h1>
@@ -118,36 +121,33 @@ export default class Credibility extends Component {
         <br />
 
         <Error error={this.state.error} />
-        {users.length > 0 && (
-          <Table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Credibility </th>
-                <th>Created At:</th>
-                <th>Updated At:</th>
+
+        <Table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Credibility </th>
+            </tr>
+          </thead>
+          <tbody>
+            {user.map(({ data }, index) => {
+              console.log('item', data);
+
+              return (
+                <tr key={index}>
+                  <td>{data.name}</td>
+                  <td>{data.credibility}</td>
+                </tr>
+              );
+            })}
+            {users.map((item) => (
+              <tr key={item.Key}>
+                <td>{item.Record.name}</td>
+                <td>{item.Record.credibility}</td>
               </tr>
-            </thead>
-            <tbody>
-              {users.map(({ data }, index) => {
-                console.log('item', data);
-                const createdAt = new Date(data.createdAt).toISOString();
-                let updatedAt = '';
-                if (data.updatedAt) {
-                  updatedAt = new Date(data.updatedAt).toISOString();
-                }
-                return (
-                  <tr key={index}>
-                    <td>{data.name}</td>
-                    <td>{data.credibility}</td>
-                    <td>{formatDate(createdAt)}</td>
-                    <td>{formatDate(updatedAt)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        )}
+            ))}
+          </tbody>
+        </Table>
       </div>
     );
   }

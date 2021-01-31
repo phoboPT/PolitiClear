@@ -208,53 +208,53 @@ exports.search = async function (req, res, contract) {
   }
 };
 
-// exports.searchNodes = async function (req, res, contract) {
-//   try {
-//     const { key } = req.headers;
-//     const allArcs = await contract.submitTransaction(
-//       "queryByObjectType",
-//       "Arcs"
-//     );
-//     const allNodes = await contract.submitTransaction(
-//       "queryByObjectType",
-//       "Nodes"
-//     );
+exports.searchNodes = async function (req, res, contract) {
+  try {
+    const { key } = req.headers;
+    const allArcs = await contract.submitTransaction(
+      "queryByObjectType",
+      "Arcs"
+    );
+    const allNodes = await contract.submitTransaction(
+      "queryByObjectType",
+      "Nodes"
+    );
 
-//     const arcos = JSON.parse(allArcs);
-//     const nodes = JSON.parse(allNodes);
-//     const filteredArcs = [];
+    const arcos = JSON.parse(allArcs);
+    const nodes = JSON.parse(allNodes);
+    const filteredArcs = [];
 
-//     arcos.forEach((arco) => {
-//       if (arco.Record.initialNode === key || arco.Record.finalNode === key) {
-//         filteredArcs.push(arco);
-//       }
-//     });
-//     const final = [];
-//     filteredArcs.forEach((arco) => {
-//       const finalData = {};
-//       nodes.forEach((node) => {
-//         if (node.Key === arco.Record.initialNode) {
-//           finalData[arco.Key] = { ...finalData[arco.Key], initialNode: node };
-//         }
-//         if (node.Key === arco.Record.finalNode) {
-//           console.log(arco, node);
-//           finalData[arco.Key] = { ...finalData[arco.Key], finalNode: node };
-//         }
-//       });
-//       if (finalData[arco.Key]) {
-//         const data = {
-//           arc: arco,
-//           ...finalData[arco.Key],
-//         };
-//         final.push(data);
-//       }
-//     });
+    arcos.forEach((arco) => {
+      if (arco.Record.initialNode === key || arco.Record.finalNode === key) {
+        filteredArcs.push(arco);
+      }
+    });
+    const final = [];
+    filteredArcs.forEach((arco) => {
+      const finalData = {};
+      nodes.forEach((node) => {
+        if (node.Key === arco.Record.initialNode) {
+          finalData[arco.Key] = { ...finalData[arco.Key], initialNode: node };
+        }
+        if (node.Key === arco.Record.finalNode) {
+          console.log(arco, node);
+          finalData[arco.Key] = { ...finalData[arco.Key], finalNode: node };
+        }
+      });
+      if (finalData[arco.Key]) {
+        const data = {
+          arc: arco,
+          ...finalData[arco.Key],
+        };
+        final.push(data);
+      }
+    });
 
-//     return { data: final };
-//   } catch (e) {
-//     return { error: e.message };
-//   }
-// };
+    return { data: final };
+  } catch (e) {
+    return { error: e.message };
+  }
+};
 
 exports.getRelations = async function (req, res, contract) {
   try {

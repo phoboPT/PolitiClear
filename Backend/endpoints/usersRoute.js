@@ -45,16 +45,23 @@ exports.getAcreditedUsers = async function (req, res, contract) {
       "queryByObjectType",
       "Users"
     );
-    let data = [];
-
-    JSON.parse(response).forEach((item) => {
-      if (
-        item.Record.permission === permissions[1] &&
-        item.Record.name.toLowerCase().includes(search.toLowerCase())
-      ) {
-        data.push(item);
-      }
-    });
+    const data = [];
+    if (search !== "undefined") {
+      JSON.parse(response).forEach((item) => {
+        if (
+          item.Record.permission === permissions[1] &&
+          item.Record.name.toLowerCase().includes(search.toLowerCase())
+        ) {
+          data.push(item);
+        }
+      });
+    } else {
+      JSON.parse(response).forEach((item) => {
+        if (item.Record.permission === permissions[1]) {
+          data.push(item);
+        }
+      });
+    }
     return data;
   } catch (e) {
     return { error: e.message };
@@ -104,7 +111,16 @@ exports.createUsers = async (req, res, contract) => {
 // Update User
 exports.updateUsers = async (req, res, contract) => {
   try {
-    const { key, token, name, oldPassword, newPassword, permission, credibility, activated } = req.body;
+    const {
+      key,
+      token,
+      name,
+      oldPassword,
+      newPassword,
+      permission,
+      credibility,
+      activated,
+    } = req.body;
     let updaterId, id;
     const newUser = {
       name,
@@ -112,7 +128,11 @@ exports.updateUsers = async (req, res, contract) => {
     };
 
     if (key) {
-      updaterId = await dataVerifications.verifyToken(contract, token, permissions[0]);
+      updaterId = await dataVerifications.verifyToken(
+        contract,
+        token,
+        permissions[0]
+      );
       id = key;
       newUser.activated = activated;
     } else {

@@ -59,17 +59,15 @@ exports.createVotes = async function (req, res, contract) {
     const voteData = {
       key,
       voter,
-      voterDescription,
+      voterDescription: voterDescription.name,
       arcId,
-      vote,
+      vote: parseInt(vote),
       createdAt,
     };
-
     const response = await contract.submitTransaction(
       "createVotes",
       JSON.stringify(voteData)
     );
-
     const arcData = {
       key: arcId,
       totalVotes: parseInt(total),
@@ -79,10 +77,15 @@ exports.createVotes = async function (req, res, contract) {
 
     const newUser = {
       key: arcUserId,
-      credibility: vote,
+      credibility: parseInt(vote),
     };
-    await contract.submitTransaction("updateUsers", JSON.stringify(newUser));
+    console.log(newUser);
+    const arcs = await contract.submitTransaction(
+      "updateUsers",
+      JSON.stringify(newUser)
+    );
 
+    console.log(JSON.parse(arcs));
     return JSON.parse(response);
   } catch (e) {
     return { error: e.message };

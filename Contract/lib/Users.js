@@ -2,7 +2,15 @@
 
 class Users {
   constructor(payload) {
-    const { name, email, password, permission, createdAt, credibility, activated } = payload;
+    const {
+      name,
+      email,
+      password,
+      permission,
+      createdAt,
+      credibility,
+      activated,
+    } = payload;
 
     this.name = name;
     this.email = email;
@@ -17,16 +25,27 @@ class Users {
   }
 
   updateUsers(payload) {
-    const { name, password, permission, updatedBy, credibility, activated } = payload;
+    const {
+      name,
+      password,
+      permission,
+      updatedBy,
+      credibility,
+      activated,
+    } = payload;
 
     this.name = name ? name : this.name;
     this.password = password ? password : this.password;
     this.permission = permission ? permission : this.permission;
     this.updatedBy = updatedBy;
     this.updatedAt = new Date();
-    this.credibility = credibility ? (parseInt(this.credibility || 0)) + parseInt(credibility) : parseInt(this.credibility);
-    console.log('entra: ' + activated)
-    this.activated = parseInt(activated) ? parseInt(activated) : parseInt(this.activated); 
+    this.credibility = credibility
+      ? parseInt(this.credibility || 0) + parseInt(credibility)
+      : parseInt(this.credibility);
+
+    this.activated = parseInt(activated)
+      ? parseInt(activated)
+      : parseInt(this.activated);
   }
 }
 
