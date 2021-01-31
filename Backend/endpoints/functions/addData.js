@@ -62,16 +62,39 @@ exports.addData = async function (req, res, contract) {
     await contract.submitTransaction("createUsers", JSON.stringify(user));
 
     user.key = "3";
+    user.name = "Acredited-User 2";
+    user.email = "acredited2@politiclear.pt";
+    user.password = await bcrypt.hash("acredited2", 10);
+    user.permission = permissions[1];
+    await contract.submitTransaction("createUsers", JSON.stringify(user));
+    user.key = "4";
+    user.name = "Acredited-User 3";
+    user.email = "acredited3@politiclear.pt";
+    user.password = await bcrypt.hash("acredited3", 10);
+    user.permission = permissions[1];
+    await contract.submitTransaction("createUsers", JSON.stringify(user));
+
+    user.key = "5";
     user.name = "User";
     user.email = "user@politiclear.pt";
     user.password = await bcrypt.hash("user", 10);
     delete user["permission"];
     await contract.submitTransaction("createUsers", JSON.stringify(user));
+    user.key = "6";
+    user.name = "User 2";
+    user.email = "user2@politiclear.pt";
+    user.password = await bcrypt.hash("user2", 10);
+    delete user["permission"];
+    await contract.submitTransaction("createUsers", JSON.stringify(user));
 
     const creatorId = await dataVerifications.verifyToken(contract, req.params.token, permissions[0]);
     const creatorIdDescription = JSON.parse(await contract.submitTransaction("readUsers", creatorId)).name;
+    
+    const creatorIdDescription2 = JSON.parse(await contract.submitTransaction("readUsers", 2)).name;
+    const creatorIdDescription3 = JSON.parse(await contract.submitTransaction("readUsers", 3)).name;
+    const creatorIdDescription4 = JSON.parse(await contract.submitTransaction("readUsers", 4)).name;
 
-    const nodeTypes = ["Partido Político", "Cargo Político", "Politico", "Eventos", "Jornalista", "Cidadão"];
+    const nodeTypes = ["Partido Político", "Cargo Político", "Politico", "Evento", "Jornalista", "Cidadão", "Empresa"];
     const nodeTypeKey = [];
 
     const cargosPoliticos = ["Primeiro Ministro", "Presidente República",];
@@ -81,7 +104,7 @@ exports.addData = async function (req, res, contract) {
       "PS - Partido Socialista", "BE - Bloco de Esquerda", "CH - CHEGA",];
     let partidosKey = [];
 
-    const eventos = ["Presidência da República", "Festa Avante",];
+    const eventos = ["Presidência da República", "Festa Avante", "Operação Marquês", "Projeto TGV", "Parque Escolar", "Casas pré-fabricadas na Venezuela"];
     let eventosKey = [];
 
     const politicos = [
@@ -101,6 +124,24 @@ exports.addData = async function (req, res, contract) {
       "José Socrates",
     ];
     let politicosKey = [];
+
+    const cidadaos = [
+      "Carlos Santos Silva",
+      "Ricardo Salgado",
+      "Joaquim Barroca",
+      "Armando Vara",
+      "Cidadão Holandes"
+    ]
+    let cidadaosKey = []
+
+    const empresas = [
+      "BES - Banco Espirito Santo",
+      "Grupo Lena",
+      "Caixa Geral de Depósitos",
+      "Vale do Lobo",
+      "Ministério Público"
+    ]
+    let empresasKey = []
 
     //create nodesTypes
     for (let i = 0; i < nodeTypes.length; i++) {
@@ -154,30 +195,67 @@ exports.addData = async function (req, res, contract) {
       await contract.submitTransaction("createNodes", JSON.stringify(newNode));
     }
 
+    for (let i = 0; i < cidadaos.length; i++) {
+      const key = uuidv4();
+      cidadaosKey.push(key);
+      const newNode = {
+        key, description: cidadaos[i], creatorId,
+        creatorIdDescription, nodeType: nodeTypeKey[5], nodeTypeDescription: nodeTypes[5],
+      };
+      await contract.submitTransaction("createNodes", JSON.stringify(newNode));
+    }
+    for (let i = 0; i < empresas.length; i++) {
+      const key = uuidv4();
+      empresasKey.push(key);
+      const newNode = {
+        key, description: empresas[i], creatorId,
+        creatorIdDescription, nodeType: nodeTypeKey[6], nodeTypeDescription: nodeTypes[6],
+      };
+      await contract.submitTransaction("createNodes", JSON.stringify(newNode));
+    }
+
     //..........................................................................
 
     for (let i = 0; i < partidos.length; i++) {
-      await insertData(contract, "Representante", politicosKey[i], partidosKey[i], creatorId);
+      await insertData(contract, "Representante", politicosKey[i], partidosKey[i], 2);
     }
 
     for (let i = 5; i < politicos.length && i < 12; i++) {
-      await insertData(contract, "Candidato", politicosKey[i], eventosKey[0], creatorId);
+      await insertData(contract, "Candidato", politicosKey[i], eventosKey[0], 3);
     }
 
     //André Ventura
-    await insertData(contract, "Realizou em 2020", partidosKey[0], eventosKey[1], creatorId); //festa pcp - avante
-    await insertData(contract, "Criticou", politicosKey[5], eventosKey[1], creatorId); //ventura -avante
-    await insertData(contract, "Acusa incompetência", politicosKey[5], politicosKey[3], creatorId); //ventura -Costa
+    await insertData(contract, "Realizou em 2020", partidosKey[0], eventosKey[1], 4); //festa pcp - avante
+    await insertData(contract, "Criticou", politicosKey[5], eventosKey[1], 4); //ventura -avante
+    await insertData(contract, "Acusa incompetência", politicosKey[5], politicosKey[3], 4); //ventura -Costa
     //Marcelo Rebelo Sousa
-    await insertData(contract, "Eleito 2016-2021", politicosKey[6], cargosPoliticosKey[1], creatorId);
-    await insertData(contract, "Eleito 2021-2026", politicosKey[6], cargosPoliticosKey[1], creatorId);
+    await insertData(contract, "Eleito 2016-2021", politicosKey[6], cargosPoliticosKey[1], 4);
+    await insertData(contract, "Eleito 2021-2026", politicosKey[6], cargosPoliticosKey[1], 4);
     //Antonio Costa
-    await insertData(contract, "Eleito 2015-2019", politicosKey[3], cargosPoliticosKey[0], creatorId);
-    await insertData(contract, "Eleito 2019-2023", politicosKey[3], cargosPoliticosKey[0], creatorId);
+    await insertData(contract, "Eleito 2015-2019", politicosKey[3], cargosPoliticosKey[0], 3);
+    await insertData(contract, "Eleito 2019-2023", politicosKey[3], cargosPoliticosKey[0], 2);
     //Pedro Passos Coelho
-    await insertData(contract, "Eleito 2011-2015", politicosKey[12], cargosPoliticosKey[0], creatorId);
+    await insertData(contract, "Eleito 2011-2015", politicosKey[12], cargosPoliticosKey[0], 4);
     //José Socrates
-    await insertData(contract, "Eleito 2005-2011", politicosKey[13], cargosPoliticosKey[0], creatorId);
+    await insertData(contract, "Eleito 2005-2011", politicosKey[13], cargosPoliticosKey[0], 2);
+    await insertData(contract, "Alvo do processo", politicosKey[13], eventosKey[2], 2);
+    //Carlos Santos Silva
+    await insertData(contract, "Guardou dinheiro em offshores", cidadaosKey[0], politicosKey[13], 3);
+    //Ricardo Salgado
+    await insertData(contract, "Pagou maioria das luvas", cidadaosKey[1], politicosKey[13], 3);
+    await insertData(contract, "Antigo Presidente", cidadaosKey[1], empresasKey[0], 2);
+    //Grupo Lena
+    await insertData(contract, "Entregou 3 milhões ao testa-de-ferro de Socrates", empresasKey[1], cidadaosKey[0], 4);
+    await insertData(contract, "Responsável pelo projeto", empresasKey[1], eventosKey[3], 4);
+    await insertData(contract, "Fez obras", empresasKey[1], eventosKey[4], 4);
+    await insertData(contract, "Construiu", empresasKey[1], eventosKey[5], 4);
+    //
+    await insertData(contract, "Comprou lote de terreno", cidadaosKey[4], empresasKey[3], 2);
+    await insertData(contract, "Recebeu pagamento do lote", cidadaosKey[2], empresasKey[3], 3);
+    await insertData(contract, "Receberam 1 milhão euros", cidadaosKey[3], cidadaosKey[2], 3);
+    await insertData(contract, "Receberam 1 milhão euros", cidadaosKey[0], cidadaosKey[2], 2);
+    await insertData(contract, "Favoreceu emprestimo avultado", empresasKey[2], empresasKey[3], 4);
+    await insertData(contract, "Acusa José Socrates no caso", empresasKey[4], eventosKey[2], 2);
 
 
     return { data: "Created" };
