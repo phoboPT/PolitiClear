@@ -113,13 +113,13 @@ exports.addData = async function (req, res, contract) {
     ).name;
 
     const creatorIdDescription2 = JSON.parse(
-      await contract.submitTransaction("readUsers", 2)
+      await contract.submitTransaction("readUsers", "2a")
     ).name;
     const creatorIdDescription3 = JSON.parse(
-      await contract.submitTransaction("readUsers", 3)
+      await contract.submitTransaction("readUsers", "3a")
     ).name;
     const creatorIdDescription4 = JSON.parse(
-      await contract.submitTransaction("readUsers", 4)
+      await contract.submitTransaction("readUsers", "4a")
     ).name;
 
     const nodeTypes = [
@@ -301,7 +301,7 @@ exports.addData = async function (req, res, contract) {
         "Representante",
         politicosKey[i],
         partidosKey[i],
-        2
+        "2a"
       );
     }
 
@@ -311,7 +311,7 @@ exports.addData = async function (req, res, contract) {
         "Candidato",
         politicosKey[i],
         eventosKey[0],
-        3
+        "3a"
       );
     }
 
@@ -321,15 +321,21 @@ exports.addData = async function (req, res, contract) {
       "Realizou em 2020",
       partidosKey[0],
       eventosKey[1],
-      4
+      "4a"
     ); //festa pcp - avante
-    await insertData(contract, "Criticou", politicosKey[5], eventosKey[1], 4); //ventura -avante
+    await insertData(
+      contract,
+      "Criticou",
+      politicosKey[5],
+      eventosKey[1],
+      "4a"
+    ); //ventura -avante
     await insertData(
       contract,
       "Acusa incompetência",
       politicosKey[5],
       politicosKey[3],
-      4
+      "4a"
     ); //ventura -Costa
     //Marcelo Rebelo Sousa
     await insertData(
@@ -337,14 +343,14 @@ exports.addData = async function (req, res, contract) {
       "Eleito 2016-2021",
       politicosKey[6],
       cargosPoliticosKey[1],
-      4
+      "4a"
     );
     await insertData(
       contract,
       "Eleito 2021-2026",
       politicosKey[6],
       cargosPoliticosKey[1],
-      4
+      "4a"
     );
     //Antonio Costa
     await insertData(
@@ -352,14 +358,14 @@ exports.addData = async function (req, res, contract) {
       "Eleito 2015-2019",
       politicosKey[3],
       cargosPoliticosKey[0],
-      3
+      "3a"
     );
     await insertData(
       contract,
       "Eleito 2019-2023",
       politicosKey[3],
       cargosPoliticosKey[0],
-      2
+      "2a"
     );
     //Pedro Passos Coelho
     await insertData(
@@ -367,7 +373,7 @@ exports.addData = async function (req, res, contract) {
       "Eleito 2011-2015",
       politicosKey[12],
       cargosPoliticosKey[0],
-      4
+      "4a"
     );
     //José Socrates
     await insertData(
@@ -375,14 +381,14 @@ exports.addData = async function (req, res, contract) {
       "Eleito 2005-2011",
       politicosKey[13],
       cargosPoliticosKey[0],
-      2
+      "2a"
     );
     await insertData(
       contract,
       "Alvo do processo",
       politicosKey[13],
       eventosKey[2],
-      2
+      "2a"
     );
     //Carlos Santos Silva
     await insertData(
@@ -390,7 +396,7 @@ exports.addData = async function (req, res, contract) {
       "Guardou dinheiro em offshores",
       cidadaosKey[0],
       politicosKey[13],
-      3
+      "3a"
     );
     //Ricardo Salgado
     await insertData(
@@ -398,14 +404,14 @@ exports.addData = async function (req, res, contract) {
       "Pagou maioria das luvas",
       cidadaosKey[1],
       politicosKey[13],
-      3
+      "3a"
     );
     await insertData(
       contract,
       "Antigo Presidente",
       cidadaosKey[1],
       empresasKey[0],
-      2
+      "2a"
     );
     //Grupo Lena
     await insertData(
@@ -413,59 +419,71 @@ exports.addData = async function (req, res, contract) {
       "Entregou 3 milhões ao testa-de-ferro de Socrates",
       empresasKey[1],
       cidadaosKey[0],
-      4
+      "4a"
     );
     await insertData(
       contract,
       "Responsável pelo projeto",
       empresasKey[1],
       eventosKey[3],
-      4
+      "4a"
     );
-    await insertData(contract, "Fez obras", empresasKey[1], eventosKey[4], 4);
-    await insertData(contract, "Construiu", empresasKey[1], eventosKey[5], 4);
+    await insertData(
+      contract,
+      "Fez obras",
+      empresasKey[1],
+      eventosKey[4],
+      "4a"
+    );
+    await insertData(
+      contract,
+      "Construiu",
+      empresasKey[1],
+      eventosKey[5],
+      "4a"
+    );
     //
     await insertData(
       contract,
       "Comprou lote de terreno",
       cidadaosKey[4],
       empresasKey[3],
-      2
+      "2a"
     );
     await insertData(
       contract,
       "Recebeu pagamento do lote",
       cidadaosKey[2],
       empresasKey[3],
-      3
+      "3a"
     );
     await insertData(
       contract,
       "Receberam 1 milhão euros",
       cidadaosKey[3],
       cidadaosKey[2],
-      3
+      "3a"
     );
     await insertData(
       contract,
       "Receberam 1 milhão euros",
       cidadaosKey[0],
       cidadaosKey[2],
-      2
+      "2a"
     );
     await insertData(
       contract,
       "Favoreceu emprestimo avultado",
       empresasKey[2],
       empresasKey[3],
-      4
+      "4a"
     );
     await insertData(
       contract,
       "Acusa José Socrates no caso",
       empresasKey[4],
       eventosKey[2],
-      2
+      "2a"
     );
 
     return { data: "Created" };

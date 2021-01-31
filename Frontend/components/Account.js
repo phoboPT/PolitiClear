@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { permissions } from '../lib/permissions';
 import EditAccount from './EditAccount';
 import Me from './Me';
+import SickButton from './styles/SickButton';
 
 const Grid = styled.div`
   display: flex;
@@ -61,14 +62,14 @@ class Account extends Component {
                       <p>email: {items.email}</p>
                     </div>
                     <div className="one">
-                      <button
+                      <SickButton
                         type="button"
                         onClick={() => {
                           this.setState({ edit: !edit });
                         }}
                       >
                         Edit
-                      </button>
+                      </SickButton>
 
                       {items.permission !== permissions[0] &&
                         items.permission !== permissions[2] && (

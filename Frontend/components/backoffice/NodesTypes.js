@@ -9,6 +9,7 @@ import Table from '../styles/Table';
 import Inner from '../styles/InnerDiv';
 import SuccessMessage from '../styles/SuccessMessage';
 import formatDate from '../../lib/formatDate';
+import SickButton from '../styles/SickButton';
 
 const ButtonDiv = styled.div`
   button {
@@ -137,12 +138,12 @@ class NodesTypes extends Component {
                     </tbody>
                   </Table>
                   <ButtonDiv>
-                    <button
+                    <SickButton
                       type="button"
                       onClick={() => this.setState({ form: 1 })}
                     >
                       Create
-                    </button>
+                    </SickButton>
                   </ButtonDiv>
                 </div>
               );

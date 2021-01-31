@@ -7,6 +7,7 @@ import Nodes from '../components/backoffice/Nodes';
 import Arcs from '../components/backoffice/Arcs';
 import Me from '../components/Me';
 import { permissions } from '../lib/permissions';
+import SickButton from '../components/styles/SickButton';
 const Div = styled.div`
   padding: 0;
   margin: 10px 0px;
@@ -42,46 +43,46 @@ class admin extends Component {
                 {items.permission === permissions[0] ? (
                   <>
                     <Div>
-                      <button
+                      <SickButton
                         type="button"
                         onClick={() => {
                           this.setState({ show: 1 });
                         }}
                       >
                         NodesTypes
-                      </button>
-                      <button
+                      </SickButton>
+                      <SickButton
                         type="button"
                         onClick={() => {
                           this.setState({ show: 2 });
                         }}
                       >
                         Users
-                      </button>
-                      <button
+                      </SickButton>
+                      <SickButton
                         type="button"
                         onClick={() => {
                           this.setState({ show: 3 });
                         }}
                       >
                         Nodes
-                      </button>
-                      <button
+                      </SickButton>
+                      <SickButton
                         type="button"
                         onClick={() => {
                           this.setState({ show: 4 });
                         }}
                       >
                         Arcs
-                      </button>
-                      <button
+                      </SickButton>
+                      <SickButton
                         type="button"
                         onClick={() => {
                           this.setState({ show: 5 });
                         }}
                       >
                         Forms
-                      </button>
+                      </SickButton>
                     </Div>
                     <div>
                       {this.state.show === 1 && <NodesTypes></NodesTypes>}
