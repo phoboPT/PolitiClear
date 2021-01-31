@@ -118,7 +118,7 @@ exports.updateUsers = async (req, res, contract) => {
       oldPassword,
       newPassword,
       permission,
-      credibility,
+
       activated,
     } = req.body;
     let updaterId, id;
@@ -140,7 +140,7 @@ exports.updateUsers = async (req, res, contract) => {
       id = updaterId;
     }
     newUser.key = id;
-    newUser.updaterId = updaterId;
+    newUser.updatedBy = updaterId;
     if (oldPassword && newPassword) {
       const user = await contract.submitTransaction("readUsers", id);
       if (!user) {
@@ -157,6 +157,8 @@ exports.updateUsers = async (req, res, contract) => {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       newUser.password = hashedPassword;
     }
+
+    console.log(newUser);
     const response = await contract.submitTransaction(
       "updateUsers",
       JSON.stringify(newUser)

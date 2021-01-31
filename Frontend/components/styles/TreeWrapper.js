@@ -20,13 +20,12 @@ const TreeWrapper = styled.div`
   h2 {
     margin: 5px;
   }
-  margin-top: 50px;
   .left {
     margin: auto;
+    width: auto;
+    height: auto;
   }
   .right {
-    margin-left: 20px;
-    width: 100%;
   }
   .votes {
     display: flex;

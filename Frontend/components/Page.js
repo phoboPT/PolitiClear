@@ -11,7 +11,6 @@ const theme = {
   darkblue: '#428bca',
   green: '#5cb85c',
   lightGrey: '#99aab5',
-  maxWidth: '1700px',
   red: '#d9534f',
   white: '#ffffff',
   adminBarSizeSmall: '50px',

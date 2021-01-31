@@ -43,9 +43,7 @@ class Users {
       ? parseInt(this.credibility || 0) + parseInt(credibility)
       : parseInt(this.credibility);
 
-    this.activated = parseInt(activated)
-      ? parseInt(activated)
-      : parseInt(this.activated);
+    this.activated = activated ? parseInt(activated) : parseInt(this.activated);
   }
 }
 

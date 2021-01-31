@@ -130,16 +130,12 @@ export default class Credibility extends Component {
             </tr>
           </thead>
           <tbody>
-            {user.map(({ data }, index) => {
-              console.log('item', data);
-
-              return (
-                <tr key={index}>
-                  <td>{data.name}</td>
-                  <td>{data.credibility}</td>
-                </tr>
-              );
-            })}
+            {user.map(({ data }, index) => (
+              <tr key={index}>
+                <td>{data.name}</td>
+                <td>{data.credibility}</td>
+              </tr>
+            ))}
             {users.map((item) => (
               <tr key={item.Key}>
                 <td>{item.Record.name}</td>

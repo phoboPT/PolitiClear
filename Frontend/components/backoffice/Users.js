@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import Cookies from 'js-cookie';
 import Me from '../Me';
 import Error from '../ErrorMessage';
-import { getData, deleteByKey } from '../../lib/requests';
+import { getData, sendRequest } from '../../lib/requests';
 import { permissions } from '../../lib/permissions';
 import Table from '../styles/Table';
 import Inner from '../styles/InnerDiv';
@@ -34,6 +35,20 @@ class Users extends Component {
 
   changeForm = () => {
     this.setState({ form: 0 });
+  };
+
+  updateUser = async (key) => {
+    const token = Cookies.get('token');
+    const data = {
+      token,
+      key,
+      activated: '0',
+    };
+    const res = await sendRequest(
+      'PUT',
+      'http://127.0.0.1:5000/users/update',
+      data,
+    );
   };
 
   render() {
@@ -105,10 +120,7 @@ class Users extends Component {
                                   );
                                   console.log(item.Key);
                                   if (res) {
-                                    deleteByKey(
-                                      'http://127.0.0.1:5000/users/delete',
-                                      item.Key,
-                                    );
+                                    this.updateUser(item.Key);
                                     this.fetch();
                                   }
                                 }}

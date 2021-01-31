@@ -45,12 +45,20 @@ class Search extends React.Component {
       };
 
       const symbol = {
-        Jornalista: 'square',
-        'Representante Político': 'circle',
-        'Partido Político': 'triangle',
-        'Função Politica': 'cross',
-        Politico: 'diamond',
-        Eventos: 'star',
+        'Partido Político':
+          'https://cdn3.iconfinder.com/data/icons/election-world-1/64/candidate-compititor-election-nominee-vote-256.png',
+        'Cargo Político':
+          'https://cdn1.iconfinder.com/data/icons/government-1/100/government_politics_political_legal_administrative_leadership-29-256.png',
+        Politico:
+          'https://cdn3.iconfinder.com/data/icons/politics-line/96/politic_congress_government_president-256.png',
+        Evento:
+          'https://cdn4.iconfinder.com/data/icons/business-and-finance-163/32/finance_event_calendar-256.png',
+        Jornalista:
+          'https://i.pinimg.com/originals/81/6b/0a/816b0ac0aff866ec3a155995811b2a24.png',
+
+        Cidadão: 'https://img.icons8.com/ios/452/global-citizen.png',
+        Empresa:
+          'https://cdn0.iconfinder.com/data/icons/stock-market-3/64/enterprise-organization-business-company-team-512.png',
       };
       relations.data.nodes.forEach((relation) => {
         console.log(relation);
@@ -58,7 +66,8 @@ class Search extends React.Component {
           id: relation[0] || 0,
           // arc: relation.Record,
           name: relation[1],
-          symbolType: symbol[relation[2]],
+          svg: symbol[relation[2]],
+
           // arcId: relation.Key,post
         });
       });
@@ -91,8 +100,6 @@ class Search extends React.Component {
   };
 
   async componentDidMount() {
-    // await this.getAll();
-
     this.setState({
       width: window.innerWidth * 0.8,
       myConfig: {
@@ -103,7 +110,7 @@ class Search extends React.Component {
         focusAnimationDuration: 0.75,
         initialZoom: 0.8,
         freezeAllDragEvents: false,
-        height: 600,
+        height: window.innerHeight * 0.8,
         highlightDegree: 1,
         highlightOpacity: 0.2,
         linkHighlightBehavior: true,
@@ -113,11 +120,11 @@ class Search extends React.Component {
         panAndZoom: false,
         staticGraph: false,
         staticGraphWithDragAndDrop: false,
-        width: window.innerWidth * 0.8,
+        width: window.innerWidth - 220,
         d3: {
           alphaTarget: 0.05,
-          gravity: -400,
-          linkLength: 300,
+          gravity: -800,
+          linkLength: 400,
           linkStrength: 1,
           disableLinkForce: false,
         },
@@ -149,7 +156,7 @@ class Search extends React.Component {
           highlightFontWeight: 'bold',
           mouseCursor: 'pointer',
           opacity: 1,
-          renderLabel: true,
+          renderLabel: false,
           semanticStrokeWidth: false,
           strokeWidth: 7,
           markerHeight: 6,
@@ -199,24 +206,27 @@ class Search extends React.Component {
     this.populate(item);
   };
 
-  getAll = async (item) => {
-    this.setState({ loading: true, data: null });
-    const users = await searchByKey(
-      'http://localhost:5000/nodes/searchNodes',
+  teste = async (item) => {
+    this.setState({ loading: true, key: item.Key, data: null });
+    const user = await searchByKey(
+      'http://localhost:5000/searchNodes',
       item.Key,
     );
-    if (user.data.arcs.length > 0) {
+    console.log(user);
+
+    if (user.data.nodes.length > 0) {
       let graph = {
         nodes: [],
 
         links: [],
       };
       for (let i = 0; i < user.data.nodes.length; i++) {
+        console.log(user.data.nodes[i]);
         graph.nodes.push({
-          id: user.data.nodes[i][1],
-          keyNode: user.data.nodes[i][1],
-          // arc: user.data[i],
-          arcId: user.data.nodes[i][2],
+          id: user.data.nodes[i].Record.description,
+          keyNode: user.data.nodes[i].Key,
+          arc: user.data[i],
+          arcId: user.data[i].arcId,
         });
       }
 
@@ -292,6 +302,30 @@ class Search extends React.Component {
     this.onChange();
   };
 
+  showLabels = () => {
+    const config = this.state.myConfig;
+    config.link.renderLabel = !config.link.renderLabel;
+    this.setState({ loading: true, config });
+
+    this.setState({
+      labels: !this.state.labels,
+      myConfig: config,
+      loading: false,
+    });
+  };
+
+  levelSwitch = (e) => {
+    const config = this.state.myConfig;
+    config.link.renderLabel = !config.link.renderLabel;
+    this.setState({ loading: true, config });
+
+    this.setState({
+      labels: !this.state.labels,
+      myConfig: config,
+      loading: false,
+    });
+  };
+
   openForm = () => {
     swal({
       width: '1800px',
@@ -358,48 +392,33 @@ class Search extends React.Component {
             )}
           </Downshift>
         </SearchStyles>
+        <br />
+        <label htmlFor="labels">
+          Show Labels
+          <input
+            type="checkbox"
+            name="labels"
+            defaultValue="false"
+            onChange={this.showLabels}
+          />
+        </label>
+
+        <label htmlFor="labels">
+          Show only 1 level
+          <input
+            type="checkbox"
+            name="labels"
+            defaultValue="false"
+            onChange={this.levelSwitch}
+          />
+        </label>
+        <br />
 
         {this.state.message && <p>{this.state.message}</p>}
         {this.state.data && (
           <TreeWrapper>
-            <div className="img">
-              <p>Representante Político:</p>
-              <img src="../static/circle.png" alt="" />
-              <p>Jornalista:</p>
-              <img src="../static/square.png" alt="" />
-              <p>Partido Político:</p>
-              <img src="../static/triangle.png" alt="" />
-              <p>Função Politica:</p>
-              <img src="../static/cross.png" alt="" />
-              <p>Politico:</p>
-              <img src="../static/diamond.png" alt="" />
-              <p>Evento:</p>
-              <img src="../static/star.png" alt="" />
-            </div>
-
-            <div className="left" style={{ width: this.state.width }}>
-              <Graph
-                id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
-                data={data}
-                config={myConfig}
-                // onClickGraph={onClickGraph}
-                onClickNode={this.onClickNode}
-                // onDoubleClickNode={onDoubleClickNode}
-                // onRightClickNode={onRightClickNode}
-                onClickLink={this.onClickLink}
-                // onRightClickLink={onRightClickLink}
-                // onMouseOverNode={onMouseOverNode}
-                // onMouseOutNode={onMouseOutNode}
-                // onMouseOverLink={onMouseOverLink}
-                // onMouseOutLink={onMouseOutLink}
-                // onNodePositionChange={onNodePositionChange}
-                // onZoomChange={onZoomChange}
-              />
-            </div>
-
             <div className="right">
-              <h2>Relations</h2>
-              {this.state.nodesInfo ? (
+              {this.state.nodesInfo && (
                 <>
                   <Error error={this.state.error} />
                   <SuccessMessage message={this.state.data2} />
@@ -496,13 +515,63 @@ class Search extends React.Component {
                       })}
                     </tbody>
                   </Table>
+                  <br />
                 </>
-              ) : (
-                <p>Click on a relation to see more info</p>
+              )}
+            </div>
+            <div className="img">
+              <p>Cargo Político:</p>
+              <img
+                src="https://cdn1.iconfinder.com/data/icons/government-1/100/government_politics_political_legal_administrative_leadership-29-256.png"
+                alt=""
+              />
+              <p>Jornalista:</p>
+              <img
+                src="https://cdn3.iconfinder.com/data/icons/seo-and-internet-marketing-11/512/48-512.png"
+                alt=""
+              />
+              <p>Partido Político:</p>
+              <img
+                src="https://cdn3.iconfinder.com/data/icons/election-world-1/64/candidate-compititor-election-nominee-vote-256.png"
+                alt=""
+              />
+
+              <p>Politico:</p>
+              <img
+                src="https://cdn3.iconfinder.com/data/icons/politics-line/96/politic_congress_government_president-256.png"
+                alt=""
+              />
+              <p>Evento:</p>
+              <img
+                src="https://cdn4.iconfinder.com/data/icons/business-and-finance-163/32/finance_event_calendar-256.png"
+                alt=""
+              />
+              <p>Empresa:</p>
+              <img
+                src="https://cdn0.iconfinder.com/data/icons/stock-market-3/64/enterprise-organization-business-company-team-512.png"
+                alt=""
+              />
+              <p>Cidadão:</p>
+              <img
+                src="https://img.icons8.com/ios/452/global-citizen.png"
+                alt=""
+              />
+            </div>
+            <p>Click on a relation to see more info</p>
+            <div className="left">
+              {!loading && (
+                <Graph
+                  id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
+                  data={data}
+                  config={myConfig}
+                  onClickNode={this.onClickNode}
+                  onClickLink={this.onClickLink}
+                />
               )}
             </div>
           </TreeWrapper>
         )}
+
         {!this.props.user.createdAt && this.props.loading && (
           <FloatingIcon>
             <div className="wsk-float">
