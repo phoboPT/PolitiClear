@@ -43,16 +43,24 @@ class Search extends React.Component {
       data: null,
       nodes: [],
       voted: { arcId: '', vote: 0 },
-      level: true,
+      level: false,
     };
   }
 
   populate = async (item) => {
     this.setState({ loading: true, key: item.Key, data: null });
-    const relations = await searchByKey(
-      'http://localhost:5000/nodes/getRelations',
-      item.Key,
-    );
+    let relations = '';
+    if (this.state.level) {
+      relations = await searchByKey(
+        'http://localhost:5000/searchNodes',
+        item.Key,
+      );
+    } else {
+      relations = await searchByKey(
+        'http://localhost:5000/nodes/getRelations',
+        item.Key,
+      );
+    }
     if (relations.data.arcs.length > 0) {
       let graph = {
         nodes: [],
@@ -153,7 +161,7 @@ class Search extends React.Component {
           highlightColor: 'lightblue',
           labelProperty: 'label',
           fontSize: 15,
-          strokeLinecap: '"round"',
+          strokeLinecap: 'round',
           fontWeight: 'normal',
           highlightFontSize: 8,
           highlightFontWeight: 'bold',
@@ -207,56 +215,6 @@ class Search extends React.Component {
       Key: node.id,
     };
     this.populate(item);
-  };
-
-  teste = async (item) => {
-    this.setState({ loading: true, key: item.Key, data: null });
-    const user = await searchByKey(
-      'http://localhost:5000/searchNodes',
-      item.Key,
-    );
-
-    console.log(user.data.data);
-    if (user.data.data.length > 0) {
-      let graph = {
-        nodes: [],
-
-        links: [],
-      };
-      for (let i = 0; i < user.data.data.length; i++) {
-        graph.nodes.push({
-          id: user.data.data[i].arc.Record.description,
-          name: user.data.data[i].arc.Record.initialNode,
-          svg: symbol[user.data.data[i].arc.Record.initialNodeDescription],
-        });
-      }
-
-      for (let i = 0; i < user.data.data.length; i++) {
-        graph.links.push({
-          source: user.data.data[i].arc.Record.initialNode || 0,
-          target: user.data.data[i].arc.Record.finalNode,
-          label: user.data.data[i].arc.Record.description,
-          arc: user.data.data[i].arc.Record,
-        });
-      }
-
-      graph = {
-        ...graph,
-      };
-      console.log(graph);
-      this.setState({
-        show: true,
-        loading: false,
-        message: null,
-        data: { ...graph },
-      });
-    } else {
-      this.setState({
-        show: false,
-        loading: false,
-        message: 'The politician don´t exist or don´t have any relation',
-      });
-    }
   };
 
   fetch = async () => {
@@ -342,7 +300,7 @@ class Search extends React.Component {
       <>
         <SearchStyles>
           <Downshift
-            onChange={level ? this.populate : this.teste}
+            onChange={this.populate}
             itemToString={(item) =>
               item === null ? '' : item.Record.description
             }
@@ -404,10 +362,11 @@ class Search extends React.Component {
         </label>
 
         <label htmlFor="labels">
-          Show only 1 level
+          Show 1 level
           <input
             type="checkbox"
             name="labels"
+            checked={level}
             defaultValue="false"
             onChange={this.levelSwitch}
           />
