@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Cookies from 'js-cookie';
-import { sendRequest, getData } from '../lib/requests';
-import Error from './ErrorMessage';
-import Form from './styles/Form';
-import SuccessMessage from './styles/SuccessMessage';
+import { sendRequest, getData } from '../../lib/requests';
+import Error from '../ErrorMessage';
+import Form from '../styles/Form';
+import SuccessMessage from '../styles/SuccessMessage';
 
 export default class CreateNode extends Component {
   constructor(props) {
@@ -58,7 +58,7 @@ export default class CreateNode extends Component {
           <fieldset disabled={loading} aria-busy={loading}>
             <SuccessMessage message={this.state.data} />
             <Error error={this.state.error} />
-            <h2>Add new Event </h2>
+            <h2>Add new Politic/Event </h2>
             <label htmlFor="name">
               Description
               <input

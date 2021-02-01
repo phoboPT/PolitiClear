@@ -9,7 +9,7 @@ import Error from '../ErrorMessage';
 import { search, sendRequest } from '../../lib/requests';
 import SuccessMessage from '../styles/SuccessMessage';
 import { DropDownItem } from '../styles/DropDown';
-import CreateNode from '../CreateNode';
+import CreateNode from './CreateNode';
 
 const DropDown = styled.div`
   position: absolute;
