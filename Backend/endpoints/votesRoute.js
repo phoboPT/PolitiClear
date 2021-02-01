@@ -77,15 +77,10 @@ exports.createVotes = async function (req, res, contract) {
 
     const newUser = {
       key: arcUserId,
-      credibility: parseInt(vote),
+      credibility: vote,
     };
-    console.log(newUser);
-    const arcs = await contract.submitTransaction(
-      "updateUsers",
-      JSON.stringify(newUser)
-    );
+    await contract.submitTransaction("updateUsers", JSON.stringify(newUser));
 
-    console.log(JSON.parse(arcs));
     return JSON.parse(response);
   } catch (e) {
     return { error: e.message };
