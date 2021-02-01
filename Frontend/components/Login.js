@@ -1,8 +1,14 @@
 import { Component } from 'react';
+import styled from 'styled-components';
 import Register from './Register';
 import Signin from './Signin';
 import RequestReset from './RequestReset';
-
+import SickButton from './styles/SickButton';
+const Div = styled.div`
+  button {
+    margin-right: 30px;
+  }
+`;
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -15,71 +21,71 @@ class Login extends Component {
     const { refetch, closeSwal } = this.props;
     if (register === 1) {
       return (
-        <div>
+        <Div>
           <Register refetch={refetch}></Register>
-          <button
+          <SickButton
             type="button"
             onClick={() => {
               this.setState({ login: 1, register: 0, reset: 0 });
             }}
           >
             Login
-          </button>
-          <button
+          </SickButton>{' '}
+          <SickButton
             type="button"
             onClick={() => {
               this.setState({ login: 0, register: 0, reset: 1 });
             }}
           >
             Reset
-          </button>
-        </div>
+          </SickButton>
+        </Div>
       );
     }
     if (login === 1) {
       return (
-        <div>
+        <Div>
           <Signin refetch={refetch} closeSwal={closeSwal}></Signin>
-          <button
+          <SickButton
             type="button"
             onClick={() => {
               this.setState({ login: 0, register: 1, reset: 0 });
             }}
           >
             Register
-          </button>
-          <button
+          </SickButton>{' '}
+          <SickButton
             type="button"
             onClick={() => {
               this.setState({ login: 0, register: 0, reset: 1 });
             }}
           >
             Reset
-          </button>
-        </div>
+          </SickButton>
+        </Div>
       );
     }
     if (reset === 1) {
       return (
-        <div>
+        <Div>
           <RequestReset refetch={refetch}></RequestReset>
-          <button
+          <SickButton
             type="button"
             onClick={() => {
               this.setState({ login: 1, register: 0, reset: 0 });
             }}
           >
             Sign in
-          </button>
-          <button
+          </SickButton>{' '}
+          <SickButton
             type="button"
             onClick={() => {
               this.setState({ login: 0, register: 1, reset: 0 });
             }}
           >
             Register
-          </button>
-        </div>
+          </SickButton>
+        </Div>
       );
     }
     return null;
