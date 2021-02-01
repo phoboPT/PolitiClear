@@ -211,50 +211,61 @@ exports.search = async function (req, res, contract) {
 exports.searchNodes = async function (req, res, contract) {
   try {
     const { key } = req.headers;
-    const allArcs = await contract.submitTransaction(
-      "queryByObjectType",
-      "Arcs"
-    );
-    const allNodes = await contract.submitTransaction(
-      "queryByObjectType",
-      "Nodes"
-    );
+    const edges = JSON.parse(await contract.submitTransaction("queryByObjectType", "Arcs"));
+    const arco = [];
+    const nodo = [];
+    let existeNodo;
 
-    const arcos = JSON.parse(allArcs);
-    const nodes = JSON.parse(allNodes);
-    const filteredArcs = [];
+    edges.forEach((edge) => {
+      if (edge.Record.initialNode === key || edge.Record.finalNode === key) {
+        arco.push([
+          edge.Key,
+          edge.Record.initialNode,
+          edge.Record.initialNodeDescription,
+          edge.Record.initialNodeNodeTypeDescription,
+          edge.Record.finalNode,
+          edge.Record.finalNodeDescription,
+          edge.Record.finalNodeNodeTypeDescription,
+          edge.Record.description,
+          edge.Record.createdAt,
+          edge.Record.totalVotes,
+          edge.Record.creatorId,
+          edge.Record.creatorIdDescription,
+        ]);
+      }
+    })
 
-    arcos.forEach((arco) => {
-      if (arco.Record.initialNode === key || arco.Record.finalNode === key) {
-        filteredArcs.push(arco);
-      }
-    });
-    const final = [];
-    filteredArcs.forEach((arco) => {
-      const finalData = {};
-      nodes.forEach((node) => {
-        if (node.Key === arco.Record.initialNode) {
-          finalData[arco.Key] = { ...finalData[arco.Key], initialNode: node };
+    arco.forEach((item) => {
+      for (let i = 0; i < nodo.length; i++) {
+        if (nodo[i][0] === item[1]) {
+          existeNodo = 1;
+          break;
         }
-        if (node.Key === arco.Record.finalNode) {
-          console.log(arco, node);
-          finalData[arco.Key] = { ...finalData[arco.Key], finalNode: node };
-        }
-      });
-      if (finalData[arco.Key]) {
-        const data = {
-          arc: arco,
-          ...finalData[arco.Key],
-        };
-        final.push(data);
       }
+      if (existeNodo !== 1) {
+        nodo.push([item[1], item[2], item[3], item[0]]);
+      }
+      existeNodo = 0;
+
+      for (let i = 0; i < nodo.length; i++) {
+        if (nodo[i][0] === item[4]) {
+          existeNodo = 1;
+          break;
+        }
+      }
+      if (existeNodo !== 1) {
+        nodo.push([item[4], item[5], item[6]]);
+      }
+      existeNodo = 0;
     });
-    console.log(final);
-    return { data: final };
+
+    return { arcs: arco, nodes: nodo };
   } catch (e) {
     return { error: e.message };
   }
 };
+
+//-----------------------------------------------------------------
 
 exports.getRelations = async function (req, res, contract) {
   try {
@@ -373,3 +384,52 @@ exports.getRelations = async function (req, res, contract) {
     return { error: e.error };
   }
 };
+
+
+// exports.searchNodes = async function (req, res, contract) {
+//   try {
+//     const { key } = req.headers;
+//     const allArcs = await contract.submitTransaction(
+//       "queryByObjectType",
+//       "Arcs"
+//     );
+//     const allNodes = await contract.submitTransaction(
+//       "queryByObjectType",
+//       "Nodes"
+//     );
+
+//     const arcos = JSON.parse(allArcs);
+//     const nodes = JSON.parse(allNodes);
+//     const filteredArcs = [];
+
+//     arcos.forEach((arco) => {
+//       if (arco.Record.initialNode === key || arco.Record.finalNode === key) {
+//         filteredArcs.push(arco);
+//       }
+//     });
+//     const final = [];
+//     filteredArcs.forEach((arco) => {
+//       const finalData = {};
+//       nodes.forEach((node) => {
+//         if (node.Key === arco.Record.initialNode) {
+//           finalData[arco.Key] = { ...finalData[arco.Key], initialNode: node };
+//         }
+//         if (node.Key === arco.Record.finalNode) {
+//           console.log(arco, node);
+//           finalData[arco.Key] = { ...finalData[arco.Key], finalNode: node };
+//         }
+//       });
+//       if (finalData[arco.Key]) {
+//         const data = {
+//           arc: arco,
+//           ...finalData[arco.Key],
+//         };
+//         final.push(data);
+//       }
+//     });
+//     console.log(final);
+//     return { data: final };
+//   } catch (e) {
+//     return { error: e.message };
+//   }
+// };
