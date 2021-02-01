@@ -23,7 +23,7 @@ const Nav = () => (
                 <a>admin</a>
               </Link>
             )}
-            {items.permission === permissions[2] && (
+            {items.permission === permissions[1] && (
               <Link href="/relations">
                 <a>relations</a>
               </Link>
