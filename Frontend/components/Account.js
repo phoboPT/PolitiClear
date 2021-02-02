@@ -72,7 +72,7 @@ class Account extends Component {
                       </SickButton>
 
                       {items.permission !== permissions[0] &&
-                        items.permission !== permissions[2] && (
+                        items.permission !== permissions[1] && (
                           <Link href="/verify">
                             <a>Verify account</a>
                           </Link>

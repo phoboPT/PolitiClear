@@ -64,7 +64,7 @@ class Relations extends Component {
     return (
       <Me>
         {(items, isLoaded) => {
-          if (!items.error && isLoaded && items.permission === permissions[2]) {
+          if (!items.error && isLoaded && items.permission === permissions[1]) {
             if (this.state.form == 0) {
               return (
                 <div>
