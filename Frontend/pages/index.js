@@ -23,7 +23,7 @@ const index = () => (
             A platform made to acredit relationships between Politics/Entities
           </h3>
         </Div>
-        <P>Search a name to start</P>
+     
         <Search user={items} loading={isLoaded}></Search>
       </div>
     )}

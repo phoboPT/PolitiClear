@@ -7,7 +7,9 @@ const TreeWrapper = styled.div`
   .img {
     text-align: center;
     display: inline-flex;
+    justify-content: flex-start;
     /* vertical-align: middle; */
+    width: 100%;
     img {
       margin: auto 50px auto 5px;
       width: 30px;
@@ -15,6 +17,9 @@ const TreeWrapper = styled.div`
     }
     p {
       margin: 5px;
+    }
+    .start {
+      margin-left: 0px;
     }
   }
   h2 {

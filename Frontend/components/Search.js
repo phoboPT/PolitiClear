@@ -4,6 +4,7 @@ import React from 'react';
 import { Graph } from 'react-d3-graph';
 import Cookies from 'js-cookie';
 import swal from '@sweetalert/with-react';
+import styled from 'styled-components';
 import { searchByKey, search, sendRequest } from '../lib/requests';
 import { DropDown, DropDownItem, SearchStyles } from './styles/DropDown';
 import Table from './styles/Table';
@@ -34,6 +35,13 @@ const symbol = {
   Empresa:
     'https://cdn0.iconfinder.com/data/icons/stock-market-3/64/enterprise-organization-business-company-team-512.png',
 };
+
+const Labels = styled.div`
+  border-bottom: 1px solid black;
+  .label {
+    margin-left: 50px;
+  }
+`;
 class Search extends React.Component {
   constructor(props) {
     super(props);
@@ -159,10 +167,10 @@ class Search extends React.Component {
           strokeWidth: 1.5,
         },
         link: {
-          highlightColor: 'lightblue',
+          highlightColor: 'red',
           labelProperty: 'label',
           fontSize: 15,
-          strokeLinecap: 'square',
+          color: '#adadad',
           fontWeight: 'normal',
           highlightFontSize: 8,
           highlightFontWeight: 'bold',
@@ -173,8 +181,6 @@ class Search extends React.Component {
           strokeWidth: 7,
           markerHeight: 6,
           markerWidth: 6,
-          strokeDasharray: 0,
-          strokeDashoffset: 0,
           type: 'CURVE_SMOOTH',
         },
       },
@@ -318,7 +324,7 @@ class Search extends React.Component {
                   {...getInputProps({
                     type: 'search',
                     name: 'search',
-                    placeholder: 'Search',
+                    placeholder: 'Search a name to start',
                     className: this.state.loading ? 'loading' : '',
                     onChange: (e) => {
                       this.saveToState(e);
@@ -352,26 +358,28 @@ class Search extends React.Component {
           </Downshift>
         </SearchStyles>
         <br />
-        <label htmlFor="labels">
-          Show Labels
-          <input
-            type="checkbox"
-            name="labels"
-            defaultValue="false"
-            onChange={this.showLabels}
-          />
-        </label>
+        <Labels>
+          <label htmlFor="labels">
+            Show Labels
+            <input
+              type="checkbox"
+              name="labels"
+              defaultValue="false"
+              onChange={this.showLabels}
+            />
+          </label>
 
-        <label htmlFor="labels">
-          Show 1 level
-          <input
-            type="checkbox"
-            name="labels"
-            checked={level}
-            defaultValue="false"
-            onChange={this.levelSwitch}
-          />
-        </label>
+          <label htmlFor="labels" className="label">
+            Show 1 level
+            <input
+              type="checkbox"
+              name="labels"
+              checked={level}
+              defaultValue="false"
+              onChange={this.levelSwitch}
+            />
+          </label>
+        </Labels>
         <br />
 
         {this.state.message && <p>{this.state.message}</p>}
@@ -494,7 +502,7 @@ class Search extends React.Component {
               )}
             </div>
             <div className="img">
-              <p>Cargo Político:</p>
+              <p className="start">Cargo Político:</p>
               <img
                 src="https://cdn1.iconfinder.com/data/icons/government-1/100/government_politics_political_legal_administrative_leadership-29-256.png"
                 alt=""
@@ -531,7 +539,6 @@ class Search extends React.Component {
                 alt=""
               />
             </div>
-            <p>Click on a relation to see more info</p>
             <div className="left">
               {!loading && (
                 <Graph
