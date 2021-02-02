@@ -11,6 +11,7 @@ exports.getByKey = async function (req, res, contract) {
       req.params.key
     );
 
+    
     return { data: JSON.parse(response) };
   } catch (e) {
     return { error: e.message };
