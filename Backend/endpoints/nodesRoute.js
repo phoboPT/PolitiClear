@@ -211,7 +211,9 @@ exports.search = async function (req, res, contract) {
 exports.searchNodes = async function (req, res, contract) {
   try {
     const { key } = req.headers;
-    const edges = JSON.parse(await contract.submitTransaction("queryByObjectType", "Arcs"));
+    const edges = JSON.parse(
+      await contract.submitTransaction("queryByObjectType", "Arcs")
+    );
     const arco = [];
     const nodo = [];
     let existeNodo;
@@ -233,7 +235,7 @@ exports.searchNodes = async function (req, res, contract) {
           edge.Record.creatorIdDescription,
         ]);
       }
-    })
+    });
 
     arco.forEach((item) => {
       for (let i = 0; i < nodo.length; i++) {
@@ -384,7 +386,6 @@ exports.getRelations = async function (req, res, contract) {
     return { error: e.error };
   }
 };
-
 
 // exports.searchNodes = async function (req, res, contract) {
 //   try {

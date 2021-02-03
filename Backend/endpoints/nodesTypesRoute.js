@@ -26,7 +26,6 @@ exports.createNodesTypes = async function (req, res, contract) {
       key,
       creatorId: userID.userId,
     };
-    console.log(nodeType);
     const response = await contract.submitTransaction(
       "createNodesTypes",
       JSON.stringify(nodeType)
@@ -39,6 +38,7 @@ exports.createNodesTypes = async function (req, res, contract) {
 
 exports.deleteNodesTypes = async function (req, res, contract) {
   try {
+    console.log(req.body);
     if (req.body.key === "" || req.body.key === undefined) {
       return { error: "Key must be provided!" };
     }
