@@ -50,7 +50,7 @@ exports.createVotes = async function (req, res, contract) {
     }
 
     if (alreadyVoted) {
-      return { error: "You already verified" };
+      return { error: "You already vote in this relation!" };
     }
     const key = uuidv4();
     const createdAt = new Date();
