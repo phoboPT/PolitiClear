@@ -26,7 +26,6 @@ exports.createNodesTypes = async function (req, res, contract) {
       key,
       creatorId: userID.userId,
     };
-    console.log(nodeType);
     const response = await contract.submitTransaction(
       "createNodesTypes",
       JSON.stringify(nodeType)

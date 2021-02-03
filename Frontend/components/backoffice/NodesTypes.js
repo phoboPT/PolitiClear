@@ -103,7 +103,7 @@ class NodesTypes extends Component {
                                   if (res) {
                                     const data = await deleteByKey(
                                       'http://127.0.0.1:5000/nodesTypes/delete',
-                                      nodeType.Key,
+                                      { key: nodeType.Key },
                                     );
                                     this.setState({
                                       data: data.data.data,
@@ -156,19 +156,6 @@ class NodesTypes extends Component {
                     changeForm={this.changeForm}
                     data={{ Record: { name: '' } }}
                     refetch={this.fetch}
-                  ></EditNodeType>
-                </Inner>
-              );
-            }
-
-            if (this.state.form == 2) {
-              return (
-                <Inner>
-                  <EditNodeType
-                    changeForm={this.changeForm}
-                    edit
-                    refetch={this.fetch}
-                    data={this.state.data.nodeType}
                   ></EditNodeType>
                 </Inner>
               );

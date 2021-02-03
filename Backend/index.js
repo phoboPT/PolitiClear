@@ -55,7 +55,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: "http://localhost:7777",
+    origin: "http://localhost:3000",
     optionsSuccessStatus: 200,
   })
 );

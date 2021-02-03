@@ -38,6 +38,7 @@ class Users extends Component {
   };
 
   updateUser = async (key) => {
+    this.setState({ formData: [] });
     const token = Cookies.get('token');
     const data = {
       token,
@@ -49,6 +50,9 @@ class Users extends Component {
       'http://127.0.0.1:5000/users/update',
       data,
     );
+    if (res) {
+      this.fetch();
+    }
   };
 
   render() {
@@ -81,7 +85,6 @@ class Users extends Component {
                     </thead>
                     <tbody>
                       {this.state.formData.map((item) => {
-                        console.log(item.Record.createdAt);
                         const createdAt = new Date(
                           item.Record.createdAt,
                         ).toISOString();
@@ -125,10 +128,8 @@ class Users extends Component {
                                     const res = confirm(
                                       'Do you really want to delete?',
                                     );
-                                    console.log(item.Key);
                                     if (res) {
                                       this.updateUser(item.Key);
-                                      this.fetch();
                                     }
                                   }}
                                 >

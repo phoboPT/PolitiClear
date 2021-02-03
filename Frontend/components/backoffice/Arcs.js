@@ -68,7 +68,7 @@ class Arcs extends Component {
                         <th>Created At:</th>
                         <th>Updated At:</th>
                         <th>Edit </th>
-                        <th>Delete </th>
+                        {/* <th>Delete </th> */}
                       </tr>
                     </thead>
                     <tbody>
@@ -107,7 +107,7 @@ class Arcs extends Component {
                                 </button>
                               )}
                             </td>
-                            <td className="center">
+                            {/* <td className="center">
                               {item.Record.isVoted > 0 ? null : (
                                 <button
                                   type="button"
@@ -124,7 +124,7 @@ class Arcs extends Component {
                                   ❌
                                 </button>
                               )}
-                            </td>
+                            </td> */}
                           </tr>
                         );
                       })}
