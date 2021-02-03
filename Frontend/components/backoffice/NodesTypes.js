@@ -105,7 +105,6 @@ class NodesTypes extends Component {
                                       'http://127.0.0.1:5000/nodesTypes/delete',
                                       { key: nodeType.Key },
                                     );
-                                    console.log(data);
                                     this.setState({
                                       data: data.data.data,
                                       error: '',

@@ -38,7 +38,6 @@ exports.createNodesTypes = async function (req, res, contract) {
 
 exports.deleteNodesTypes = async function (req, res, contract) {
   try {
-    console.log(req.body);
     if (req.body.key === "" || req.body.key === undefined) {
       return { error: "Key must be provided!" };
     }
