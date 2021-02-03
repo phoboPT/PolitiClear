@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Cookies from 'js-cookie';
 import Me from '../Me';
 import Error from '../ErrorMessage';
 import { getData, deleteByKey } from '../../lib/requests';
@@ -7,7 +8,6 @@ import Table from '../styles/Table';
 import Inner from '../styles/InnerDiv';
 import EditArcs from './EditArcs';
 import formatDate from '../../lib/formatDate';
-
 class Arcs extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +31,16 @@ class Arcs extends Component {
   async componentDidMount() {
     this.fetch();
   }
+
+  delete = async (key) => {
+    const token = Cookies.get('token');
+    const data = {
+      key,
+      token,
+    };
+    console.log(data);
+    await deleteByKey('http://127.0.0.1:5000/arcs/delete', data);
+  };
 
   render() {
     return (
@@ -106,10 +116,7 @@ class Arcs extends Component {
                                       'Do you really want to delete?',
                                     );
                                     if (res) {
-                                      await deleteByKey(
-                                        'http://127.0.0.1:5000/arcs/delete',
-                                        item.Key,
-                                      );
+                                      await this.delete(item.Key);
                                       this.fetch();
                                     }
                                   }}

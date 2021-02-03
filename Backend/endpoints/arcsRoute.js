@@ -11,7 +11,6 @@ exports.getByKey = async function (req, res, contract) {
       req.params.key
     );
 
-    
     return { data: JSON.parse(response) };
   } catch (e) {
     return { error: e.message };
@@ -100,7 +99,7 @@ const updatePromisses = async (contract, creatorId) => {
   const creatorIdDescription = contract.submitTransaction(
     "readUsers",
     creatorId
-  ).name;
+  );
 
   const votes = contract.submitTransaction("queryByObjectType", "Votes");
 
@@ -114,11 +113,9 @@ exports.updateArcs = async function (req, res, contract) {
     if (key === "" || key === undefined) {
       return { error: "Key must be provided!" };
     }
-
     const creatorId = jwt.verify(token, "MySecret").userId;
     const data = await updatePromisses(contract, creatorId);
-
-    const creatorIdDescription = JSON.parse(data[0]);
+    const creatorIdDescription = JSON.parse(data[0]).name;
     const votes = JSON.parse(data[1]);
     let aux = 0;
     votes.forEach((votesData) => {
@@ -137,7 +134,6 @@ exports.updateArcs = async function (req, res, contract) {
       creatorId,
       creatorIdDescription,
     };
-
     const response = await contract.submitTransaction(
       "updateArcs",
       JSON.stringify(newArc)
@@ -159,6 +155,7 @@ const deleteOneArc = async (contract, key) => {
 exports.deleteArcs = async function (req, res, contract) {
   try {
     const { key, token } = req.body;
+    console.log(key, token);
     await dataVerifications.verifyToken(contract, token, permissions[0]);
 
     if (

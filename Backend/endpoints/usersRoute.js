@@ -118,23 +118,24 @@ exports.updateUsers = async (req, res, contract) => {
       oldPassword,
       newPassword,
       permission,
-
       activated,
     } = req.body;
+    console.log(req.body);
     let updaterId, id;
     const newUser = {
       name,
       permission: permission,
     };
-
     if (key) {
       updaterId = await dataVerifications.verifyToken(
         contract,
         token,
         permissions[0]
       );
+      console.log("hey");
       id = key;
       newUser.activated = activated;
+      console.log(newUser);
     } else {
       updaterId = await dataVerifications.verifyToken(contract, token);
       id = updaterId;

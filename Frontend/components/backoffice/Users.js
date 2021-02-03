@@ -72,8 +72,9 @@ class Users extends Component {
                         <th>Email </th>
                         <th>Name</th>
                         <th>Permission</th>
-                        <th>Created At:</th>
-                        <th>Updated At:</th>
+                        <th>Activated</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
                         <th>Edit </th>
                         <th>Delete </th>
                       </tr>
@@ -96,6 +97,11 @@ class Users extends Component {
                             <td>{item.Record.email}</td>
                             <td>{item.Record.name}</td>
                             <td>{item.Record.permission}</td>
+                            <td>
+                              {item.Record.activated === 1
+                                ? 'Activated'
+                                : 'Disabled'}
+                            </td>
                             <td>{formatDate(createdAt)}</td>
                             <td>{formatDate(updatedAt)}</td>
                             <td className="center">
@@ -112,21 +118,23 @@ class Users extends Component {
                               </button>
                             </td>
                             <td className="center">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const res = confirm(
-                                    'Do you really want to delete?',
-                                  );
-                                  console.log(item.Key);
-                                  if (res) {
-                                    this.updateUser(item.Key);
-                                    this.fetch();
-                                  }
-                                }}
-                              >
-                                ❌
-                              </button>
+                              {item.Record.activated === 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const res = confirm(
+                                      'Do you really want to delete?',
+                                    );
+                                    console.log(item.Key);
+                                    if (res) {
+                                      this.updateUser(item.Key);
+                                      this.fetch();
+                                    }
+                                  }}
+                                >
+                                  ❌
+                                </button>
+                              )}
                             </td>
                           </tr>
                         );

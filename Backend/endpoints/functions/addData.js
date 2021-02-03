@@ -376,13 +376,13 @@ exports.addData = async function (req, res, contract) {
       "4a"
     );
     //José Socrates
-    await insertData(
-      contract,
-      "Eleito 2005-2011",
-      politicosKey[13],
-      cargosPoliticosKey[0],
-      "2a"
-    );
+    // await insertData(
+    //   contract,
+    //   "Eleito 2005-2011",
+    //   politicosKey[13],
+    //   cargosPoliticosKey[0],
+    //   "2a"
+    // );
     await insertData(
       contract,
       "Alvo do processo",

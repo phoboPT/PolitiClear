@@ -109,7 +109,7 @@ class VerifyAccount extends Component {
               </div>
             );
           }
-          return <p>hello</p>;
+          return null;
         }}
       </Me>
     );

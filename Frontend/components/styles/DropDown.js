@@ -5,16 +5,16 @@ const DropDown = styled.div`
   width: 100%;
   z-index: 2;
   border: 1px solid ${(props) => props.theme.lightgrey};
-  `;
-  
-  const DropDownItem = styled.div`
+`;
+
+const DropDownItem = styled.div`
   border-bottom: 1px solid ${(props) => props.theme.lightgrey};
   background: ${(props) => (props.highlighted ? '#f7f7f7' : 'white')};
-    padding-bottom:auto;
-    padding-top:auto;
-p{
-  max-height:15px;
-}
+  padding-bottom: auto;
+  padding-top: auto;
+  p {
+    max-height: 15px;
+  }
   transition: all 0.2s;
   ${(props) => (props.highlighted ? 'padding-left: 2rem;' : null)};
   display: flex;

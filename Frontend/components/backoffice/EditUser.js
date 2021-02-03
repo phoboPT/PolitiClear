@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import Cookies from 'js-cookie';
 import Form from '../styles/Form';
 import Error from '../ErrorMessage';
 import SuccessMessage from '../styles/SuccessMessage';
 import { sendRequest } from '../../lib/requests';
 import SickButton from '../styles/SickButton';
-
 const ButtonDiv = styled.div`
   button {
     margin: 0 auto;
@@ -20,6 +20,7 @@ class EditUser extends Component {
     this.state = {
       data: '',
       error: '',
+      activated: false,
     };
   }
 
@@ -28,11 +29,15 @@ class EditUser extends Component {
   };
 
   saveForm = async () => {
+    const token = Cookies.get('token');
     this.setState({ loading: true });
+    console.log(this.state.activated);
     const data = {
       name: this.state.name,
       permission: this.state.permission,
       key: this.props.data.Key,
+      activated: this.state.activated ? '1' : '0',
+      token,
     };
     const res = await sendRequest(
       'PUT',
@@ -58,12 +63,20 @@ class EditUser extends Component {
   }
 
   componentDidMount() {
-    const { email, name, permission } = this.props.data.Record;
-    this.setState({ email, name, permission });
+    const { email, name, permission, activated } = this.props.data.Record;
+    this.setState({ email, name, permission, activated });
   }
+
+  changeActivated = () => {
+    this.setState({
+      activated: !this.state.activated,
+    });
+  };
 
   render() {
     const { loading, email, name = '', permission = '' } = this.state;
+    const show = this.props.data.Record.activated === 0;
+    console.log(show);
     return (
       <Form>
         <fieldset disabled={loading} aria-busy={loading}>
@@ -100,6 +113,18 @@ class EditUser extends Component {
               onChange={this.saveToState}
             />
           </label>
+          {show && (
+            <label htmlFor="labels">
+              Activate account
+              <input
+                type="checkbox"
+                name="labels"
+                defaultValue={this.props.activated}
+                onChange={this.changeActivated}
+              />
+            </label>
+          )}
+
           <ButtonDiv>
             <SickButton type="button" onClick={this.saveForm}>
               Sav{loading ? 'ing' : 'e'}

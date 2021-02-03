@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import Cookies from 'js-cookie';
 import Form from '../styles/Form';
 import Error from '../ErrorMessage';
 import SuccessMessage from '../styles/SuccessMessage';
-import { sendRequest, getData } from '../../lib/requests';
+import { sendRequest } from '../../lib/requests';
 import SickButton from '../styles/SickButton';
-
 const ButtonDiv = styled.div`
   button {
     margin: 0 auto;
@@ -29,10 +29,12 @@ class EditArcs extends Component {
 
   saveForm = async () => {
     this.setState({ loading: true });
+    const token = Cookies.get('token');
     const data = {
       key: this.props.data.Key,
       description: this.state.description,
-      nodeType: this.state.nodeType,
+
+      token,
     };
     const res = await sendRequest(
       'PUT',
@@ -76,11 +78,11 @@ class EditArcs extends Component {
           </label>
           <ButtonDiv>
             <SickButton type="button" onClick={this.saveForm}>
-              Save
+              Sav{loading ? 'ing' : 'e'}
             </SickButton>
 
             <SickButton type="button" onClick={this.props.changeForm}>
-              Sav{loading ? 'ing' : 'e'}
+              Back
             </SickButton>
           </ButtonDiv>
         </fieldset>

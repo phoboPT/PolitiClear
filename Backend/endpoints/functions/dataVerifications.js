@@ -34,6 +34,7 @@ exports.verifyNameAlreadyExists = async function (name, dataType, contract) {
   }
   return data;
 };
+
 /**
  * 
  * Accepts the user token, the disered permissions to check and the network connection.

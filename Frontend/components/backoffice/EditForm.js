@@ -196,7 +196,7 @@ class EditForm extends Component {
             <SickButton
               type="button"
               onClick={() => {
-                certify ? this.saveForm() : this.updateUser();
+                !certify ? this.saveForm() : this.updateUser();
               }}
             >
               Sav{loading ? 'ing' : 'e'}
